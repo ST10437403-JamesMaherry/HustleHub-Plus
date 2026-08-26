@@ -2,12 +2,14 @@ require('dotenv').config();
 
 const express = require('express');
 
+const authRoutes = require('./routes/authRoutes');
+
 const app = express();
 
 const PORT = Number(process.env.PORT) || 4000;
 const APP_NAME = process.env.APP_NAME || 'HustleHubPlusAPI';
 
-// Parse incoming JSON requests.
+// Parse incoming JSON request bodies.
 app.use(express.json());
 
 // Basic API information route.
@@ -25,6 +27,9 @@ app.get('/health', (req, res) => {
     app: APP_NAME
   });
 });
+
+// Authentication endpoints.
+app.use('/api/auth', authRoutes);
 
 app.listen(PORT, () => {
   console.log(`${APP_NAME} running on port ${PORT}`);
