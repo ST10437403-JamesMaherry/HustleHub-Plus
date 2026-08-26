@@ -178,6 +178,16 @@ Security functionality will be introduced incrementally throughout Part 1, inclu
 * Controlled error handling
 * Security-related HTTP headers
 * Secure management of environment variables and secrets
+   
+### Password Security
+
+HustleHub+ never stores user passwords in plaintext.
+
+Passwords received during registration are passed through bcrypt before reaching the user store. The application uses a configurable bcrypt work factor with a secure default of 12 rounds.
+
+Only the resulting password hash is retained. Passwords and password hashes are never included in registration responses.
+
+Password verification is performed using bcrypt comparison rather than attempting to decrypt stored hashes.
 
 Sensitive configuration such as secrets and local certificate material must never be committed to GitHub.
 

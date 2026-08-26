@@ -1,22 +1,14 @@
-const bcrypt = require('bcrypt');
-
 const {
   createUser,
   findUserByEmail
 } = require('../models/userStore');
 
-// Number of bcrypt hashing rounds used when protecting passwords.
-const BCRYPT_SALT_ROUNDS = 12;
+const {
+  hashPassword
+} = require('../utils/password');
 
 /**
  * Registers a new HustleHub+ user.
- *
- * Registration performs the following security-sensitive steps:
- * 1. Reads the expected registration fields.
- * 2. Checks whether the email address is already registered.
- * 3. Hashes the password before it reaches the user store.
- * 4. Stores only the password hash.
- * 5. Returns only non-sensitive user information.
  */
 const registerUser = async (req, res, next) => {
   try {
@@ -27,7 +19,7 @@ const registerUser = async (req, res, next) => {
       role
     } = req.body;
 
-    // Check whether another account already uses this email address.
+    // Prevent duplicate accounts from using the same email address.
     const existingUser = findUserByEmail(email);
 
     if (existingUser) {
@@ -36,11 +28,8 @@ const registerUser = async (req, res, next) => {
       });
     }
 
-    // Hash the plaintext password before storing the user.
-    const passwordHash = await bcrypt.hash(
-      password,
-      BCRYPT_SALT_ROUNDS
-    );
+    // Hash the password before passing the user to the storage layer.
+    const passwordHash = await hashPassword(password);
 
     const user = createUser({
       fullName,
@@ -49,7 +38,7 @@ const registerUser = async (req, res, next) => {
       role
     });
 
-    // Return only fields that are safe to expose to the client.
+    // Return only information that is safe to expose.
     return res.status(201).json({
       message: 'User registered successfully',
       user: {
@@ -60,7 +49,7 @@ const registerUser = async (req, res, next) => {
       }
     });
   } catch (error) {
-    // Pass unexpected failures to the application's error-handling pipeline.
+    // Forward unexpected failures to the error-handling pipeline.
     return next(error);
   }
 };
