@@ -189,6 +189,46 @@ Only the resulting password hash is retained. Passwords and password hashes are 
 
 Password verification is performed using bcrypt comparison rather than attempting to decrypt stored hashes.
 
+### Input Validation
+
+All registration input is validated by middleware before it reaches the
+authentication controller. Invalid requests are rejected with a `400 Bad Request`
+response and never reach the password hashing utility or the user store.
+
+Registration input is checked for:
+
+* Presence of all required fields
+* Correct data types, so that values such as objects and numbers are rejected
+* Full name length, between 2 and 80 characters once whitespace is removed
+* Email address structure, with a maximum length of 254 characters
+* Password length, between 8 and 72 bytes
+* Membership of the public role allow-list
+
+Full name, email address, and role values are trimmed, and email addresses and
+roles are normalised to lowercase. Passwords are never trimmed, so that the value
+stored at registration is byte-identical to the value supplied at login. The
+validated values then replace the original request body, so the controller cannot
+receive additional properties supplied by the client.
+
+Password length is measured in bytes rather than characters because bcrypt reads
+only the first 72 bytes of a password and discards the remainder without raising
+an error. A character-based limit would allow a longer multi-byte password to be
+silently truncated. No character composition rules are applied, following NIST
+SP 800-63B, which recommends length and screening over composition requirements.
+
+Client and freelancer accounts may be created publicly. The admin role exists in
+the system but is excluded from the registration allow-list, so an administrative
+account cannot be created by a public request.
+
+Control characters are rejected in the full name and email address. They serve no
+legitimate purpose in either field and allow forged entries to be written into log
+output once logging is introduced.
+
+The email pattern confirms the structure of an address rather than its
+deliverability, and HTML characters are not stripped, because the API returns JSON
+and output encoding is the responsibility of the frontend. Both are deliberate
+decisions to revisit alongside schema validation in Part 2.
+
 Sensitive configuration such as secrets and local certificate material must never be committed to GitHub.
 
 ## Part 1 Development Status
@@ -199,10 +239,10 @@ Sensitive configuration such as secrets and local certificate material must neve
 * [x] Temporary user-store abstraction
 * [x] User registration
 * [x] Password hashing with bcrypt
+* [X] Input validation
 * [ ] User login
 * [ ] JWT generation
 * [ ] JWT-protected routes
-* [ ] Input validation
 * [ ] Controlled error handling
 * [ ] Local HTTPS
 * [ ] Security headers
