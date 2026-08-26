@@ -25,6 +25,11 @@ The current Part 1 implementation includes:
 * UUID-based user identification
 * Normalised email storage and lookup
 * Separation of backend responsibilities into routes, controllers, middleware, and models
+* Public user registration for clients and freelancers
+* Duplicate email prevention
+* Secure password hashing using bcrypt
+* Registration input validation
+* Safe registration responses that exclude credentials and password hashes
 
 Authentication and additional security controls will be added incrementally during Part 1.
 
@@ -131,6 +136,7 @@ http://localhost:4000
 | ------ | --------- | ---------------------------------------- |
 | GET    | `/`       | Returns basic HustleHub+ API information |
 | GET    | `/health` | Confirms that the backend API is running |
+| POST | `/api/auth/register` | Registers a new client or freelancer |
 
 Example health response:
 
@@ -181,8 +187,8 @@ Sensitive configuration such as secrets and local certificate material must neve
 * [x] Environment configuration
 * [x] Health-check endpoint
 * [x] Temporary user-store abstraction
-* [ ] User registration
-* [ ] Password hashing with bcrypt
+* [x] User registration
+* [x] Password hashing with bcrypt
 * [ ] User login
 * [ ] JWT generation
 * [ ] JWT-protected routes
