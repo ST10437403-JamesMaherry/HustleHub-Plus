@@ -35,6 +35,10 @@ The current Part 1 implementation includes:
 * JWT generation after successful authentication
 * Minimal JWT payload containing user ID and role
 * Generic authentication failure responses
+* JWT verification middleware for protected API routes
+* Bearer-token authentication
+* Protected current-user endpoint
+* Rejection of missing, malformed, invalid and expired JWTs
 
 Authentication and additional security controls will be added incrementally during Part 1.
 
@@ -143,6 +147,14 @@ http://localhost:4000
 | GET    | `/health` | Confirms that the backend API is running |
 | POST | `/api/auth/register` | Registers a new client or freelancer |
 | POST | `/api/auth/login` | Authenticates a user and returns a signed JWT |
+| GET | `/api/auth/me` | Returns the authenticated user's safe account information | Bearer JWT |
+
+### Protected Routes
+
+Protected HustleHub+ routes require a JWT in the HTTP `Authorization` header using the Bearer scheme:
+
+```text
+Authorization: Bearer <token>
 
 Example health response:
 
