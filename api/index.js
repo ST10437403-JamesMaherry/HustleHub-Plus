@@ -86,11 +86,29 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   console.error(err);
 
-  res.status(err.status || 500).json({
-    error:
-      process.env.NODE_ENV === 'production'
+  // Return a clear response when the JSON body exceeds the configured limit.
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({
+      error: 'Request body too large'
+    });
+  }
+
+  // Preserve safe client error status codes where available.
+  const statusCode =
+    Number.isInteger(err.status) && err.status >= 400 && err.status < 500
+      ? err.status
+      : 500;
+
+  // Avoid exposing internal error information in production.
+  const errorMessage =
+    statusCode < 500
+      ? err.message
+      : process.env.NODE_ENV === 'production'
         ? 'Internal server error'
-        : err.message
+        : err.message;
+
+  return res.status(statusCode).json({
+    error: errorMessage
   });
 });
 
