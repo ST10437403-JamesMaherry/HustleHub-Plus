@@ -4,6 +4,8 @@ const express = require('express');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const helmet = require('helmet');
+const cors = require('cors');
 
 const authRoutes = require('./routes/authRoutes');
 
@@ -13,8 +15,45 @@ const PORT = Number(process.env.PORT) || 4000;
 const APP_NAME = process.env.APP_NAME || 'HustleHubPlusAPI';
 const USE_HTTPS = process.env.USE_HTTPS === 'true';
 
-// Parse incoming JSON request bodies.
-app.use(express.json());
+// Read the permitted frontend origin from the environment.
+const CLIENT_ORIGIN =
+  process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+
+// Hide the Express implementation detail from responses.
+app.disable('x-powered-by');
+
+// Apply security-related HTTP headers.
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:'],
+        connectSrc: ["'self'", CLIENT_ORIGIN],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        frameAncestors: ["'none'"]
+      }
+    },
+    crossOriginResourcePolicy: {
+      policy: 'same-site'
+    }
+  })
+);
+
+// Only allow browser requests from the configured frontend origin.
+app.use(
+  cors({
+    origin: CLIENT_ORIGIN,
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  })
+);
+
+// Limit JSON request bodies to reduce oversized-payload abuse.
+app.use(express.json({ limit: '10kb' }));
 
 // Basic API information route.
 app.get('/', (req, res) => {
@@ -36,6 +75,44 @@ app.get('/health', (req, res) => {
 // Authentication endpoints.
 app.use('/api/auth', authRoutes);
 
+// Handle requests that do not match any defined route.
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Route not found'
+  });
+});
+
+// Central error-handling middleware.
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  // Return a clear response when the JSON body exceeds the configured limit.
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({
+      error: 'Request body too large'
+    });
+  }
+
+  // Preserve safe client error status codes where available.
+  const statusCode =
+    Number.isInteger(err.status) && err.status >= 400 && err.status < 500
+      ? err.status
+      : 500;
+
+  // Avoid exposing internal error information in production.
+  const errorMessage =
+    statusCode < 500
+      ? err.message
+      : process.env.NODE_ENV === 'production'
+        ? 'Internal server error'
+        : err.message;
+
+  return res.status(statusCode).json({
+    error: errorMessage
+  });
+});
+
+// Start the API using HTTPS when enabled.
 if (USE_HTTPS) {
   // Resolve the local certificate paths from environment configuration.
   const keyPath = path.resolve(
