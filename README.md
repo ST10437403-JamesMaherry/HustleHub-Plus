@@ -23,13 +23,18 @@ The current Part 1 implementation includes:
 * API health-check endpoint
 * Temporary in-memory user store
 * UUID-based user identification
-* Normalised email storage and lookup
+* Normalized email storage and lookup
 * Separation of backend responsibilities into routes, controllers, middleware, and models
 * Public user registration for clients and freelancers
 * Duplicate email prevention
 * Secure password hashing using bcrypt
 * Registration input validation
 * Safe registration responses that exclude credentials and password hashes
+* User login using registered credentials
+* Secure password verification using bcrypt
+* JWT generation after successful authentication
+* Minimal JWT payload containing user ID and role
+* Generic authentication failure responses
 
 Authentication and additional security controls will be added incrementally during Part 1.
 
@@ -137,6 +142,7 @@ http://localhost:4000
 | GET    | `/`       | Returns basic HustleHub+ API information |
 | GET    | `/health` | Confirms that the backend API is running |
 | POST | `/api/auth/register` | Registers a new client or freelancer |
+| POST | `/api/auth/login` | Authenticates a user and returns a signed JWT |
 
 Example health response:
 
@@ -178,7 +184,7 @@ Security functionality will be introduced incrementally throughout Part 1, inclu
 * Controlled error handling
 * Security-related HTTP headers
 * Secure management of environment variables and secrets
-   
+
 ### Password Security
 
 HustleHub+ never stores user passwords in plaintext.
@@ -191,6 +197,16 @@ Password verification is performed using bcrypt comparison rather than attemptin
 
 Sensitive configuration such as secrets and local certificate material must never be committed to GitHub.
 
+### JWT Authentication
+
+After successful login, HustleHub+ issues a signed JSON Web Token (JWT).
+
+The token contains only the authenticated user's ID and role. The JWT secret is loaded from environment configuration and is never stored directly in source code.
+
+Tokens have a limited lifetime configured using `JWT_EXPIRES_IN`.
+
+The application returns the same `401 Invalid credentials` response when either the email address is unknown or the password is incorrect. This avoids exposing whether a particular account exists.
+
 ## Part 1 Development Status
 
 * [x] Express API foundation
@@ -199,8 +215,8 @@ Sensitive configuration such as secrets and local certificate material must neve
 * [x] Temporary user-store abstraction
 * [x] User registration
 * [x] Password hashing with bcrypt
-* [ ] User login
-* [ ] JWT generation
+* [x] User login
+* [x] JWT generation
 * [ ] JWT-protected routes
 * [ ] Input validation
 * [ ] Controlled error handling
