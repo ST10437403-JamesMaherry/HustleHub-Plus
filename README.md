@@ -4,77 +4,112 @@
 
 HustleHub+ is a secure freelance marketplace being developed incrementally as part of the INSY7314 Portfolio of Evidence.
 
-The completed platform will allow freelancers to advertise services and clients to browse and book those services. The system will also support transaction tracking, freelancer income information, and estimated tax calculations in later stages of the POE.
+The completed platform will allow freelancers to advertise services and clients to browse and book those services. Later stages of the POE will extend the platform with MongoDB persistence, marketplace functionality, bookings, transaction tracking, freelancer income information, estimated tax calculations, DevSecOps practices, containerisation, logging, and monitoring.
+
+---
 
 ## Part 1 — Secure Foundations
 
 Part 1 focuses on establishing a secure backend foundation using **Node.js** and **Express**.
 
-The backend is being designed using a modular structure so that authentication, security controls, MongoDB persistence, and the React frontend can be added progressively in later parts of the project.
-
-### Current Implementation
+The backend is designed using a modular structure so that authentication, security controls, MongoDB persistence, and the React frontend can be introduced progressively without requiring the existing authentication flow to be rewritten.
 
 The current Part 1 implementation includes:
 
-* Node.js backend project
-* Express API
-* Environment-based configuration using `dotenv`
-* JSON request handling
-* API health-check endpoint
-* Temporary in-memory user store
-* UUID-based user identification
-* Normalized email storage and lookup
-* Separation of backend responsibilities into routes, controllers, middleware, and models
-* Public user registration for clients and freelancers
-* Duplicate email prevention
-* Secure password hashing using bcrypt
-* Registration input validation
-* Safe registration responses that exclude credentials and password hashes
-* User login using registered credentials
-* Secure password verification using bcrypt
-* JWT generation after successful authentication
-* Minimal JWT payload containing user ID and role
-* Generic authentication failure responses
-* JWT verification middleware for protected API routes
-* Bearer-token authentication
-* Protected current-user endpoint
-* Rejection of missing, malformed, invalid and expired JWTs
+- Node.js backend project
+- Express API
+- Environment-based configuration using `dotenv`
+- JSON request handling
+- API health-check endpoint
+- Temporary in-memory user storage
+- UUID-based user identification
+- Normalised email storage and lookup
+- Separation of routes, controllers, middleware, models, and utilities
+- Public registration for clients and freelancers
+- Duplicate email prevention
+- Secure password hashing using bcrypt
+- Configurable bcrypt work factor
+- Registration input validation
+- Safe registration responses that exclude credentials and password hashes
+- User login using registered credentials
+- Secure password verification using bcrypt
+- JWT generation after successful authentication
+- Minimal JWT payload containing only user ID and role
+- Generic authentication failure responses
+- JWT verification middleware
+- Bearer-token authentication
+- Protected current-user endpoint
+- Rejection of missing, malformed, invalid, tampered, and expired JWTs
+- Local HTTPS/TLS using a self-signed development certificate
+- Environment-controlled HTTP/HTTPS startup
+- HTTPS protection for registration, login, and protected routes
 
-Authentication and additional security controls will be added incrementally during Part 1.
+Additional security controls, testing, evidence, and documentation will continue to be added during Part 1.
 
-## Technology Stack
+---
 
-### Current
+# Technology Stack
 
-* Node.js
-* Express.js
-* dotenv
-* JavaScript
-* Git and GitHub
-* Postman
+## Current
 
-### Later POE Stages
+- Node.js
+- Express.js
+- JavaScript
+- dotenv
+- bcrypt
+- jsonwebtoken
+- Node.js Crypto
+- HTTPS/TLS
+- Git
+- GitHub
+- Postman
 
-* MongoDB
-* React
-* JWT authentication
-* Docker
-* GitHub Actions
-* Automated testing and security analysis
-* Logging and monitoring
+## Later POE Stages
 
-## Project Structure
+- MongoDB
+- Mongoose
+- React
+- Role-Based Access Control
+- Rate limiting
+- Docker
+- Docker Compose
+- GitHub Actions
+- Automated backend and frontend testing
+- Static code analysis
+- Security scanning
+- Logging
+- Monitoring
+
+---
+
+# Project Structure
 
 ```text
 INSY7314POE/
 │
 ├── api/
 │   ├── controllers/
+│   │   └── authController.js
+│   │
 │   ├── middleware/
+│   │   ├── authMiddleware.js
+│   │   ├── validateLogin.js
+│   │   └── validateRegistration.js
+│   │
 │   ├── models/
 │   │   └── userStore.js
+│   │
 │   ├── routes/
+│   │   └── authRoutes.js
+│   │
+│   ├── utils/
+│   │   ├── password.js
+│   │   └── token.js
+│   │
 │   ├── certs/
+│   │   ├── localhost-cert.pem
+│   │   └── localhost-key.pem
+│   │
 │   ├── .env
 │   ├── .env.example
 │   ├── index.js
@@ -93,197 +128,996 @@ INSY7314POE/
 └── README.md
 ```
 
-> The `.env` file, local certificates, `node_modules`, and other sensitive or generated files are excluded from Git.
+> `.env`, `node_modules`, local certificate files, private keys, logs, and other local or generated files are excluded from Git.
 
-## Running the API
+---
 
-### 1. Navigate to the API directory
+# Backend Architecture
+
+The backend follows a modular structure with responsibilities separated between different layers.
+
+```text
+HTTP Request
+     │
+     ▼
+Routes
+     │
+     ▼
+Validation / Authentication Middleware
+     │
+     ▼
+Controllers
+     │
+     ├── Password Utilities
+     ├── JWT Utilities
+     │
+     ▼
+Temporary User Store
+     │
+     ▼
+HTTP Response
+```
+
+### Routes
+
+Routes define the API endpoints and determine which middleware and controller functions handle each request.
+
+### Middleware
+
+Middleware performs reusable request-processing tasks before controller logic executes.
+
+Current middleware includes:
+
+- Registration validation
+- Login validation
+- JWT authentication
+
+### Controllers
+
+Controllers contain application workflows such as:
+
+- User registration
+- User login
+- Retrieving the authenticated user's account
+
+### Models
+
+Part 1 uses an in-memory user-store abstraction rather than MongoDB.
+
+The store is intentionally separated from controller logic so that it can later be replaced with MongoDB and Mongoose without redesigning the authentication API.
+
+### Utilities
+
+Security-specific functionality is separated into reusable utilities:
+
+- `password.js` handles password hashing and verification.
+- `token.js` handles JWT creation and verification.
+
+---
+
+# Running the API
+
+## 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd INSY7314POE
+```
+
+---
+
+## 2. Navigate to the API directory
 
 ```bash
 cd api
 ```
 
-### 2. Install dependencies
+---
+
+## 3. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Create the local environment file
+---
 
-Copy the example configuration:
+## 4. Create the local environment file
+
+Copy the supplied example configuration:
 
 ```bash
 cp .env.example .env
 ```
 
-Environment values must be configured locally and should never be committed to the repository.
+The actual `.env` file must remain local and must never be committed to GitHub.
 
-### 4. Start the API
+A local environment may contain:
 
-For normal execution:
+```env
+PORT=4000
+APP_NAME=HustleHubPlusAPI
+NODE_ENV=development
+
+CLIENT_ORIGIN=http://localhost:5173
+
+USE_HTTPS=true
+SSL_KEY_PATH=./certs/localhost-key.pem
+SSL_CERT_PATH=./certs/localhost-cert.pem
+
+BCRYPT_SALT_ROUNDS=12
+
+JWT_SECRET=replace_with_a_long_random_local_secret
+JWT_EXPIRES_IN=1h
+```
+
+Generate a secure JWT secret locally rather than using the placeholder value.
+
+For example:
+
+```bash
+openssl rand -hex 32
+```
+
+The generated value must only be placed in the local `.env` file.
+
+---
+
+# Local HTTPS Setup
+
+Part 1 runs over HTTPS using a self-signed development certificate.
+
+From inside the `api` directory:
+
+```bash
+mkdir -p certs
+```
+
+Generate the certificate and private key:
+
+```bash
+openssl req -x509 -newkey rsa:2048 -nodes -sha256 -days 365 \
+  -keyout certs/localhost-key.pem \
+  -out certs/localhost-cert.pem \
+  -subj "/CN=localhost"
+```
+
+This creates:
+
+```text
+certs/localhost-key.pem
+certs/localhost-cert.pem
+```
+
+These files are for **local development only** and must not be committed to GitHub.
+
+Because the certificate is self-signed, browsers and Postman may not trust it automatically.
+
+For local Postman testing, SSL certificate verification may need to be disabled.
+
+This should only be done for the local self-signed development certificate and is not appropriate production behaviour.
+
+---
+
+# Starting the API
+
+## Normal execution
 
 ```bash
 npm start
 ```
 
-For development with automatic restart when files change:
+## Development mode
 
 ```bash
 npm run dev
 ```
 
-The API currently runs on:
+Development mode automatically restarts the Node.js application when source files change.
+
+With HTTPS enabled, the API runs at:
 
 ```text
-http://localhost:4000
+https://localhost:4000
 ```
 
-## Current API Endpoints
+HTTP mode remains available for local troubleshooting by setting:
 
-| Method | Endpoint  | Description                              |
-| ------ | --------- | ---------------------------------------- |
-| GET    | `/`       | Returns basic HustleHub+ API information |
-| GET    | `/health` | Confirms that the backend API is running |
-| POST | `/api/auth/register` | Registers a new client or freelancer |
-| POST | `/api/auth/login` | Authenticates a user and returns a signed JWT |
-| GET | `/api/auth/me` | Returns the authenticated user's safe account information | Bearer JWT |
+```env
+USE_HTTPS=false
+```
 
-### Protected Routes
+Normal Part 1 testing and demonstration should use HTTPS.
 
-Protected HustleHub+ routes require a JWT in the HTTP `Authorization` header using the Bearer scheme:
+---
 
-```text
-Authorization: Bearer <token>
+# API Endpoints
 
-Example health response:
+| Method | Endpoint | Authentication | Description |
+|---|---|---|---|
+| GET | `/` | Public | Returns basic HustleHub+ API information |
+| GET | `/health` | Public | Confirms that the API is running |
+| POST | `/api/auth/register` | Public | Registers a new client or freelancer |
+| POST | `/api/auth/login` | Public | Authenticates a user and returns a signed JWT |
+| GET | `/api/auth/me` | Bearer JWT | Returns the authenticated user's safe account information |
+
+---
+
+# Health Check
+
+Request:
+
+```http
+GET https://localhost:4000/health
+```
+
+Example response:
 
 ```json
 {
   "status": "OK",
-  "app": "HustleHubPlusAPI"
+  "app": "HustleHubPlusAPI",
+  "protocol": "HTTPS"
 }
 ```
 
-## Temporary User Storage
+---
+
+# User Registration
+
+Users may register as either:
+
+- `client`
+- `freelancer`
+
+Public requests cannot create administrator accounts.
+
+Example request:
+
+```http
+POST https://localhost:4000/api/auth/register
+```
+
+```json
+{
+  "fullName": "James Maherry",
+  "email": "james@example.com",
+  "password": "Password123",
+  "role": "client"
+}
+```
+
+Example successful response:
+
+```json
+{
+  "message": "User registered successfully",
+  "user": {
+    "id": "generated-user-id",
+    "fullName": "James Maherry",
+    "email": "james@example.com",
+    "role": "client"
+  }
+}
+```
+
+The API never returns:
+
+- plaintext passwords
+- password hashes
+- JWT secrets
+- private certificate material
+
+Duplicate email addresses return:
+
+```text
+409 Conflict
+```
+
+---
+
+# User Login
+
+Example request:
+
+```http
+POST https://localhost:4000/api/auth/login
+```
+
+```json
+{
+  "email": "james@example.com",
+  "password": "Password123"
+}
+```
+
+Example successful response:
+
+```json
+{
+  "message": "Login successful",
+  "token": "<jwt>",
+  "user": {
+    "id": "generated-user-id",
+    "fullName": "James Maherry",
+    "email": "james@example.com",
+    "role": "client"
+  }
+}
+```
+
+The same external authentication failure is used for:
+
+- unknown email addresses
+- incorrect passwords
+
+Example:
+
+```json
+{
+  "error": "Invalid credentials"
+}
+```
+
+with:
+
+```text
+401 Unauthorized
+```
+
+This reduces the amount of information exposed about whether a specific account exists.
+
+---
+
+# Protected Routes
+
+Protected HustleHub+ routes require a JWT in the HTTP `Authorization` header using the Bearer scheme.
+
+```text
+Authorization: Bearer <token>
+```
+
+Authentication middleware performs the following process:
+
+```text
+Authorization Header
+        │
+        ▼
+Bearer Token Extraction
+        │
+        ▼
+JWT Signature Verification
+        │
+        ▼
+JWT Expiry Verification
+        │
+        ▼
+Verified User ID + Role
+        │
+        ▼
+Protected Controller
+```
+
+Missing, malformed, invalid, tampered, and expired JWTs are rejected with controlled `401 Unauthorized` responses.
+
+---
+
+# Current User Endpoint
+
+Request:
+
+```http
+GET https://localhost:4000/api/auth/me
+```
+
+Header:
+
+```text
+Authorization: Bearer <token>
+```
+
+Example response:
+
+```json
+{
+  "user": {
+    "id": "generated-user-id",
+    "fullName": "James Maherry",
+    "email": "james@example.com",
+    "role": "client"
+  }
+}
+```
+
+The stored password hash is never returned.
+
+---
+
+# Temporary User Storage
 
 Part 1 currently uses an in-memory user store.
 
+The user structure contains:
+
+```text
+id
+fullName
+email
+passwordHash
+role
+```
+
+It deliberately does not contain a plaintext password field.
+
 The store supports:
 
-* Creating users
-* Generating unique user IDs
-* Looking users up by email
-* Looking users up by ID
-* Normalising email addresses
-* Receiving a `passwordHash` rather than a plaintext password
+- Creating users
+- Generating unique UUID identifiers
+- Looking users up by email
+- Looking users up by ID
+- Normalising email addresses
+- Retaining password hashes rather than plaintext credentials
 
-The temporary store will later be replaced by MongoDB persistence as the application progresses through the POE.
+Because the store exists only in Node.js process memory, users are removed whenever the API restarts.
 
-Because the current storage is in memory, user data is reset whenever the Node.js process restarts.
+For example:
 
-## Security Approach
+```text
+API starts
+   ↓
+users = []
+
+Register user
+   ↓
+users = [user]
+
+API stops
+   ↓
+memory cleared
+
+API restarts
+   ↓
+users = []
+```
+
+This limitation is intentional for Part 1.
+
+MongoDB persistence will replace the temporary store during a later POE stage.
+
+---
+
+# Security Approach
 
 HustleHub+ is being developed using a **secure-by-design** approach.
 
-Security functionality will be introduced incrementally throughout Part 1, including:
+Security controls are introduced as part of the backend architecture rather than being added only after application functionality has been completed.
 
-* Input validation
-* Secure password hashing
-* JWT-based authentication
-* Protected API routes
-* HTTPS/TLS
-* Controlled error handling
-* Security-related HTTP headers
-* Secure management of environment variables and secrets
+Current security controls include:
 
-### Password Security
+- Input validation
+- Password hashing
+- Password verification
+- JWT authentication
+- JWT expiry
+- Protected API routes
+- HTTPS/TLS
+- Environment-based secret handling
+- Public role restrictions
+- Safe authentication responses
+- Controlled handling of invalid authentication tokens
+
+Further Part 1 controls will include:
+
+- Central error handling
+- Security-related HTTP headers
+- Content Security Policy
+- Restricted CORS
+- Request-body limits
+
+---
+
+# Password Security
 
 HustleHub+ never stores user passwords in plaintext.
 
-Passwords received during registration are passed through bcrypt before reaching the user store. The application uses a configurable bcrypt work factor with a secure default of 12 rounds.
+During registration:
 
-Only the resulting password hash is retained. Passwords and password hashes are never included in registration responses.
+```text
+Plaintext Password
+       │
+       ▼
+bcrypt
+       │
+       ▼
+Password Hash
+       │
+       ▼
+User Store
+```
 
-Password verification is performed using bcrypt comparison rather than attempting to decrypt stored hashes.
+The password is passed through bcrypt before reaching the user store.
 
-### Input Validation
+The application uses a configurable bcrypt work factor:
 
-All registration input is validated by middleware before it reaches the
-authentication controller. Invalid requests are rejected with a `400 Bad Request`
-response and never reach the password hashing utility or the user store.
+```env
+BCRYPT_SALT_ROUNDS=12
+```
+
+A secure fallback of 12 rounds is used when the configured value is invalid.
+
+Only the resulting password hash is retained.
+
+Passwords and password hashes are never included in authentication responses.
+
+During login, bcrypt performs a secure comparison:
+
+```text
+Submitted Password
+       │
+       ▼
+bcrypt.compare()
+       │
+       ├── match    → authentication continues
+       │
+       └── no match → 401 Invalid credentials
+```
+
+Stored password hashes are never decrypted.
+
+---
+
+# Input Validation
+
+Registration input is validated before it reaches the authentication controller.
+
+Invalid requests are rejected with:
+
+```text
+400 Bad Request
+```
+
+and do not reach password hashing or user storage logic.
+
+## Registration Validation
 
 Registration input is checked for:
 
-* Presence of all required fields
-* Correct data types, so that values such as objects and numbers are rejected
-* Full name length, between 2 and 80 characters once whitespace is removed
-* Email address structure, with a maximum length of 254 characters
-* Password length, between 8 and 72 bytes
-* Membership of the public role allow-list
+- Presence of all required fields
+- Correct data types
+- Full-name length
+- Email structure
+- Email length
+- Password byte length
+- Public role allow-list membership
+- Control characters
 
-Full name, email address, and role values are trimmed, and email addresses and
-roles are normalised to lowercase. Passwords are never trimmed, so that the value
-stored at registration is byte-identical to the value supplied at login. The
-validated values then replace the original request body, so the controller cannot
-receive additional properties supplied by the client.
+### Full Name
 
-Password length is measured in bytes rather than characters because bcrypt reads
-only the first 72 bytes of a password and discards the remainder without raising
-an error. A character-based limit would allow a longer multi-byte password to be
-silently truncated. No character composition rules are applied, following NIST
-SP 800-63B, which recommends length and screening over composition requirements.
+Full names must contain between:
 
-Client and freelancer accounts may be created publicly. The admin role exists in
-the system but is excluded from the registration allow-list, so an administrative
-account cannot be created by a public request.
+```text
+2 and 80 characters
+```
 
-Control characters are rejected in the full name and email address. They serve no
-legitimate purpose in either field and allow forged entries to be written into log
-output once logging is introduced.
+after surrounding whitespace is removed.
 
-The email pattern confirms the structure of an address rather than its
-deliverability, and HTML characters are not stripped, because the API returns JSON
-and output encoding is the responsibility of the frontend. Both are deliberate
-decisions to revisit alongside schema validation in Part 2.
+Names containing legitimate characters such as accented characters and apostrophes remain supported.
 
-Sensitive configuration such as secrets and local certificate material must never be committed to GitHub.
+### Email
 
-### JWT Authentication
+Email addresses are:
 
-After successful login, HustleHub+ issues a signed JSON Web Token (JWT).
+- trimmed
+- converted to lowercase
+- limited to 254 characters
+- checked for a valid email-like structure
 
-The token contains only the authenticated user's ID and role. The JWT secret is loaded from environment configuration and is never stored directly in source code.
+The validation confirms address structure rather than whether the mailbox actually exists.
 
-Tokens have a limited lifetime configured using `JWT_EXPIRES_IN`.
+### Password
 
-The application returns the same `401 Invalid credentials` response when either the email address is unknown or the password is incorrect. This avoids exposing whether a particular account exists.
+Passwords must contain between:
 
-## Part 1 Development Status
+```text
+8 and 72 bytes
+```
 
-* [x] Express API foundation
-* [x] Environment configuration
-* [x] Health-check endpoint
-* [x] Temporary user-store abstraction
-* [x] User registration
-* [x] Password hashing with bcrypt
-* [X] Input validation
-* [x] User login
-* [x] JWT generation
-* [x] User login
-* [x] JWT generation
-* [ ] JWT-protected routes
-* [ ] Controlled error handling
-* [ ] Local HTTPS
-* [ ] Security headers
-* [ ] Postman test collection
-* [ ] MERN architecture diagram
-* [ ] Part 1 evidence and screenshots
-* [ ] Demonstration video
-* [ ] Final Part 1 security documentation
+Password length is measured using UTF-8 bytes rather than only JavaScript character count.
 
-## Team
+This prevents input from exceeding bcrypt's supported password input size.
 
-HustleHub+ is being developed as a group project for **INSY7314 — Information Systems 3D**.
+Passwords are deliberately **not trimmed**.
 
-Further technical and security documentation will be added to this README as Part 1 development progresses.
+A password entered during login must therefore be byte-identical to the password originally submitted during registration.
+
+No mandatory uppercase, lowercase, number, or special-character composition rules are currently imposed.
+
+The current policy prioritises password length while allowing users to choose longer passphrases.
+
+### Role
+
+Public registration accepts only:
+
+```text
+client
+freelancer
+```
+
+The `admin` role cannot be assigned through the public registration endpoint.
+
+This prevents a user from creating their own administrative account.
+
+### Control Characters
+
+Control characters are rejected in:
+
+- full names
+- email addresses
+
+These values serve no legitimate purpose in those fields and could interfere with future logging or structured output.
+
+### Request Filtering
+
+After validation, the middleware replaces the original request body with only the validated fields:
+
+```text
+fullName
+email
+password
+role
+```
+
+Unexpected additional properties supplied by the client therefore do not reach the authentication controller.
+
+Backend validation remains authoritative and does not rely on frontend validation.
+
+Context-specific sanitisation and safe frontend output handling will continue to be introduced as the application grows.
+
+---
+
+# JWT Authentication
+
+After successful login, HustleHub+ issues a signed JSON Web Token.
+
+The JWT contains only:
+
+```text
+id
+role
+issued-at timestamp
+expiry timestamp
+```
+
+Sensitive data is not placed inside the token.
+
+The token does not contain:
+
+- password
+- password hash
+- JWT secret
+- certificate material
+
+JWTs are **signed rather than encrypted**.
+
+The payload can therefore be decoded, but it cannot be modified without invalidating the signature.
+
+The JWT secret is loaded from:
+
+```env
+JWT_SECRET
+```
+
+and must never be hardcoded into source files.
+
+Token lifetime is configured using:
+
+```env
+JWT_EXPIRES_IN=1h
+```
+
+A limited token lifetime reduces the amount of time in which a compromised token could be reused.
+
+---
+
+# JWT Verification
+
+Protected routes do not trust a token simply because it can be decoded.
+
+The authentication middleware verifies:
+
+- token format
+- JWT signature
+- token expiry
+
+Only after successful verification are the authenticated user's ID and role attached to the request.
+
+```text
+JWT
+ │
+ ▼
+Signature Verification
+ │
+ ▼
+Expiry Verification
+ │
+ ▼
+Verified Claims
+ │
+ ▼
+req.auth
+```
+
+A modified or expired JWT is rejected.
+
+---
+
+# HTTPS and TLS
+
+HustleHub+ runs over HTTPS during normal Part 1 development.
+
+HTTPS protects information travelling between API clients and the backend, including:
+
+- registration credentials
+- login credentials
+- JWT access tokens
+- protected API responses
+
+The local development environment uses a self-signed certificate.
+
+Because this certificate is not issued by a publicly trusted Certificate Authority, browsers and API clients may display certificate warnings.
+
+This is expected for local development.
+
+Production deployments must use certificates issued by a trusted Certificate Authority or managed by the hosting environment.
+
+HTTP remains available only as an explicit local troubleshooting mode.
+
+---
+
+# Environment and Secret Management
+
+Configuration is separated from source code using environment variables.
+
+Sensitive values must never be hardcoded.
+
+Examples include:
+
+```text
+JWT_SECRET
+certificate paths
+environment-specific configuration
+```
+
+The repository contains:
+
+```text
+.env.example
+```
+
+to document required environment variables.
+
+The real:
+
+```text
+.env
+```
+
+file remains local and is excluded by `.gitignore`.
+
+Local certificates and private keys are also excluded from source control.
+
+---
+
+# Postman Testing
+
+Postman is used to test API functionality and security behaviour.
+
+The final Part 1 collection will include positive, negative, and security-focused scenarios.
+
+Current test scenarios include:
+
+## Registration
+
+- Valid client registration
+- Valid freelancer registration
+- Missing registration field
+- Invalid data types
+- Whitespace-only values
+- Malformed email
+- Invalid full-name length
+- Password below 8 bytes
+- Password above 72 bytes
+- Multi-byte password exceeding 72 bytes
+- Admin registration attempt
+- Duplicate email
+- Control characters
+- Normalised email
+- Additional request properties
+
+## Login
+
+- Valid login
+- Incorrect password
+- Unknown email
+- Missing email
+- Missing password
+- Invalid field types
+- Case-insensitive email lookup
+
+## JWT Protection
+
+- Protected route without token
+- Malformed Authorization header
+- Invalid JWT
+- Tampered JWT
+- Expired JWT
+- Valid JWT
+
+## HTTPS
+
+- Health endpoint over HTTPS
+- Registration over HTTPS
+- Login over HTTPS
+- Protected route over HTTPS
+
+---
+
+# Current HTTP Status Codes
+
+| Status | Meaning | Current Use |
+|---|---|---|
+| `200 OK` | Request successful | Login, health check, protected user lookup |
+| `201 Created` | Resource successfully created | User registration |
+| `400 Bad Request` | Invalid request data | Registration/login validation |
+| `401 Unauthorized` | Authentication failed | Invalid login or JWT |
+| `409 Conflict` | Resource conflicts with existing state | Duplicate email |
+
+Additional controlled error responses will be added with the central error-handling implementation.
+
+---
+
+# Development Workflow
+
+The project uses GitHub issues and pull requests to track development.
+
+Work is completed using short-lived branches and merged into the `dev` integration branch through reviewed pull requests.
+
+Examples:
+
+```text
+feature/3-user-registration
+security/4-password-security
+feature/5-login-jwt
+security/6-jwt-protection
+security/7-local-https
+```
+
+Each major feature or security control is linked to a GitHub issue.
+
+Pull requests use issue-closing references such as:
+
+```text
+Closes #6
+```
+
+so completed issues are automatically closed when their implementation is merged.
+
+The `main` branch remains the stable release branch.
+
+---
+
+# Part 1 Development Status
+
+## Backend Foundation
+
+- [x] Express API foundation
+- [x] Environment configuration
+- [x] Health-check endpoint
+- [x] Modular backend structure
+- [x] Temporary user-store abstraction
+
+## Authentication
+
+- [x] User registration
+- [x] Duplicate email prevention
+- [x] Password hashing with bcrypt
+- [x] Password verification
+- [x] User login
+- [x] JWT generation
+- [x] JWT verification
+- [x] JWT-protected routes
+- [x] Current-user protected endpoint
+
+## Validation and Security
+
+- [x] Registration validation
+- [x] Login validation
+- [x] Public role allow-list
+- [x] Environment-based JWT secret
+- [x] Local HTTPS/TLS
+- [x] Self-signed development certificate
+- [ ] Central controlled error handling
+- [ ] Helmet security headers
+- [ ] Content Security Policy
+- [ ] Restricted CORS configuration
+- [ ] JSON request-body limit
+
+## Testing and Evidence
+
+- [ ] Final Postman collection
+- [ ] Final Postman environment
+- [ ] Security-header tests
+- [ ] MERN architecture diagram
+- [ ] Part 1 screenshots
+- [ ] Demonstration video
+- [ ] Final rubric review
+
+## Documentation
+
+- [x] Project overview
+- [x] Backend architecture
+- [x] Setup instructions
+- [x] Authentication explanation
+- [x] Password-security explanation
+- [x] Input-validation explanation
+- [x] JWT explanation
+- [x] HTTPS explanation
+- [ ] Security-header documentation
+- [ ] Final evidence links
+- [ ] Final demonstration link
+
+---
+
+# Part 1 Limitations
+
+The current implementation deliberately remains within Part 1 scope.
+
+The following are not yet implemented:
+
+- MongoDB persistence
+- React frontend
+- Gig creation
+- Gig browsing
+- Bookings
+- Transaction records
+- Freelancer income tracking
+- Tax calculations
+- Full Role-Based Access Control
+- Docker
+- CI/CD
+- Static code analysis
+- Production deployment
+- Logging and monitoring
+
+These features will be introduced progressively during later POE stages.
+
+---
+
+# Part 2 Direction
+
+Part 2 will extend the secure backend foundation into a full MERN application.
+
+Planned changes include:
+
+```text
+Temporary User Store
+        ↓
+MongoDB + Mongoose
+
+Backend API
+        +
+React Frontend
+
+Authentication
+        +
+Role-Based Access Control
+
+Users
+        +
+Gigs
+Bookings
+Transactions
+Income
+```
+
+The current backend structure has been designed so that these additions can be introduced without replacing the existing authentication contract.
