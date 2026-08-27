@@ -1,6 +1,7 @@
 const {
   createUser,
-  findUserByEmail
+  findUserByEmail,
+  findUserById
 } = require('../models/userStore');
 
 const {
@@ -115,7 +116,32 @@ const loginUser = async (req, res, next) => {
   }
 };
 
+/**
+ * Returns the authenticated user's safe account information.
+ */
+const getCurrentUser = (req, res) => {
+  const user = findUserById(req.auth.id);
+
+  // A valid token should still map to an existing application user.
+  if (!user) {
+    return res.status(401).json({
+      error: 'Authenticated user not found'
+    });
+  }
+
+  // Never expose the stored password hash.
+  return res.status(200).json({
+    user: {
+      id: user.id,
+      fullName: user.fullName,
+      email: user.email,
+      role: user.role
+    }
+  });
+};
+
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  getCurrentUser
 };

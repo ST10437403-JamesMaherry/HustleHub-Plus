@@ -2,7 +2,8 @@ const express = require('express');
 
 const {
   registerUser,
-  loginUser
+  loginUser,
+  getCurrentUser
 } = require('../controllers/authController');
 
 const validateRegistration = require(
@@ -12,6 +13,10 @@ const validateRegistration = require(
 const validateLogin = require(
   '../middleware/validateLogin'
 );
+
+const {
+  protect
+} = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -27,6 +32,13 @@ router.post(
   '/login',
   validateLogin,
   loginUser
+);
+
+// Protected route for retrieving the authenticated user's account.
+router.get(
+  '/me',
+  protect,
+  getCurrentUser
 );
 
 module.exports = router;
