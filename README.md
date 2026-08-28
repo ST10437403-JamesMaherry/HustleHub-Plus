@@ -156,6 +156,7 @@ INSY7314POE/
 |   |
 |   |-- middleware/
 |   |   |-- authMiddleware.js
+|   |   |-- errorHandler.js
 |   |   |-- validateLogin.js
 |   |   `-- validateRegistration.js
 |   |
@@ -244,6 +245,7 @@ Current middleware performs reusable request-processing tasks including:
 - Registration validation
 - Login validation
 - JWT authentication
+- Central error handling
 
 ### Controllers
 
@@ -745,11 +747,21 @@ curl -k -i \
 
 Expected result:
 
+- HTTP `400 Bad Request`
 - Controlled client error response
 - No stack trace
 - No internal file-system path
 - No environment values
 - No secret material
+- No part of the submitted body repeated back
+
+Example:
+
+```json
+{
+  "error": "Request body is not valid JSON"
+}
+```
 
 ### 17. Oversized JSON Body Test
 
@@ -1134,9 +1146,18 @@ Requests above the configured limit are rejected with a controlled `413 Payload 
 
 ### Error Handling
 
-The backend uses controlled error handling to prevent accidental disclosure of internal implementation details.
+All failures are returned through a single error-handling middleware in:
 
-The API avoids exposing sensitive information such as:
+```text
+api/middleware/errorHandler.js
+```
+
+Two handlers are registered after the application routes:
+
+- A not-found handler, which returns a controlled `404` for any request that does not match a defined route
+- A central error handler, which converts every forwarded error into a controlled response
+
+Response bodies are built from a fixed set of client-safe messages rather than from the underlying error. The API therefore does not expose:
 
 - Stack traces
 - Internal file-system paths
@@ -1144,8 +1165,27 @@ The API avoids exposing sensitive information such as:
 - JWT secrets
 - Certificate paths
 - Password hashes
+- Database or connection strings
 
-Unknown routes are handled with a controlled `404` JSON response.
+Only recognized client error codes are allowed, any other status gets reported as `500 Internal Server Error`
+
+Error responses are not affected by `NODE_ENV`. Development and production return identical bodies, so a configuration change cannot re-expose internal detail.
+
+Full error details, including the stack, are written to the server log so that failures remain diagnosable:
+
+```text
+[error] GET /api/auth/me -> 500
+```
+
+The stack is logged rather than the error object. The body parser attaches the rejected request body to parsing errors, and logging that object would write submitted credentials into the log in plain text.
+
+Controllers do not handle unexpected failures themselves. Each one forwards to the error pipeline using:
+
+```text
+next(error)
+```
+
+This keeps error formatting in a single place and produces consistent responses across every endpoint.
 
 ### Environment and Secret Management
 
@@ -1224,6 +1264,9 @@ The same rule applies to locally generated certificate and private-key files.
 - [x] Express implementation-header removal
 - [x] `10kb` JSON request-body limit
 - [x] Controlled oversized-payload handling
+- [x] Central error-handling middleware
+- [x] Controlled unknown-route handling
+- [x] Controlled internal-error handling
 - [x] Final backend integration review
 - [x] Final security regression review
 
@@ -1238,6 +1281,7 @@ The same rule applies to locally generated certificate and private-key files.
 - [x] Request-body-limit testing
 - [x] Unknown-route testing
 - [x] Malformed-request review
+- [x] Controlled internal-error testing
 - [x] Dependency security review
 - [x] Full backend integration and regression testing
 
@@ -1277,6 +1321,10 @@ The following functionality is not yet implemented:
 - Logging and monitoring
 
 The temporary user store is intentionally non-persistent. All registered users are removed when the Node.js process restarts.
+
+Client-safe error messages are held in a fixed map inside the error-handling middleware. 
+Any status code that is not listed there is reported as `500 Internal Server Error`. 
+The map must be extended whenever a new client error response is introduced.
 
 ```text
 API starts
