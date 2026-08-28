@@ -1,0 +1,66 @@
+flowchart TB
+
+    subgraph UNTRUSTED["UNTRUSTED ZONE : Public Internet"]
+        direction TB
+
+        subgraph ACTORS["System Actors"]
+            CLIENT["Client<br/>browses and books gigs"]
+            FREELANCER["Freelancer<br/>advertises gigs, views income"]
+            ADMIN["Admin<br/>assigned server side only"]
+        end
+
+        subgraph CLIENTS["Client Applications"]
+            REACT["React Frontend<br/>PART 2"]
+            TOOLS["Postman / curl<br/>Part 1 test client"]
+        end
+    end
+
+    TLS{{"TRUST BOUNDARY<br/>HTTPS / TLS<br/>self signed certificate, local development"}}
+
+    subgraph TRUSTED["TRUSTED ZONE : Application Server"]
+        subgraph RUNTIME["Node.js Runtime"]
+            subgraph API["Express API"]
+                HEADERS["Security Headers<br/>Helmet, CSP, CORS allow list<br/>x-powered-by removed"]
+                LIMIT["Request Body Limit<br/>10kb JSON"]
+                VALIDATE["Input Validation Middleware<br/>presence, type, length, format<br/>public role allow list"]
+                JWTMW["JWT Verification Middleware<br/>protected routes only"]
+                CTRL["Controllers<br/>register, login, profile"]
+                ERRORS["Controlled Error Handling<br/>fixed safe messages<br/>404 and 500, no internal detail"]
+            end
+            BCRYPT["bcrypt Password Hashing<br/>12 salt rounds"]
+            JWTGEN["JWT Issuing<br/>signed with server secret<br/>id and role claims"]
+        end
+    end
+
+    subgraph DATA["DATA ZONE"]
+        STORE["Temporary User Store<br/>in memory, non persistent<br/>PART 1"]
+        MONGO[("MongoDB Atlas<br/>PART 2")]
+    end
+
+    ACTORS --> CLIENTS
+    CLIENTS -->|"HTTPS request"| TLS
+    TLS --> HEADERS
+    HEADERS --> LIMIT
+    LIMIT --> VALIDATE
+    VALIDATE --> JWTMW
+    JWTMW --> CTRL
+    CTRL --> BCRYPT
+    CTRL --> JWTGEN
+    BCRYPT --> STORE
+    CTRL --> STORE
+    CTRL -.->|"replaces the store in Part 2"| MONGO
+    CTRL --> ERRORS
+    ERRORS -->|"controlled JSON response"| TLS
+    JWTGEN -->|"signed token returned to client"| TLS
+
+    classDef future fill:#f1f1f1,stroke:#9a9a9a,stroke-width:1px,stroke-dasharray:5 4,color:#4a4a4a
+    classDef security fill:#fff3e0,stroke:#c26a00,stroke-width:1px,color:#5a3000
+    classDef boundary fill:#ffe9e9,stroke:#c0392b,stroke-width:2px,color:#6b1b12
+    classDef store fill:#e8f2ff,stroke:#2a6fb5,stroke-width:1px,color:#123a63
+    classDef actor fill:#eef7ee,stroke:#3d7a3d,stroke-width:1px,color:#1e3d1e
+
+    class REACT,MONGO future
+    class HEADERS,LIMIT,VALIDATE,JWTMW,ERRORS,BCRYPT,JWTGEN security
+    class TLS boundary
+    class STORE store
+    class CLIENT,FREELANCER,ADMIN,TOOLS actor
