@@ -11,6 +11,7 @@ The completed platform will allow freelancers to advertise services and clients 
 ## Table of Contents
 
 - [Part 1 - Secure Foundations](#part-1---secure-foundations)
+- [Architecture Diagram](#architecture-diagram)
 - [Technology Stack](#technology-stack)
 - [Part 1 Features](#part-1-features)
 - [Project Structure](#project-structure)
@@ -38,6 +39,108 @@ Part 1 establishes the secure backend foundation for HustleHub+ using **Node.js*
 The backend is intentionally modular so that MongoDB persistence, the React frontend, role-based authorization, marketplace functionality, DevSecOps controls, and later POE requirements can be added without rewriting the existing authentication contract.
 
 Part 1 now includes the complete backend authentication and security baseline required for the current stage of the project.
+
+---
+
+## Architecture Diagram
+
+The diagram shows the HustleHub+ MERN architecture, the security controls applied
+at each layer, and the trust boundaries between them.
+
+Components marked **PART 2** are planned rather than implemented and are drawn
+with a dashed outline. Everything else is implemented in Part 1.
+
+```mermaid
+flowchart TB
+
+    subgraph UNTRUSTED["UNTRUSTED ZONE : Public Internet"]
+        direction TB
+
+        subgraph ACTORS["System Actors"]
+            CLIENT["Client<br/>browses and books gigs"]
+            FREELANCER["Freelancer<br/>advertises gigs, views income"]
+            ADMIN["Admin<br/>assigned server side only"]
+        end
+
+        subgraph CLIENTS["Client Applications"]
+            REACT["React Frontend<br/>PART 2"]
+            TOOLS["Postman / curl<br/>Part 1 test client"]
+        end
+    end
+
+    TLS{{"TRUST BOUNDARY<br/>HTTPS / TLS<br/>self signed certificate, local development"}}
+
+    subgraph TRUSTED["TRUSTED ZONE : Application Server"]
+        subgraph RUNTIME["Node.js Runtime"]
+            subgraph API["Express API"]
+                HEADERS["Security Headers<br/>Helmet, CSP, CORS allow list<br/>x-powered-by removed"]
+                LIMIT["Request Body Limit<br/>10kb JSON"]
+                VALIDATE["Input Validation Middleware<br/>presence, type, length, format<br/>public role allow list"]
+                JWTMW["JWT Verification Middleware<br/>protected routes only"]
+                CTRL["Controllers<br/>register, login, profile"]
+                ERRORS["Controlled Error Handling<br/>fixed safe messages<br/>404 and 500, no internal detail"]
+            end
+            BCRYPT["bcrypt Password Hashing<br/>12 salt rounds"]
+            JWTGEN["JWT Issuing<br/>signed with server secret<br/>id and role claims"]
+        end
+    end
+
+    subgraph DATA["DATA ZONE"]
+        STORE["Temporary User Store<br/>in memory, non persistent<br/>PART 1"]
+        MONGO[("MongoDB Atlas<br/>PART 2")]
+    end
+
+    ACTORS --> CLIENTS
+    CLIENTS -->|"HTTPS request"| TLS
+    TLS --> HEADERS
+    HEADERS --> LIMIT
+    LIMIT --> VALIDATE
+    VALIDATE --> JWTMW
+    JWTMW --> CTRL
+    CTRL --> BCRYPT
+    CTRL --> JWTGEN
+    BCRYPT --> STORE
+    CTRL --> STORE
+    CTRL -.->|"replaces the store in Part 2"| MONGO
+    CTRL --> ERRORS
+    ERRORS -->|"controlled JSON response"| TLS
+    JWTGEN -->|"signed token returned to client"| TLS
+
+    classDef future fill:#f1f1f1,stroke:#9a9a9a,stroke-width:1px,stroke-dasharray:5 4,color:#4a4a4a
+    classDef security fill:#fff3e0,stroke:#c26a00,stroke-width:1px,color:#5a3000
+    classDef boundary fill:#ffe9e9,stroke:#c0392b,stroke-width:2px,color:#6b1b12
+    classDef store fill:#e8f2ff,stroke:#2a6fb5,stroke-width:1px,color:#123a63
+    classDef actor fill:#eef7ee,stroke:#3d7a3d,stroke-width:1px,color:#1e3d1e
+
+    class REACT,MONGO future
+    class HEADERS,LIMIT,VALIDATE,JWTMW,ERRORS,BCRYPT,JWTGEN security
+    class TLS boundary
+    class STORE store
+    class CLIENT,FREELANCER,ADMIN,TOOLS actor
+```
+
+### Trust Boundaries
+
+| Boundary | Separates | Control applied at the crossing |
+|---|---|---|
+| Network | Public internet from the application server | HTTPS/TLS encrypts traffic in transit. Helmet applies security headers and CORS restricts which browser origin may read responses. |
+| Request | Untrusted request data from application logic | Body size limit, then input validation middleware. Malformed or oversized requests are rejected before any controller runs. |
+| Identity | Anonymous requests from authenticated ones | JWT verification middleware. Protected routes require a valid signed token before the controller executes. |
+| Storage | Application logic from stored credentials | bcrypt hashes every password before storage. Plaintext passwords are never written or returned. |
+| Response | Internal failures from client responses | Central error handler replaces every error with a fixed client-safe message. |
+
+### Part 1 and Part 2 Scope
+
+| Layer | Part 1 | Part 2 |
+|---|---|---|
+| Presentation | Postman and curl | React frontend |
+| Application | Node.js, Express, validation, JWT, bcrypt, security headers, controlled errors | Extended with marketplace and financial endpoints |
+| Data | Temporary in-memory user store | MongoDB Atlas with Mongoose schemas |
+
+The middleware order is itself a security control. Each stage rejects invalid
+requests before the next stage runs, so untrusted input never reaches password
+hashing or storage. A full request-level walkthrough is available in
+[`docs/architecture/hustlehub-architecture.md`](docs/architecture/hustlehub-architecture.md).
 
 ---
 
@@ -182,6 +285,8 @@ INSY7314POE/
 |
 |-- docs/
 |   `-- architecture/
+|       |-- hustlehub-architecture.md
+|       `-- hustlehub-architecture.mmd
 |
 |-- evidence/
 |   `-- part1/
@@ -1286,6 +1391,8 @@ The same rule applies to locally generated certificate and private-key files.
 - [x] Full backend integration and regression testing
 
 ### Submission Evidence and Documentation
+
+- [x] MERN architecture diagram with security features and trust boundaries
 
 The repository structure reserves locations for final Part 1 evidence and submission artifacts:
 
