@@ -9,6 +9,11 @@ const cors = require('cors');
 
 const authRoutes = require('./routes/authRoutes');
 
+const {
+  notFoundHandler,
+  errorHandler
+} = require('./middleware/errorHandler');
+
 const app = express();
 
 const PORT = Number(process.env.PORT) || 4000;
@@ -76,41 +81,10 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 
 // Handle requests that do not match any defined route.
-app.use((req, res) => {
-  res.status(404).json({
-    error: 'Route not found'
-  });
-});
+app.use(notFoundHandler);
 
 // Central error-handling middleware.
-app.use((err, req, res, next) => {
-  console.error(err);
-
-  // Return a clear response when the JSON body exceeds the configured limit.
-  if (err.type === 'entity.too.large') {
-    return res.status(413).json({
-      error: 'Request body too large'
-    });
-  }
-
-  // Preserve safe client error status codes where available.
-  const statusCode =
-    Number.isInteger(err.status) && err.status >= 400 && err.status < 500
-      ? err.status
-      : 500;
-
-  // Avoid exposing internal error information in production.
-  const errorMessage =
-    statusCode < 500
-      ? err.message
-      : process.env.NODE_ENV === 'production'
-        ? 'Internal server error'
-        : err.message;
-
-  return res.status(statusCode).json({
-    error: errorMessage
-  });
-});
+app.use(errorHandler);
 
 // Start the API using HTTPS when enabled.
 if (USE_HTTPS) {
