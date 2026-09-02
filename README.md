@@ -21,6 +21,7 @@ The completed platform will allow freelancers to advertise services and clients 
 - [Environment Configuration](#environment-configuration)
 - [Local HTTPS Setup](#local-https-setup)
 - [Running the API](#running-the-api)
+- [Clean Installation Verification](#clean-installation-verification)
 - [API Endpoints](#api-endpoints)
 - [Testing Guide](#testing-guide)
 - [Postman Testing](#postman-testing)
@@ -401,7 +402,17 @@ Before running the project, ensure the following are installed:
 - OpenSSL
 - Postman or another API client for manual API testing
 
-The command examples below use a macOS/Linux-style terminal. On Windows, equivalent commands may be run through Git Bash, WSL, PowerShell, or Postman where appropriate.
+Command examples are written as single lines so that they can be pasted directly into any supported shell.
+
+| Environment | Notes |
+|---|---|
+| macOS, Linux, WSL | Run as written. |
+| PowerShell 7 or later | Run as written. `curl` resolves to `curl.exe`. |
+| Windows PowerShell 5.1 | `curl` is an alias for `Invoke-WebRequest`. Use `curl.exe` explicitly, or use Postman. Check your version with `$PSVersionTable.PSVersion`. |
+| Git Bash | Run as written, except the certificate subject in [Local HTTPS Setup](#local-https-setup), which requires a doubled leading slash. |
+| Postman | Any request below can be sent from Postman instead. Disable SSL certificate verification for the local self-signed certificate. |
+
+`cmd.exe` is not supported for these examples. Use PowerShell on Windows.
 
 ---
 
@@ -507,12 +518,20 @@ mkdir -p certs
 
 ### 2. Generate a Development Certificate and Private Key
 
-```bash
-openssl req -x509 -newkey rsa:2048 -nodes -sha256 -days 365 \
-  -keyout certs/localhost-key.pem \
-  -out certs/localhost-cert.pem \
-  -subj "/CN=localhost"
-```
+From inside `api`:
+
+​```bash
+openssl req -x509 -newkey rsa:2048 -nodes -sha256 -days 365 -keyout certs/localhost-key.pem -out certs/localhost-cert.pem -subj "/CN=localhost"
+​```
+
+In Git Bash, the certificate subject needs a doubled leading slash. Git Bash
+rewrites a single leading slash as a Windows path before OpenSSL receives it, so
+the single-slash form produces a certificate with an incorrect subject rather
+than an error:
+
+​```bash
+openssl req -x509 -newkey rsa:2048 -nodes -sha256 -days 365 -keyout certs/localhost-key.pem -out certs/localhost-cert.pem -subj "//CN=localhost"
+​```
 
 This creates:
 
@@ -575,6 +594,16 @@ Normal Part 1 testing and demonstration should use HTTPS.
 
 ---
 
+## Clean Installation Verification
+
+The Part 1 setup and testing instructions were verified from a fresh clone of the repository, with no existing environment file, certificates, or installed dependencies.
+
+The verification covered cloning the repository, installing dependencies, creating a local environment file, generating a JWT secret and a development certificate, starting the API over HTTPS, registering both public roles, rejecting public administrator registration, logging in, accessing a protected route with the issued token, and running the full testing sequence.
+
+Command examples were corrected where the documented steps did not run in the environments listed under [Prerequisites](#prerequisites).
+
+---
+
 ## API Endpoints
 
 | Method | Endpoint | Authentication | Description |
@@ -592,6 +621,8 @@ Normal Part 1 testing and demonstration should use HTTPS.
 The following sequence can be used by the lecturer to install, run, verify, and security-test the Part 1 backend.
 
 Start the API before running the requests below.
+
+Commands are written on a single line so that they run in any supported shell. In bash-family shells they may be split across lines with a trailing `\` if preferred.
 
 ### 1. Health Check
 
@@ -618,11 +649,7 @@ Example:
 ### 2. Register a Client
 
 ```bash
-curl -k -i \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"fullName":"Test Client","email":"client@example.com","password":"Password123","role":"client"}' \
-  https://localhost:4000/api/auth/register
+curl -k -i -X POST -H "Content-Type: application/json" -d '{"fullName":"Test Client","email":"client@example.com","password":"Password123","role":"client"}' https://localhost:4000/api/auth/register
 ```
 
 Expected result:
@@ -635,11 +662,7 @@ Expected result:
 ### 3. Register a Freelancer
 
 ```bash
-curl -k -i \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"fullName":"Test Freelancer","email":"freelancer@example.com","password":"Password123","role":"freelancer"}' \
-  https://localhost:4000/api/auth/register
+curl -k -i -X POST -H "Content-Type: application/json" -d '{"fullName":"Test Freelancer","email":"freelancer@example.com","password":"Password123","role":"freelancer"}' https://localhost:4000/api/auth/register
 ```
 
 Expected result:
@@ -650,11 +673,7 @@ Expected result:
 ### 4. Reject Public Admin Registration
 
 ```bash
-curl -k -i \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"fullName":"Test Admin","email":"admin@example.com","password":"Password123","role":"admin"}' \
-  https://localhost:4000/api/auth/register
+curl -k -i -X POST -H "Content-Type: application/json" -d '{"fullName":"Test Admin","email":"admin@example.com","password":"Password123","role":"admin"}' https://localhost:4000/api/auth/register
 ```
 
 Expected result:
@@ -664,7 +683,11 @@ Expected result:
 
 ### 5. Duplicate Email Test
 
-Repeat the client registration request using `client@example.com`.
+Repeat the client registration request using `client@example.com`:
+
+​```bash
+curl -k -i -X POST -H "Content-Type: application/json" -d '{"fullName":"Test Client","email":"client@example.com","password":"Password123","role":"client"}' https://localhost:4000/api/auth/register
+​```
 
 Expected result:
 
@@ -673,11 +696,7 @@ Expected result:
 ### 6. Login
 
 ```bash
-curl -k -i \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"email":"client@example.com","password":"Password123"}' \
-  https://localhost:4000/api/auth/login
+curl -k -i -X POST -H "Content-Type: application/json" -d '{"email":"client@example.com","password":"Password123"}' https://localhost:4000/api/auth/login
 ```
 
 Expected result:
@@ -691,11 +710,7 @@ Copy the returned JWT for the protected-route test.
 ### 7. Invalid Login - Wrong Password
 
 ```bash
-curl -k -i \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"email":"client@example.com","password":"WrongPassword123"}' \
-  https://localhost:4000/api/auth/login
+curl -k -i -X POST -H "Content-Type: application/json" -d '{"email":"client@example.com","password":"WrongPassword123"}' https://localhost:4000/api/auth/login
 ```
 
 Expected result:
@@ -711,11 +726,7 @@ with HTTP `401 Unauthorized`.
 ### 8. Invalid Login - Unknown Email
 
 ```bash
-curl -k -i \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"email":"unknown@example.com","password":"WrongPassword123"}' \
-  https://localhost:4000/api/auth/login
+curl -k -i -X POST -H "Content-Type: application/json" -d '{"email":"unknown@example.com","password":"Password123"}' https://localhost:4000/api/auth/login
 ```
 
 Expected result:
@@ -743,9 +754,7 @@ Expected result:
 ### 10. Protected Route With an Invalid Token
 
 ```bash
-curl -k -i \
-  -H "Authorization: Bearer invalid-token" \
-  https://localhost:4000/api/auth/me
+curl -k -i -H "Authorization: Bearer invalid-token" https://localhost:4000/api/auth/me
 ```
 
 Expected result:
@@ -757,9 +766,7 @@ Expected result:
 Replace `<token>` with the JWT returned by the login endpoint:
 
 ```bash
-curl -k -i \
-  -H "Authorization: Bearer <token>" \
-  https://localhost:4000/api/auth/me
+curl -k -i -H "Authorization: Bearer <token>" https://localhost:4000/api/auth/me
 ```
 
 Expected result:
@@ -796,9 +803,7 @@ X-Powered-By: Express
 ### 13. Allowed CORS Origin
 
 ```bash
-curl -k -i \
-  -H "Origin: http://localhost:5173" \
-  https://localhost:4000/health
+curl -k -i -H "Origin: http://localhost:5173" https://localhost:4000/health
 ```
 
 Expected CORS response:
@@ -809,17 +814,29 @@ Access-Control-Allow-Origin: http://localhost:5173
 
 ### 14. Untrusted CORS Origin
 
-```bash
-curl -k -i \
-  -H "Origin: https://malicious.example" \
-  https://localhost:4000/health
-```
+​```bash
+curl -k -i -H "Origin: https://malicious.example" https://localhost:4000/health
+​```
 
-The API must not grant `https://malicious.example` browser access.
+Expected result:
 
-With the current fixed-origin CORS configuration, the response may contain the configured trusted origin rather than the request origin. The important security property is that the malicious origin is never granted as the allowed origin, so a browser will reject the cross-origin response.
+- HTTP `200 OK`
+- `Access-Control-Allow-Origin` is `http://localhost:5173`, the configured trusted origin
+- `Access-Control-Allow-Origin` is never the requesting origin
 
-> Postman and curl can inspect CORS headers, but CORS itself is enforced by web browsers.
+The API answers the request, because CORS does not reject requests.
+ It states which origin may read the response, and the browser enforces that. 
+ Since the returned value never matches `https://malicious.example`, a browser withholds the response from any script running on that origin.
+
+curl and Postman can inspect these headers but cannot demonstrate the enforcement, because neither is a browser. 
+To observe it directly, first visit `https://localhost:4000/health` in a browser and accept the self-signed certificate warning. 
+Then open the developer console on any other site and run:
+
+​```js
+fetch('https://localhost:4000/health').then(r => r.json()).then(console.log)
+​```
+
+The browser blocks the read and reports a CORS error.
 
 ### 15. Unknown Route Test
 
@@ -843,11 +860,7 @@ Example:
 ### 16. Malformed JSON Test
 
 ```bash
-curl -k -i \
-  -X POST \
-  -H "Content-Type: application/json" \
-  --data-binary '{"email":"client@example.com",' \
-  https://localhost:4000/api/auth/login
+curl -k -i -X POST -H "Content-Type: application/json" --data-binary '{"email":"client@example.com",' https://localhost:4000/api/auth/login
 ```
 
 Expected result:
@@ -870,27 +883,37 @@ Example:
 
 ### 17. Oversized JSON Body Test
 
-Generate a request body larger than the configured `10kb` limit:
+From inside the `api` directory, generate a request body larger than the configured `10kb` limit:
 
-```bash
-node -e "process.stdout.write(JSON.stringify({data:'A'.repeat(11000)}))" > /tmp/hustlehub-large.json
-```
+​```bash
+node -e "require('fs').writeFileSync('large-body.json', JSON.stringify({data:'A'.repeat(11000)}))"
+​```
 
 Send it to the API:
 
-```bash
-curl -k -i \
-  -X POST \
-  -H "Content-Type: application/json" \
-  --data-binary @/tmp/hustlehub-large.json \
-  https://localhost:4000/api/auth/login
-```
+​```bash
+curl -k -i -X POST -H "Content-Type: application/json" --data-binary @large-body.json https://localhost:4000/api/auth/login
+​```
 
 Expected result:
 
 - HTTP `413 Payload Too Large`
 - Controlled JSON error response
 - Request rejected before normal authentication processing
+
+Example:
+
+​```json
+{
+  "error": "Request body too large"
+}
+​```
+
+Remove the generated file afterwards:
+
+​```bash
+rm large-body.json
+​```
 
 ### 18. Dependency Security Review
 
@@ -908,14 +931,21 @@ Do not automatically run `npm audit fix --force` without reviewing the dependenc
 
 From the repository root:
 
-```bash
-git ls-files | grep -E '(^|/)\.env$|node_modules|certs/|localhost-key.pem'
-```
+​```bash
+git ls-files -- '.env' 'certs/*' 'node_modules/*' '*.pem'
+​```
 
-Sensitive local files should not be tracked.
+The command lists any tracked file matching a sensitive path. Empty output confirms that no local environment file, certificate, private key, or installed dependency has been committed.
 
-The repository should contain `.env.example`, but not the real `.env` file or local private key.
+Confirm that the check itself is working by running it against a path that should match:
 
+​```bash
+git ls-files -- '*.example'
+​```
+
+This must return `api/.env.example`. An empty result from the first command is only meaningful once the second has shown that pathspec matching works.
+
+The repository should contain `.env.example`, but not the real `.env` file, the `certs` directory, or any private key.
 ---
 
 ## Postman Testing
@@ -1389,10 +1419,12 @@ The same rule applies to locally generated certificate and private-key files.
 - [x] Controlled internal-error testing
 - [x] Dependency security review
 - [x] Full backend integration and regression testing
+- [x] Clean installation verification from a fresh clone
 
 ### Submission Evidence and Documentation
 
 - [x] MERN architecture diagram with security features and trust boundaries
+- [x] Setup and testing instructions verified from a fresh clone
 
 The repository structure reserves locations for final Part 1 evidence and submission artifacts:
 
