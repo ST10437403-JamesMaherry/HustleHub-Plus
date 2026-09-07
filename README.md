@@ -2,9 +2,39 @@
 
 **INSY7314 Portfolio of Evidence - Part 1: Secure Foundations**
 
+## Demonstration Video
+
+[**Watch the HustleHub+ Part 1 demonstration on YouTube**](https://youtu.be/fm5UVAwE3pM)
+
+## Group Members
+
+| Group Member | Student Number | GitHub Username |
+|---|---|---|
+| James Maherry | ST10437403 | [ST10437403-JamesMaherry](https://github.com/ST10437403-JamesMaherry) |
+| Ewald Pagel | ST10257942 | [ST10257942](https://github.com/ST10257942) |
+| Mark Mansvelt | ST10438365 | [ST10438365MarkMansvelt](https://github.com/ST10438365MarkMansvelt) |
+
+---
+
 HustleHub+ is a secure freelance marketplace for clients, freelancers, and administrators. The completed platform will allow freelancers to advertise services, clients to make bookings, and the system to record transactions, income, and estimated tax.
 
 Part 1 implements the secure backend foundation: an Express API with registration, login, password hashing, JWT authentication, HTTPS, input validation, security headers, and controlled error responses. MongoDB, the React frontend, marketplace features, RBAC, financial reporting, DevSecOps, and monitoring are introduced in later parts.
+
+## Table of Contents
+
+- [Demonstration Video](#demonstration-video)
+- [Group Members](#group-members)
+- [Architecture](#architecture)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [API Endpoints](#api-endpoints)
+- [Security Design](#security-design)
+- [Installation and HTTPS Setup](#installation-and-https-setup)
+- [Postman Testing](#postman-testing)
+- [Screenshot Evidence](#screenshot-evidence)
+- [Response Status Codes](#response-status-codes)
+- [Part 1 Limitations and Part 2 Direction](#part-1-limitations-and-part-2-direction)
+- [References](#references)
 
 ## Architecture
 
@@ -84,6 +114,7 @@ INSY7314POE/
 |   `-- package.json
 |-- docs/architecture/     Architecture documentation and diagram source
 |-- evidence/part1/        Submission evidence
+|   `-- screenshots/       Setup, authentication, security, and Postman screenshots
 |-- postman/               Collection, environment, and import instructions
 |-- .gitignore
 `-- README.md
@@ -254,6 +285,92 @@ The concise collection contains 11 ordered requests covering:
 
 Select the supplied environment, temporarily disable Postman's SSL verification for this local self-signed certificate, and run the collection once in its existing order.
 
+## Screenshot Evidence
+
+The screenshots below are stored in [`evidence/part1/screenshots/`](evidence/part1/screenshots/) and referenced using paths relative to this repository-root README.
+
+### Setup and HTTPS
+
+**Fresh Clone Setup**
+
+![Fresh clone setup](evidence/part1/screenshots/NewCloneSetUp.png)
+
+**HTTPS Health Check**
+
+![HTTPS health check](evidence/part1/screenshots/HTTPS_HealthCheck.png)
+
+### Registration
+
+**Successful Registration**
+
+![Successful registration](evidence/part1/screenshots/RegisterSuccess.png)
+
+**Duplicate Registration**
+
+![Duplicate registration test](evidence/part1/screenshots/RegisterDuplicate.png)
+
+### Login
+
+**Successful Login**
+
+![Successful login](evidence/part1/screenshots/LoginSuccessful.png)
+
+**Failed Login**
+
+![Failed login test](evidence/part1/screenshots/LoginFailed.png)
+
+### JWT Authentication
+
+**Valid JWT**
+
+![Protected-route test with a valid JWT](evidence/part1/screenshots/JWT_Valid.png)
+
+**Invalid JWT**
+
+![Protected-route test with an invalid JWT](evidence/part1/screenshots/JWT_Invalid.png)
+
+### Input Validation and Request Limits
+
+**Invalid Field Types**
+
+![Invalid field types test](evidence/part1/screenshots/InvalidFieldTypes.png)
+
+**Malformed JSON**
+
+![Malformed JSON test](evidence/part1/screenshots/Malformed_JSON.png)
+
+**Oversized Request Body**
+
+![Oversized request body test](evidence/part1/screenshots/OversizedBody.png)
+
+### CORS and Security Headers
+
+**Allowed CORS Origin**
+
+![Allowed CORS origin test](evidence/part1/screenshots/CORS_AllowedOrigin.png)
+
+**Untrusted CORS Origin**
+
+![Untrusted CORS origin test](evidence/part1/screenshots/CORS_UntrustedOrigin.png)
+
+**Security Headers — Screenshot 1**
+
+![Security headers screenshot 1](evidence/part1/screenshots/SecurityHeaders1.png)
+
+**Security Headers — Screenshot 2**
+
+![Security headers screenshot 2](evidence/part1/screenshots/SecurityHeaders2.png)
+
+### Postman Collection
+
+**Postman Collection — Screenshot 1**
+
+![Postman collection screenshot 1](evidence/part1/screenshots/PostmanCollection1.jpeg)
+
+**Postman Collection — Screenshot 2**
+
+![Postman collection screenshot 2](evidence/part1/screenshots/PostmanCollection2.jpeg)
+
 ## Response Status Codes
 
 | Status | Use |
@@ -266,7 +383,6 @@ Select the supplied environment, temporarily disable Postman's SSL verification 
 | `409 Conflict` | Duplicate email. |
 | `413 Payload Too Large` | JSON body exceeds `10kb`. |
 | `500 Internal Server Error` | Controlled unexpected server failure. |
-
 
 ## Part 1 Limitations and Part 2 Direction
 
