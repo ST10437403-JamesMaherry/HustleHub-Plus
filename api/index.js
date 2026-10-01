@@ -7,6 +7,8 @@ const path = require('path');
 const helmet = require('helmet');
 const cors = require('cors');
 
+const connectDB = require('./config/db');
+
 const authRoutes = require('./routes/authRoutes');
 
 const {
@@ -86,36 +88,53 @@ app.use(notFoundHandler);
 // Central error-handling middleware.
 app.use(errorHandler);
 
-// Start the API using HTTPS when enabled.
-if (USE_HTTPS) {
-  // Resolve the local certificate paths from environment configuration.
-  const keyPath = path.resolve(
-    __dirname,
-    process.env.SSL_KEY_PATH || './certs/localhost-key.pem'
-  );
+// Start the application only after the database connection succeeds.
+const startServer = async () => {
+  try {
+    await connectDB();
 
-  const certPath = path.resolve(
-    __dirname,
-    process.env.SSL_CERT_PATH || './certs/localhost-cert.pem'
-  );
+    if (USE_HTTPS) {
+      // Resolve the local certificate paths from environment configuration.
+      const keyPath = path.resolve(
+        __dirname,
+        process.env.SSL_KEY_PATH || './certs/localhost-key.pem'
+      );
 
-  // Load the local private key and certificate.
-  const httpsOptions = {
-    key: fs.readFileSync(keyPath),
-    cert: fs.readFileSync(certPath)
-  };
+      const certPath = path.resolve(
+        __dirname,
+        process.env.SSL_CERT_PATH || './certs/localhost-cert.pem'
+      );
 
-  // Run the Express application through an HTTPS server.
-  https.createServer(httpsOptions, app).listen(PORT, () => {
-    console.log(
-      `${APP_NAME} HTTPS server running on port ${PORT}`
+      // Load the local private key and certificate.
+      const httpsOptions = {
+        key: fs.readFileSync(keyPath),
+        cert: fs.readFileSync(certPath)
+      };
+
+      // Run the Express application through an HTTPS server.
+      https.createServer(httpsOptions, app).listen(PORT, () => {
+        console.log(
+          `${APP_NAME} HTTPS server running on port ${PORT}`
+        );
+      });
+
+      return;
+    }
+
+    // HTTP remains available only for local troubleshooting.
+    app.listen(PORT, () => {
+      console.log(
+        `${APP_NAME} HTTP server running on port ${PORT}`
+      );
+    });
+  } catch (error) {
+    // A missing database connection prevents a safe application startup.
+    console.error(
+      `[startup] HustleHub+ failed to start: ${error.message}`
     );
-  });
-} else {
-  // HTTP remains available only for local troubleshooting.
-  app.listen(PORT, () => {
-    console.log(
-      `${APP_NAME} HTTP server running on port ${PORT}`
-    );
-  });
-}
+
+    process.exit(1);
+  }
+};
+
+startServer();
