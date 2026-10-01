@@ -1,27 +1,31 @@
-const {
-  DuplicateEmailError,
-  createUser,
-  findUserByEmail,
-  findUserById
-} = require('../models/userStore');
+const mongoose = require('mongoose');
 
-// Password operations are kept in a utility so the controller never handles
-// bcrypt configuration or stores a plaintext password.
+const User = require('../models/User');
+
+// Password operations remain isolated so authentication controllers do not
+// manage bcrypt configuration directly.
 const {
   hashPassword,
   verifyPassword
 } = require('../utils/password');
 
-// JWT creation is isolated from the controller so signing configuration and
-// token expiry remain in one place.
+// JWT creation remains isolated so token configuration stays in one place.
 const {
   createToken
 } = require('../utils/token');
 
-// Reuse one controlled response for both sequential and concurrent duplicate
-// registration attempts.
 const DUPLICATE_EMAIL_RESPONSE = {
   error: 'An account with this email already exists'
+};
+
+// Return only fields that are safe to expose outside the API.
+const toSafeUser = (user) => {
+  return {
+    id: user.id,
+    fullName: user.fullName,
+    email: user.email,
+    role: user.role
+  };
 };
 
 /**
@@ -39,45 +43,36 @@ const registerUser = async (req, res, next) => {
       role
     } = req.body;
 
-    // Avoid an unnecessary bcrypt operation for an existing account.
-    if (findUserByEmail(email)) {
+    // Avoid an unnecessary bcrypt operation when the account already exists.
+    const existingUser = await User.findOne({
+      email
+    });
+
+    if (existingUser) {
       return res.status(409).json(DUPLICATE_EMAIL_RESPONSE);
     }
 
-    // Hash the password before it reaches the storage layer. The plaintext
-    // value is used only for this operation and is never stored or returned.
+    // Store only the bcrypt hash. The plaintext password is never persisted.
     const passwordHash = await hashPassword(password);
 
-    // createUser performs the authoritative duplicate check after the await,
-    // closing the concurrent check-then-create race.
-    const user = createUser({
+    const user = await User.create({
       fullName,
       email,
       passwordHash,
       role
     });
 
-    // Return only public account fields. password and passwordHash are
-    // deliberately excluded from the response.
     return res.status(201).json({
       message: 'User registered successfully',
-      user: {
-        id: user.id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role
-      }
+      user: toSafeUser(user)
     });
   } catch (error) {
-    // A second registration may pass the early lookup while the first request
-    // is awaiting bcrypt. The storage layer catches that race, and the
-    // controller converts it into the same safe 409 response.
-    if (error instanceof DuplicateEmailError) {
+    // The unique database index remains the authoritative duplicate check for
+    // concurrent registrations that pass the earlier lookup together.
+    if (error?.code === 11000) {
       return res.status(409).json(DUPLICATE_EMAIL_RESPONSE);
     }
 
-    // Unexpected failures are delegated to the central error handler so no
-    // stack trace or internal detail is sent to the client.
     return next(error);
   }
 };
@@ -92,12 +87,12 @@ const loginUser = async (req, res, next) => {
       password
     } = req.body;
 
-    // Email values have already been normalised by validateLogin, but the
-    // store also normalises lookups as a defensive measure.
-    const user = findUserByEmail(email);
+    // passwordHash is excluded by default and selected only for authentication.
+    const user = await User.findOne({
+      email
+    }).select('+passwordHash');
 
-    // Use the same message for an unknown account and an incorrect password
-    // to avoid revealing whether a particular email address is registered.
+    // Keep authentication failures generic to reduce account enumeration.
     if (!user) {
       return res.status(401).json({
         error: 'Invalid credentials'
@@ -109,31 +104,20 @@ const loginUser = async (req, res, next) => {
       user.passwordHash
     );
 
-    // Keep the authentication failure generic to prevent account enumeration.
     if (!passwordMatches) {
       return res.status(401).json({
         error: 'Invalid credentials'
       });
     }
 
-    // A token is issued only after the stored bcrypt hash has been verified.
     const token = createToken(user);
 
-    // Return the token with safe user information. The password hash remains
-    // inside the server-side store.
     return res.status(200).json({
       message: 'Login successful',
       token,
-      user: {
-        id: user.id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role
-      }
+      user: toSafeUser(user)
     });
   } catch (error) {
-    // Forward configuration or unexpected authentication failures to the
-    // application's controlled error pipeline.
     return next(error);
   }
 };
@@ -141,29 +125,33 @@ const loginUser = async (req, res, next) => {
 /**
  * Returns the safe account details for the user identified by a verified JWT.
  */
-const getCurrentUser = (req, res) => {
-  // authMiddleware verifies the token before setting req.auth.id.
-  const user = findUserById(req.auth.id);
-
-  // A valid token must still refer to an account that exists in the store.
-  if (!user) {
-    return res.status(401).json({
-      error: 'Authenticated user not found'
-    });
-  }
-
-  // Never expose the stored bcrypt password hash through the protected route.
-  return res.status(200).json({
-    user: {
-      id: user.id,
-      fullName: user.fullName,
-      email: user.email,
-      role: user.role
+const getCurrentUser = async (req, res, next) => {
+  try {
+    // Reject a signed token containing an identifier that cannot represent a
+    // MongoDB user record.
+    if (!mongoose.isValidObjectId(req.auth.id)) {
+      return res.status(401).json({
+        error: 'Authenticated user not found'
+      });
     }
-  });
+
+    const user = await User.findById(req.auth.id);
+
+    // A valid JWT must still reference an account that currently exists.
+    if (!user) {
+      return res.status(401).json({
+        error: 'Authenticated user not found'
+      });
+    }
+
+    return res.status(200).json({
+      user: toSafeUser(user)
+    });
+  } catch (error) {
+    return next(error);
+  }
 };
 
-// Export only the handlers used by the authentication routes.
 module.exports = {
   registerUser,
   loginUser,
