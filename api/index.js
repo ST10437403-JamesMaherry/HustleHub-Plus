@@ -11,6 +11,8 @@ const connectDB = require('./config/db');
 
 const authRoutes = require('./routes/authRoutes');
 
+const bookingRoutes = require('./routes/bookingRoutes');
+
 const {
   notFoundHandler,
   errorHandler
@@ -81,6 +83,8 @@ app.get('/health', (req, res) => {
 
 // Authentication endpoints.
 app.use('/api/auth', authRoutes);
+
+app.use('/api/bookings', bookingRoutes);
 
 // Handle requests that do not match any defined route.
 app.use(notFoundHandler);
