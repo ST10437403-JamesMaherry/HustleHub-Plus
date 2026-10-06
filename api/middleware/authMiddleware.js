@@ -37,7 +37,7 @@ const protect = (req, res, next) => {
     // Verify the signature and expiry before trusting the token payload.
     const decodedToken = verifyToken(token);
 
-    // Store only the verified authentication claims required downstream.
+    // Store only the verified claims required by downstream middleware.
     req.auth = {
       id: decodedToken.id,
       role: decodedToken.role
@@ -45,8 +45,7 @@ const protect = (req, res, next) => {
 
     return next();
   } catch (error) {
-    // A missing server-side secret is a configuration failure,
-    // not an authentication failure caused by the client.
+    // A missing secret is a server configuration failure.
     if (error.message === 'JWT secret is not configured') {
       return res.status(500).json({
         error: 'Authentication service unavailable'
@@ -60,6 +59,26 @@ const protect = (req, res, next) => {
   }
 };
 
+/**
+ * Restricts an authenticated route to one or more allowed roles.
+ */
+const authorizeRoles = (...allowedRoles) => {
+  return (req, res, next) => {
+    // Authentication must run before role authorisation.
+    if (
+      !req.auth ||
+      !allowedRoles.includes(req.auth.role)
+    ) {
+      return res.status(403).json({
+        error: 'Access denied'
+      });
+    }
+
+    return next();
+  };
+};
+
 module.exports = {
-  protect
+  protect,
+  authorizeRoles
 };
