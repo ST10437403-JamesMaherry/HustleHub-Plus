@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 
 const gigSchema = new mongoose.Schema(
   {
+    freelancer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true
+    },
     title: {
       type: String,
       required: true,
@@ -28,10 +34,10 @@ const gigSchema = new mongoose.Schema(
       required: true,
       min: 0.01
     },
-    freelancer: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+    active: {
+      type: Boolean,
       required: true,
+      default: true,
       index: true
     }
   },

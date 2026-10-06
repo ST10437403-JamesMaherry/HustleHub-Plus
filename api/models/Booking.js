@@ -32,6 +32,7 @@ const bookingSchema = new mongoose.Schema(
     },
     status: {
       type: String,
+      required: true,
       enum: BOOKING_STATUSES,
       default: 'confirmed'
     }
