@@ -1,8 +1,8 @@
 {
   "info": {
-    "_postman_id": "2932f6e6-7520-4c11-87ae-399cbac17e21",
-    "name": "HustleHub+ Part 1 - Essential Tests",
-    "description": "A concise Part 1 collection covering HTTPS, successful client and freelancer registration, required invalid registration scenarios, successful login with JWT capture, invalid login, and protected-route access.",
+    "_postman_id": "5f9663a1-abc1-4303-b052-606674a947b0",
+    "name": "HustleHub+ Part 2 - API Tests",
+    "description": "HustleHub+ Part 2 API collection. Preserves the Part 1 authentication and security regression checks and adds the complete client booking to simulated transaction flow, including ownership and negative security scenarios.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -23,12 +23,60 @@
       "value": ""
     },
     {
+      "key": "secondClientEmail",
+      "value": ""
+    },
+    {
       "key": "clientId",
+      "value": ""
+    },
+    {
+      "key": "freelancerId",
+      "value": ""
+    },
+    {
+      "key": "secondClientId",
       "value": ""
     },
     {
       "key": "token",
       "value": ""
+    },
+    {
+      "key": "freelancerToken",
+      "value": ""
+    },
+    {
+      "key": "secondClientToken",
+      "value": ""
+    },
+    {
+      "key": "gigId",
+      "value": ""
+    },
+    {
+      "key": "inactiveGigId",
+      "value": ""
+    },
+    {
+      "key": "gigFreelancerId",
+      "value": ""
+    },
+    {
+      "key": "expectedGigPrice",
+      "value": "750"
+    },
+    {
+      "key": "bookingId",
+      "value": ""
+    },
+    {
+      "key": "transactionId",
+      "value": ""
+    },
+    {
+      "key": "nonexistentGigId",
+      "value": "000000000000000000000001"
     }
   ],
   "item": [
@@ -43,8 +91,15 @@
               "const runId = Date.now().toString(36);",
               "pm.collectionVariables.set('clientEmail', `client.${runId}@example.com`);",
               "pm.collectionVariables.set('freelancerEmail', `freelancer.${runId}@example.com`);",
+              "pm.collectionVariables.set('secondClientEmail', `client2.${runId}@example.com`);",
               "pm.collectionVariables.unset('clientId');",
-              "pm.collectionVariables.unset('token');"
+              "pm.collectionVariables.unset('freelancerId');",
+              "pm.collectionVariables.unset('secondClientId');",
+              "pm.collectionVariables.unset('token');",
+              "pm.collectionVariables.unset('freelancerToken');",
+              "pm.collectionVariables.unset('secondClientToken');",
+              "pm.collectionVariables.unset('bookingId');",
+              "pm.collectionVariables.unset('transactionId');"
             ]
           }
         },
@@ -128,6 +183,7 @@
               "  pm.expect(json.user.email).to.eql(pm.variables.get('freelancerEmail'));",
               "  pm.expect(json.user.role).to.eql('freelancer');",
               "  pm.expect(json.user).not.to.have.property('passwordHash');",
+              "  pm.collectionVariables.set('freelancerId', json.user.id);",
               "});"
             ]
           }
@@ -432,6 +488,649 @@
         "header": [],
         "url": "{{baseUrl}}/api/auth/me"
       }
+    },
+    {
+      "name": "Part 2 - Booking Flow",
+      "description": "Booking and simulated transaction tests. Before running this folder, set gigId, inactiveGigId, gigFreelancerId and expectedGigPrice collection variables using known MongoDB test data.",
+      "item": [
+        {
+          "name": "12. Login Freelancer - Capture JWT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Freelancer login succeeds and token is captured', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.user.role).to.eql('freelancer');",
+                  "  pm.collectionVariables.set('freelancerToken', json.token);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{freelancerEmail}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "13. Register Second Client",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Second client is registered', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.user.role).to.eql('client');",
+                  "  pm.collectionVariables.set('secondClientId', json.user.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Second Test Client\",\n  \"email\": \"{{secondClientEmail}}\",\n  \"password\": \"{{password}}\",\n  \"role\": \"client\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        },
+        {
+          "name": "14. Login Second Client - Capture JWT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Second client login succeeds and token is captured', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.user.id).to.eql(pm.variables.get('secondClientId'));",
+                  "  pm.collectionVariables.set('secondClientToken', json.token);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{secondClientEmail}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "15. Booking - Create Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Client booking creates a matching simulated transaction', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "  const json = pm.response.json();",
+                  "  const expectedPrice = Number(pm.variables.get('expectedGigPrice'));",
+                  "  pm.expect(json.message).to.eql('Booking confirmed and simulated transaction recorded');",
+                  "  pm.expect(json.booking.gig).to.eql(pm.variables.get('gigId'));",
+                  "  pm.expect(json.booking.client).to.eql(pm.variables.get('clientId'));",
+                  "  pm.expect(json.booking.freelancer).to.eql(pm.variables.get('gigFreelancerId'));",
+                  "  pm.expect(json.booking.amount).to.eql(expectedPrice);",
+                  "  pm.expect(json.booking.status).to.eql('confirmed');",
+                  "  pm.expect(json.transaction.booking).to.eql(json.booking.id);",
+                  "  pm.expect(json.transaction.client).to.eql(pm.variables.get('clientId'));",
+                  "  pm.expect(json.transaction.freelancer).to.eql(pm.variables.get('gigFreelancerId'));",
+                  "  pm.expect(json.transaction.amount).to.eql(expectedPrice);",
+                  "  pm.expect(json.transaction.status).to.eql('confirmed');",
+                  "  pm.collectionVariables.set('bookingId', json.booking.id);",
+                  "  pm.collectionVariables.set('transactionId', json.transaction.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gigId\": \"{{gigId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/bookings"
+          }
+        },
+        {
+          "name": "16. Booking - Mine",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Client sees own booking history', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.bookings).to.be.an('array');",
+                  "  const booking = json.bookings.find((item) => item.id === pm.variables.get('bookingId'));",
+                  "  pm.expect(booking).to.exist;",
+                  "  pm.expect(booking.client).to.eql(pm.variables.get('clientId'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/bookings/mine"
+          }
+        },
+        {
+          "name": "17. Booking - Get Own",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Client can retrieve owned booking', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.booking.id).to.eql(pm.variables.get('bookingId'));",
+                  "  pm.expect(json.booking.client).to.eql(pm.variables.get('clientId'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}"
+          }
+        },
+        {
+          "name": "18. Booking - Reject Missing JWT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Booking creation requires authentication', function () {",
+                  "  pm.response.to.have.status(401);",
+                  "  pm.expect(pm.response.json()).to.eql({ error: 'Authentication required' });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gigId\": \"{{gigId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/bookings"
+          }
+        },
+        {
+          "name": "19. Booking - Reject Freelancer Role",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Freelancer cannot create client booking', function () {",
+                  "  pm.response.to.have.status(403);",
+                  "  pm.expect(pm.response.json()).to.eql({ error: 'Access denied' });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{freelancerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gigId\": \"{{gigId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/bookings"
+          }
+        },
+        {
+          "name": "20. Booking - Reject Invalid Gig ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Invalid gig identifier is rejected', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "  pm.expect(pm.response.json()).to.eql({ error: 'Invalid gig ID' });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gigId\": \"not-an-object-id\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/bookings"
+          }
+        },
+        {
+          "name": "21. Booking - Reject Nonexistent Gig",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Nonexistent gig is rejected cleanly', function () {",
+                  "  pm.response.to.have.status(404);",
+                  "  pm.expect(pm.response.json()).to.eql({ error: 'Gig not found or unavailable' });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gigId\": \"{{nonexistentGigId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/bookings"
+          }
+        },
+        {
+          "name": "22. Booking - Reject Inactive Gig",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Inactive gig is unavailable for booking', function () {",
+                  "  pm.response.to.have.status(404);",
+                  "  pm.expect(pm.response.json()).to.eql({ error: 'Gig not found or unavailable' });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gigId\": \"{{inactiveGigId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/bookings"
+          }
+        },
+        {
+          "name": "23. Booking - Reject Amount Override",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Amount override is rejected', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "  pm.expect(pm.response.json()).to.eql({ error: 'Booking request contains unsupported fields' });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gigId\": \"{{gigId}}\",\n  \"amount\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/bookings"
+          }
+        },
+        {
+          "name": "24. Booking - Reject Freelancer Override",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Freelancer override is rejected', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "  pm.expect(pm.response.json()).to.eql({ error: 'Booking request contains unsupported fields' });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gigId\": \"{{gigId}}\",\n  \"freelancer\": \"000000000000000000000002\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/bookings"
+          }
+        },
+        {
+          "name": "25. Booking - Reject Client Override",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Client override is rejected', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "  pm.expect(pm.response.json()).to.eql({ error: 'Booking request contains unsupported fields' });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gigId\": \"{{gigId}}\",\n  \"client\": \"000000000000000000000003\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/bookings"
+          }
+        },
+        {
+          "name": "26. Booking - Other Client Cannot Read",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Another client cannot retrieve the private booking', function () {",
+                  "  pm.response.to.have.status(404);",
+                  "  pm.expect(pm.response.json()).to.eql({ error: 'Booking not found' });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{secondClientToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}"
+          }
+        }
+      ]
     }
   ]
 }
