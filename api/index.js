@@ -63,7 +63,9 @@ app.use(
   'PUT',
   'DELETE'
 ],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    // Lets the React client tell users how long a rate limit lasts.
+    exposedHeaders: ['Retry-After']
   })
 );
 
