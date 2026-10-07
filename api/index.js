@@ -10,7 +10,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 
 const authRoutes = require('./routes/authRoutes');
-
+const gigRoutes = require('./routes/gigRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 
 const {
@@ -56,7 +56,12 @@ app.use(
 app.use(
   cors({
     origin: CLIENT_ORIGIN,
-    methods: ['GET', 'POST'],
+    methods: [
+  'GET',
+  'POST',
+  'PUT',
+  'DELETE'
+],
     allowedHeaders: ['Content-Type', 'Authorization']
   })
 );
@@ -84,6 +89,10 @@ app.get('/health', (req, res) => {
 // Authentication endpoints.
 app.use('/api/auth', authRoutes);
 
+// Marketplace Gig endpoints.
+app.use('/api/gigs', gigRoutes);
+
+// Booking endpoints.
 app.use('/api/bookings', bookingRoutes);
 
 // Handle requests that do not match any defined route.
