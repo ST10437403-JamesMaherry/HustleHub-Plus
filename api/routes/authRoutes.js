@@ -18,18 +18,28 @@ const {
   protect
 } = require('../middleware/authMiddleware');
 
+const {
+  authLimiter
+} = require('../middleware/rateLimiters');
+
+const {
+  sanitizeFields
+} = require('../middleware/sanitizeInput');
+
 const router = express.Router();
 
-// Public registration endpoint.
+// Public registration sanitises the user-controlled display name first.
 router.post(
   '/register',
+  sanitizeFields('fullName'),
   validateRegistration,
   registerUser
 );
 
-// Public login endpoint.
+// Login attempts are rate limited before credential validation.
 router.post(
   '/login',
+  authLimiter,
   validateLogin,
   loginUser
 );

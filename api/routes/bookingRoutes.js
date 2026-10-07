@@ -16,13 +16,18 @@ const validateBooking = require(
   '../middleware/validateBooking'
 );
 
+const {
+  bookingLimiter
+} = require('../middleware/rateLimiters');
+
 const router = express.Router();
 
-// Only clients may create marketplace bookings.
+// Only authenticated clients may reach the booking rate limiter.
 router.post(
   '/',
   protect,
   authorizeRoles('client'),
+  bookingLimiter,
   validateBooking,
   createBooking
 );
