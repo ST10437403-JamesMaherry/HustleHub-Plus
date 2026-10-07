@@ -19,6 +19,10 @@ const {
   validateGigUpdate
 } = require('../middleware/validateGig');
 
+const {
+  sanitizeFields
+} = require('../middleware/sanitizeInput');
+
 const router = express.Router();
 
 // Active marketplace gigs are available for browsing.
@@ -40,6 +44,11 @@ router.post(
   '/',
   protect,
   authorizeRoles('freelancer'),
+  sanitizeFields(
+    'title',
+    'description',
+    'category'
+  ),
   validateGigCreate,
   createGig
 );
@@ -55,6 +64,11 @@ router.put(
   '/:id',
   protect,
   authorizeRoles('freelancer'),
+  sanitizeFields(
+    'title',
+    'description',
+    'category'
+  ),
   validateGigUpdate,
   updateGig
 );
