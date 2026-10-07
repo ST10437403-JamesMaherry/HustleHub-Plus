@@ -19,7 +19,8 @@ const {
 } = require('../middleware/authMiddleware');
 
 const {
-  authLimiter
+  authLimiter,
+  registerLimiter
 } = require('../middleware/rateLimiters');
 
 const {
@@ -28,9 +29,10 @@ const {
 
 const router = express.Router();
 
-// Public registration sanitises the user-controlled display name first.
+// Registration is rate limited before sanitisation and validation run.
 router.post(
   '/register',
+  registerLimiter,
   sanitizeFields('fullName'),
   validateRegistration,
   registerUser
