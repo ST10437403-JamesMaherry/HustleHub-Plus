@@ -4,7 +4,7 @@ const Gig = require('../models/Gig');
 const Booking = require('../models/Booking');
 const Transaction = require('../models/Transaction');
 
-// Return only booking fields required by the client.
+// Return only booking fields required by API consumers.
 const toBookingResponse = (booking) => {
   return {
     id: booking.id,
@@ -135,6 +135,26 @@ const getMyBookings = async (req, res, next) => {
 };
 
 /**
+ * Returns bookings associated with the authenticated freelancer.
+ */
+const getFreelancerBookings = async (req, res, next) => {
+  try {
+    // Ownership is enforced using the verified freelancer ID from the JWT.
+    const bookings = await Booking.find({
+      freelancer: req.auth.id
+    }).sort({
+      createdAt: -1
+    });
+
+    return res.status(200).json({
+      bookings: bookings.map(toBookingResponse)
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+/**
  * Returns one booking only when it belongs to the authenticated client.
  */
 const getBookingById = async (req, res, next) => {
@@ -169,5 +189,6 @@ const getBookingById = async (req, res, next) => {
 module.exports = {
   createBooking,
   getMyBookings,
+  getFreelancerBookings,
   getBookingById
 };
