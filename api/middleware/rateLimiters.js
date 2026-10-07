@@ -5,17 +5,35 @@ const {
 const FIFTEEN_MINUTES_MS =
   15 * 60 * 1000;
 
-// Authentication attempts are intentionally restrictive because password
-// verification is both sensitive and comparatively expensive.
+const ONE_HOUR_MS =
+  60 * 60 * 1000;
+
+// Only failed logins count towards the limit: brute-force guessing is the
+// threat, so legitimate sign-ins should never lock a user out.
 const authLimiter = rateLimit({
   windowMs: FIFTEEN_MINUTES_MS,
   limit: 5,
+  skipSuccessfulRequests: true,
   standardHeaders: true,
   legacyHeaders: false,
   handler: (req, res) => {
     return res.status(429).json({
       error:
         'Too many authentication attempts. Please try again later.'
+    });
+  }
+});
+
+// Registration is limited separately to slow automated account creation.
+const registerLimiter = rateLimit({
+  windowMs: ONE_HOUR_MS,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    return res.status(429).json({
+      error:
+        'Too many registration attempts. Please try again later.'
     });
   }
 });
@@ -36,5 +54,6 @@ const bookingLimiter = rateLimit({
 
 module.exports = {
   authLimiter,
+  registerLimiter,
   bookingLimiter
 };
