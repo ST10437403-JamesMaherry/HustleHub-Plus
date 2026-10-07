@@ -1,0 +1,89 @@
+/* Authentication screens. Builds on the shared .form-stack / .form-field primitives. */
+
+.auth-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+  gap: clamp(3rem, 8vw, 7rem);
+  align-items: start;
+}
+.auth-layout .form-stack { width: 100%; }
+
+.field-label-row { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.field-toggle {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.field-toggle:hover { background: none; color: #ffffff; }
+
+.field-hint, .field-error { margin: 0; font-size: 0.8125rem; line-height: 1.6; }
+.field-hint { color: var(--muted); }
+.field-error { color: #ffffff; }
+.field-error::before {
+  content: 'Error / ';
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+input[aria-invalid='true'] { border-color: #f5f5f5; }
+
+.role-options { display: grid; gap: 0.5rem; min-width: 0; margin: 0; padding: 0; border: 0; }
+.role-options legend { padding: 0; margin-bottom: 0.5rem; font-size: 0.875rem; }
+.role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.role-option {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--surface);
+  cursor: pointer;
+}
+.role-option:hover { background: var(--surface-hover); }
+.role-option:has(input:checked) { border-color: #f5f5f5; background: var(--surface-hover); }
+.role-option:has(input:focus-visible) { outline: 2px solid #ffffff; outline-offset: 4px; }
+.role-options:disabled .role-option { cursor: not-allowed; opacity: 0.55; }
+.role-option input { position: absolute; width: 1px; height: 1px; margin: 0; padding: 0; opacity: 0; pointer-events: none; }
+.role-option-title { display: flex; justify-content: space-between; gap: 0.75rem; font-size: 0.875rem; font-weight: 650; }
+.role-option-mark { color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 400; }
+.role-option:has(input:checked) .role-option-mark { color: #ffffff; }
+.role-option-copy { color: var(--muted); font-size: 0.8125rem; line-height: 1.6; }
+
+.form-message {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-left: 2px solid #f5f5f5;
+  background: var(--surface);
+}
+.form-message p { margin: 0; font-size: 0.875rem; line-height: 1.6; }
+.form-message-tag { color: var(--muted); font-size: 0.65rem; font-weight: 650; letter-spacing: 0.16em; text-transform: uppercase; }
+
+.button-block { width: 100%; }
+.form-footer { margin: 0.5rem 0 0; padding-top: 1.25rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.875rem; }
+.form-footer a { color: #ffffff; text-underline-offset: 5px; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 860px) {
+  .auth-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+}
+@media (max-width: 420px) {
+  .role-grid { grid-template-columns: 1fr; }
+}
