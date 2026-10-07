@@ -12,6 +12,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const gigRoutes = require('./routes/gigRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
+const incomeRoutes = require('./routes/incomeRoutes');
 
 const {
   notFoundHandler,
@@ -94,6 +95,9 @@ app.use('/api/gigs', gigRoutes);
 
 // Booking endpoints.
 app.use('/api/bookings', bookingRoutes);
+
+// Income endpoints.
+app.use('/api/income', incomeRoutes);
 
 // Handle requests that do not match any defined route.
 app.use(notFoundHandler);
