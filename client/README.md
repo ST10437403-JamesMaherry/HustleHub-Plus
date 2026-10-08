@@ -182,6 +182,28 @@ If the login rate limiter returns 429, stop and restart only the local developme
 
 This smoke check creates one disposable User record and does not delete existing records. Formal Postman/Newman and frontend interaction testing remain part of the later testing milestone.
 
+## Frontend tests
+
+Vitest, React Testing Library and jsdom cover the main user journeys. Network calls are replaced at the `fetch` boundary, so no API, database or certificate is needed. Install and run from the repository root:
+
+```powershell
+npm --prefix client install; npm --prefix client test
+```
+
+`VITE_API_URL` is set to `https://localhost:4000` by the test config, so `client/.env` is not read or required. Each run also writes a JUnit report to `evidence/part2/react-tests.xml` for the Part 2 evidence folder.
+
+What is covered:
+
+- Login (interaction): a rejected sign-in shows one generic error, clears the password field and stores nothing.
+- Registration (rendering and interaction): only client and freelancer can be chosen, and the request omits `confirmPassword` and sends a lowercase email.
+- Marketplace (rendering and interaction): gigs from the API are listed, the search box narrows them, and anonymous visitors see no booking button.
+- Freelancer gig form (interaction): an empty form is blocked with field messages and no request; a valid form posts the expected payload with the bearer token.
+- Client booking (interaction): booking needs a confirmation step and sends only the gig ID.
+- Route guards (rendering): anonymous visitors go to `/login`, the wrong role sees Access denied, and the right role sees the page.
+- API service (security): paths that would leave the configured origin are refused before `fetch`, so the JWT cannot be sent elsewhere.
+
+The admin dashboard is still a placeholder, so only its route guard is exercised, not admin features.
+
 ## Build and deployment boundary
 
 `npm run build` builds this client into `dist/`. The generated package-lock.json must be committed for reproducible installs. A later deployment must serve index.html for frontend route paths such as /bookings; do not configure that fallback on the API server blindly.
