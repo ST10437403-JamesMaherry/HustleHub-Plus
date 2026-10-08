@@ -8,6 +8,7 @@ export default function GigCard({ gig, children }) {
 
   return (
     <article className="gig-card" aria-labelledby={titleId}>
+      {!gig.active && <p className="gig-flag">Hidden from marketplace</p>}
       <p className="eyebrow gig-category">{gig.category}</p>
       <h2 id={titleId} className="gig-title">{gig.title}</h2>
       <p className="gig-description">{gig.description}</p>
