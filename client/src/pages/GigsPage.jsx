@@ -4,8 +4,10 @@ import { apiRequest } from '../services/api';
 import { useAuth } from '../context/useAuth';
 import GigCard from '../components/gigs/GigCard';
 import GigsStatus from '../components/gigs/GigsStatus';
+import BookGigAction from '../components/bookings/BookGigAction';
 import { toSafeGigs } from '../components/gigs/gigFormat';
 import '../components/gigs/gigs.css';
+import '../components/bookings/bookings.css';
 
 export default function GigsPage() {
   const { user } = useAuth();
@@ -93,7 +95,12 @@ export default function GigsPage() {
           {visibleGigs.length > 0 ? (
             <ul className="gig-grid">
               {visibleGigs.map((gig) => (
-                <li key={gig.id}><GigCard gig={gig} /></li>
+                <li key={gig.id}>
+                  <GigCard gig={gig}>
+                    {/* Booking controls are only offered to clients; the API enforces the same rule. */}
+                    {user?.role === 'client' && <BookGigAction gig={gig} />}
+                  </GigCard>
+                </li>
               ))}
             </ul>
           ) : (
