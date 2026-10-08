@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
@@ -13,5 +13,13 @@ export default defineConfig({
     host: 'localhost',
     port: 5173,
     strictPort: true
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.js'],
+    // api.js reads this once at import; tests never reach a real server.
+    env: { VITE_API_URL: 'https://localhost:4000' },
+    // Console output plus a JUnit file for the Part 2 evidence folder.
+    reporters: ['default', ['junit', { outputFile: '../evidence/part2/react-tests.xml' }]]
   }
 });
