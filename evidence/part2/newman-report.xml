@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="HustleHub+ Part 2 - API Tests" tests="82" time="2.371">
+  <testsuite name="01 Health and Security Headers / Health and HTTPS" id="a1364fd2-5200-473f-803b-884a0f424e0b" timestamp="2026-10-08T12:21:25.737Z" tests="5" failures="0" errors="0" time="0.037">
+    <testcase name="Response does not leak stack traces or server internals" time="0.037" classname="01HealthAndSecurityHeadersHealthAndHttps"/>
+    <testcase name="Health endpoint is available over HTTPS" time="0.037" classname="01HealthAndSecurityHeadersHealthAndHttps"/>
+    <testcase name="Important security headers are present" time="0.037" classname="01HealthAndSecurityHeadersHealthAndHttps"/>
+    <testcase name="Helmet hardening headers have safe values" time="0.037" classname="01HealthAndSecurityHeadersHealthAndHttps"/>
+    <testcase name="adminPassword is provided (see postman/README.md, Admin Account)" time="0.037" classname="01HealthAndSecurityHeadersHealthAndHttps"/>
+  </testsuite>
+  <testsuite name="01 Health and Security Headers / CORS - Trusted Origin Allowed" id="4be14afd-e0d8-42a3-ae0d-87c74080a88a" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Response does not leak stack traces or server internals" time="0.003" classname="01HealthAndSecurityHeadersCorsTrustedOriginAllowed"/>
+    <testcase name="Configured frontend origin is allowed" time="0.003" classname="01HealthAndSecurityHeadersCorsTrustedOriginAllowed"/>
+  </testsuite>
+  <testsuite name="01 Health and Security Headers / CORS - Untrusted Origin Not Allowed" id="3ffea638-0b90-4b07-be93-d8e2475838ae" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Response does not leak stack traces or server internals" time="0.004" classname="01HealthAndSecurityHeadersCorsUntrustedOriginNotAllowed"/>
+    <testcase name="Untrusted origin is not echoed back as allowed" time="0.004" classname="01HealthAndSecurityHeadersCorsUntrustedOriginNotAllowed"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Login Admin - Capture JWT" id="6fd7d5fa-07dd-43f9-9156-90be5233636c" timestamp="2026-10-08T12:21:25.737Z" tests="3" failures="0" errors="0" time="0.227">
+    <testcase name="Response does not leak stack traces or server internals" time="0.227" classname="02AuthenticationLoginAdminCaptureJwt"/>
+    <testcase name="Auth rate limiter has capacity for this run (restart the API if this fails)" time="0.227" classname="02AuthenticationLoginAdminCaptureJwt"/>
+    <testcase name="Admin account is provisioned and adminPassword is correct (see postman/README.md, Admin Account)" time="0.227" classname="02AuthenticationLoginAdminCaptureJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register Client - Success" id="373a6445-c20a-48a3-a1c9-aca2e9d2b28b" timestamp="2026-10-08T12:21:25.737Z" tests="4" failures="0" errors="0" time="0.214">
+    <testcase name="Response does not leak stack traces or server internals" time="0.214" classname="02AuthenticationRegisterClientSuccess"/>
+    <testcase name="Register rate limiter has capacity for this run (restart the API if this fails)" time="0.214" classname="02AuthenticationRegisterClientSuccess"/>
+    <testcase name="Register route is protected by the register rate limiter" time="0.214" classname="02AuthenticationRegisterClientSuccess"/>
+    <testcase name="Client is registered safely" time="0.214" classname="02AuthenticationRegisterClientSuccess"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register Freelancer - Success" id="c43f7225-1074-483d-b242-74a9864f4d54" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.206">
+    <testcase name="Response does not leak stack traces or server internals" time="0.206" classname="02AuthenticationRegisterFreelancerSuccess"/>
+    <testcase name="Freelancer is registered safely" time="0.206" classname="02AuthenticationRegisterFreelancerSuccess"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register Second Client" id="8bfe4d35-737f-4db7-8eea-6213fe9ec0e2" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.205">
+    <testcase name="Response does not leak stack traces or server internals" time="0.205" classname="02AuthenticationRegisterSecondClient"/>
+    <testcase name="Second client is registered" time="0.205" classname="02AuthenticationRegisterSecondClient"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register Second Freelancer" id="fefc8fc4-7396-4536-a55d-12f9826c9e76" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.205">
+    <testcase name="Response does not leak stack traces or server internals" time="0.205" classname="02AuthenticationRegisterSecondFreelancer"/>
+    <testcase name="Second Test Freelancer is registered" time="0.205" classname="02AuthenticationRegisterSecondFreelancer"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register - Missing Field" id="be217e6a-ba90-44ab-840f-53ba5887827e" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Response does not leak stack traces or server internals" time="0.003" classname="02AuthenticationRegisterMissingField"/>
+    <testcase name="Missing registration field is rejected" time="0.003" classname="02AuthenticationRegisterMissingField"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register - Reject Admin Role" id="ade6b3a6-7c62-4ef8-817f-501a45f56c04" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="02AuthenticationRegisterRejectAdminRole"/>
+    <testcase name="Public admin registration is rejected" time="0.002" classname="02AuthenticationRegisterRejectAdminRole"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register - Reject Malicious Name" id="d420a620-fac7-4742-a782-36a71bbb9100" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="02AuthenticationRegisterRejectMaliciousName"/>
+    <testcase name="Script-like name is rejected safely" time="0.002" classname="02AuthenticationRegisterRejectMaliciousName"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register - Duplicate Email" id="f48e7b42-6198-4702-9c2e-0125d2972568" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.005">
+    <testcase name="Response does not leak stack traces or server internals" time="0.005" classname="02AuthenticationRegisterDuplicateEmail"/>
+    <testcase name="Duplicate email is rejected" time="0.005" classname="02AuthenticationRegisterDuplicateEmail"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Login Client - Success and Capture JWT" id="b0afd01c-bafc-4655-b498-4617056287b0" timestamp="2026-10-08T12:21:25.737Z" tests="3" failures="0" errors="0" time="0.200">
+    <testcase name="Response does not leak stack traces or server internals" time="0.200" classname="02AuthenticationLoginClientSuccessAndCaptureJwt"/>
+    <testcase name="Login route is protected by the auth rate limiter" time="0.200" classname="02AuthenticationLoginClientSuccessAndCaptureJwt"/>
+    <testcase name="Login returns a valid JWT" time="0.200" classname="02AuthenticationLoginClientSuccessAndCaptureJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Login Freelancer - Capture JWT" id="3a2017cc-c9a8-433f-8cc9-10a9552b3e00" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.200">
+    <testcase name="Response does not leak stack traces or server internals" time="0.200" classname="02AuthenticationLoginFreelancerCaptureJwt"/>
+    <testcase name="Freelancer login succeeds and token is captured" time="0.200" classname="02AuthenticationLoginFreelancerCaptureJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Login Second Client - Capture JWT" id="fb58b7d3-ec9a-4696-89c4-3a771ae93337" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.199">
+    <testcase name="Response does not leak stack traces or server internals" time="0.199" classname="02AuthenticationLoginSecondClientCaptureJwt"/>
+    <testcase name="Second client login succeeds and token is captured" time="0.199" classname="02AuthenticationLoginSecondClientCaptureJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Login Second Freelancer - Capture JWT" id="1e35f302-ad14-45b8-9d15-82fe423c356d" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.200">
+    <testcase name="Response does not leak stack traces or server internals" time="0.200" classname="02AuthenticationLoginSecondFreelancerCaptureJwt"/>
+    <testcase name="Second freelancer login succeeds and token is captured" time="0.200" classname="02AuthenticationLoginSecondFreelancerCaptureJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Login - Invalid Password" id="686bcccd-0030-4896-a270-3c0999855c42" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.198">
+    <testcase name="Response does not leak stack traces or server internals" time="0.198" classname="02AuthenticationLoginInvalidPassword"/>
+    <testcase name="Invalid login is rejected generically" time="0.198" classname="02AuthenticationLoginInvalidPassword"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Current User - Valid JWT" id="7bf702e1-7480-4f74-b8c8-8ab608d1b5e7" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.005">
+    <testcase name="Response does not leak stack traces or server internals" time="0.005" classname="02AuthenticationCurrentUserValidJwt"/>
+    <testcase name="Valid JWT grants access safely" time="0.005" classname="02AuthenticationCurrentUserValidJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Current User - Missing JWT" id="19c1d017-b9c5-4e4d-aa0c-cb9be29ee882" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="02AuthenticationCurrentUserMissingJwt"/>
+    <testcase name="Protected route rejects missing JWT" time="0.002" classname="02AuthenticationCurrentUserMissingJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Current User - Tampered JWT" id="55118497-7fb6-4f0f-a003-31c0376a5c62" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="02AuthenticationCurrentUserTamperedJwt"/>
+    <testcase name="Edited JWT payload is rejected" time="0.002" classname="02AuthenticationCurrentUserTamperedJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Current User - Wrong Auth Scheme" id="2fb95bf4-9e9e-4623-9aef-33ce889cd011" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="02AuthenticationCurrentUserWrongAuthScheme"/>
+    <testcase name="Non-Bearer authorisation scheme is rejected" time="0.002" classname="02AuthenticationCurrentUserWrongAuthScheme"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Browse Gigs - Public" id="724f6563-3909-4567-9a36-d4455bb856d5" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.009">
+    <testcase name="Response does not leak stack traces or server internals" time="0.009" classname="03GigsBrowseGigsPublic"/>
+    <testcase name="Active gigs are browsable without a JWT" time="0.009" classname="03GigsBrowseGigsPublic"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Freelancer Success" id="0aff3bcf-f252-402c-8cd5-c0ad0421e1b4" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.009">
+    <testcase name="Response does not leak stack traces or server internals" time="0.009" classname="03GigsCreateGigFreelancerSuccess"/>
+    <testcase name="Freelancer creates a gig owned by their account" time="0.009" classname="03GigsCreateGigFreelancerSuccess"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Inactive" id="e3c47f4f-205a-43bf-a5e5-471d7c63b3c6" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.006">
+    <testcase name="Response does not leak stack traces or server internals" time="0.006" classname="03GigsCreateGigInactive"/>
+    <testcase name="Freelancer creates an inactive gig" time="0.006" classname="03GigsCreateGigInactive"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Markup Sanitised" id="22c84aff-5062-44d0-a4c6-3923bb961d09" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.008">
+    <testcase name="Response does not leak stack traces or server internals" time="0.008" classname="03GigsCreateGigMarkupSanitised"/>
+    <testcase name="Markup is stripped from stored gig text" time="0.008" classname="03GigsCreateGigMarkupSanitised"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject Client Role" id="f15cf04c-dc67-4488-90da-15f63c8ea243" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="03GigsCreateGigRejectClientRole"/>
+    <testcase name="Client cannot create a gig" time="0.002" classname="03GigsCreateGigRejectClientRole"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject Missing JWT" id="d7b93efd-e091-411f-96b9-a28b621f3ee3" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="03GigsCreateGigRejectMissingJwt"/>
+    <testcase name="Gig creation requires authentication" time="0.002" classname="03GigsCreateGigRejectMissingJwt"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject Missing Fields" id="10dc2309-3c5d-4b91-8376-a571f509e725" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="03GigsCreateGigRejectMissingFields"/>
+    <testcase name="Incomplete gig is rejected" time="0.002" classname="03GigsCreateGigRejectMissingFields"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject Invalid Price" id="c3803dc5-6f7e-46f3-ac7e-6fa06ce4e681" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="03GigsCreateGigRejectInvalidPrice"/>
+    <testcase name="Non-positive price is rejected" time="0.002" classname="03GigsCreateGigRejectInvalidPrice"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject Owner Override" id="1a07be4c-9013-4fd5-8404-333acf7e05e2" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="03GigsCreateGigRejectOwnerOverride"/>
+    <testcase name="Client-supplied owner is rejected" time="0.002" classname="03GigsCreateGigRejectOwnerOverride"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Browse Gigs - Authenticated Client" id="e6421d0e-8b66-439a-8370-6160f39d8d70" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.005">
+    <testcase name="Response does not leak stack traces or server internals" time="0.005" classname="03GigsBrowseGigsAuthenticatedClient"/>
+    <testcase name="Marketplace lists active gigs and hides inactive ones" time="0.005" classname="03GigsBrowseGigsAuthenticatedClient"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Get Gig - Inactive Hidden" id="9a08f1fa-aada-491d-95d6-d4935f02877e" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Response does not leak stack traces or server internals" time="0.004" classname="03GigsGetGigInactiveHidden"/>
+    <testcase name="Inactive gig is not publicly retrievable" time="0.004" classname="03GigsGetGigInactiveHidden"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Get Gig - Invalid ID" id="9b6a141e-1fac-46a2-afeb-8b96d1ecd82e" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="03GigsGetGigInvalidId"/>
+    <testcase name="Malformed gig ID is rejected" time="0.002" classname="03GigsGetGigInvalidId"/>
+  </testsuite>
+  <testsuite name="03 Gigs / My Gigs - Freelancer" id="04d731f8-b938-48dc-8965-645e1f31cddc" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.005">
+    <testcase name="Response does not leak stack traces or server internals" time="0.005" classname="03GigsMyGigsFreelancer"/>
+    <testcase name="Freelancer sees all own gigs, including inactive ones" time="0.005" classname="03GigsMyGigsFreelancer"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Update Gig - Reject Non-owner" id="ffa35292-91be-406f-9fba-2a8153f04ab8" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.007">
+    <testcase name="Response does not leak stack traces or server internals" time="0.007" classname="03GigsUpdateGigRejectNonOwner"/>
+    <testcase name="Another freelancer cannot update the gig" time="0.007" classname="03GigsUpdateGigRejectNonOwner"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Delete Gig - Reject Non-owner" id="9d771ede-6473-4088-9035-f8bf2b81eed2" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Response does not leak stack traces or server internals" time="0.004" classname="03GigsDeleteGigRejectNonOwner"/>
+    <testcase name="Another freelancer cannot delete the gig" time="0.004" classname="03GigsDeleteGigRejectNonOwner"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Get Gig - Unchanged After Non-owner Attempts" id="bd2c4851-9ce8-47ab-9f72-6f20b37b6085" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Response does not leak stack traces or server internals" time="0.004" classname="03GigsGetGigUnchangedAfterNonOwnerAttempts"/>
+    <testcase name="Gig survives non-owner update and delete attempts" time="0.004" classname="03GigsGetGigUnchangedAfterNonOwnerAttempts"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Update Gig - Owner Success" id="015c68c1-0bb0-48d8-bdc0-5306c0d88b12" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.007">
+    <testcase name="Response does not leak stack traces or server internals" time="0.007" classname="03GigsUpdateGigOwnerSuccess"/>
+    <testcase name="Owner updates the gig" time="0.007" classname="03GigsUpdateGigOwnerSuccess"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Update Gig - Reject Invalid Title" id="d2db1e8e-d655-4ac2-9303-259137c83948" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="03GigsUpdateGigRejectInvalidTitle"/>
+    <testcase name="Too-short title is rejected" time="0.002" classname="03GigsUpdateGigRejectInvalidTitle"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Update Gig - Reject Client Role" id="b8b0613e-19ad-4a45-bae7-cf894ca0628f" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="03GigsUpdateGigRejectClientRole"/>
+    <testcase name="Client cannot update a gig" time="0.002" classname="03GigsUpdateGigRejectClientRole"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Delete Gig - Owner Success" id="865cde6c-4396-4267-9e3f-c784a61ae606" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.005">
+    <testcase name="Response does not leak stack traces or server internals" time="0.005" classname="03GigsDeleteGigOwnerSuccess"/>
+    <testcase name="Owner deletes the gig" time="0.005" classname="03GigsDeleteGigOwnerSuccess"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Get Gig - Deleted Gig Gone" id="d44167b5-d7b5-489d-aba7-977d3b594769" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Response does not leak stack traces or server internals" time="0.004" classname="03GigsGetGigDeletedGigGone"/>
+    <testcase name="Deleted gig is no longer retrievable" time="0.004" classname="03GigsGetGigDeletedGigGone"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Create Success" id="3f7d14e5-762a-49cf-a46a-f79eb6bba04c" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.027">
+    <testcase name="Response does not leak stack traces or server internals" time="0.027" classname="04BookingsBookingCreateSuccess"/>
+    <testcase name="Client booking creates a matching simulated transaction" time="0.027" classname="04BookingsBookingCreateSuccess"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Mine" id="55b13f49-6cdb-436e-aba3-147ad15ea7a6" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.005">
+    <testcase name="Response does not leak stack traces or server internals" time="0.005" classname="04BookingsBookingMine"/>
+    <testcase name="Client sees own booking history" time="0.005" classname="04BookingsBookingMine"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Get Own" id="b1cfca2f-0b3a-4c72-99bf-0d3004be56ad" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Response does not leak stack traces or server internals" time="0.004" classname="04BookingsBookingGetOwn"/>
+    <testcase name="Client can retrieve owned booking" time="0.004" classname="04BookingsBookingGetOwn"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Freelancer Sees Booking" id="9bafa442-8d8a-49fe-bd83-42f2501f0914" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Response does not leak stack traces or server internals" time="0.004" classname="04BookingsBookingFreelancerSeesBooking"/>
+    <testcase name="Freelancer sees the booking made on their gig" time="0.004" classname="04BookingsBookingFreelancerSeesBooking"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Reject Missing JWT" id="a826f432-59ef-41c1-a4fa-48221cb91dec" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="04BookingsBookingRejectMissingJwt"/>
+    <testcase name="Booking creation requires authentication" time="0.002" classname="04BookingsBookingRejectMissingJwt"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Reject Freelancer Role" id="0c850370-dacf-4d66-9d0e-740732e1097f" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="04BookingsBookingRejectFreelancerRole"/>
+    <testcase name="Freelancer cannot create client booking" time="0.002" classname="04BookingsBookingRejectFreelancerRole"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Reject Invalid Gig ID" id="596a5208-11bf-4f94-aae8-d413a6e4eb64" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="04BookingsBookingRejectInvalidGigId"/>
+    <testcase name="Invalid gig identifier is rejected" time="0.002" classname="04BookingsBookingRejectInvalidGigId"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Reject Nonexistent Gig" id="243650f9-bb2a-466b-9df6-65d398c20e8a" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.007">
+    <testcase name="Response does not leak stack traces or server internals" time="0.007" classname="04BookingsBookingRejectNonexistentGig"/>
+    <testcase name="Nonexistent gig is rejected cleanly" time="0.007" classname="04BookingsBookingRejectNonexistentGig"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Reject Inactive Gig" id="2afd88b6-20c6-4ba2-afbb-7b4dc2386583" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.006">
+    <testcase name="Response does not leak stack traces or server internals" time="0.006" classname="04BookingsBookingRejectInactiveGig"/>
+    <testcase name="Inactive gig is unavailable for booking" time="0.006" classname="04BookingsBookingRejectInactiveGig"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Reject Amount Override" id="351ec262-abc7-4492-9d71-188d36ef0916" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="04BookingsBookingRejectAmountOverride"/>
+    <testcase name="Amount override is rejected" time="0.002" classname="04BookingsBookingRejectAmountOverride"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Reject Freelancer Override" id="bad092a3-482c-4f60-bcd8-2bd57ec8c133" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="04BookingsBookingRejectFreelancerOverride"/>
+    <testcase name="Freelancer override is rejected" time="0.002" classname="04BookingsBookingRejectFreelancerOverride"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Reject Client Override" id="67d59051-22cc-4eba-af90-8eeb946a0c26" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="04BookingsBookingRejectClientOverride"/>
+    <testcase name="Client override is rejected" time="0.002" classname="04BookingsBookingRejectClientOverride"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Other Client Cannot Read" id="7cd614c1-a3a7-47d6-85c8-6478188c6b88" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Response does not leak stack traces or server internals" time="0.004" classname="04BookingsBookingOtherClientCannotRead"/>
+    <testcase name="Another client cannot retrieve the private booking" time="0.004" classname="04BookingsBookingOtherClientCannotRead"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Freelancer Success" id="ed01bb9b-74b1-43fe-a820-8342f8ac5bab" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.007">
+    <testcase name="Response does not leak stack traces or server internals" time="0.007" classname="05IncomeIncomeFreelancerSuccess"/>
+    <testcase name="Freelancer income matches the booking transaction" time="0.007" classname="05IncomeIncomeFreelancerSuccess"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Freelancer Without Bookings" id="7f2dbcbf-56f3-4792-8453-310999d37569" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Response does not leak stack traces or server internals" time="0.004" classname="05IncomeIncomeFreelancerWithoutBookings"/>
+    <testcase name="Income is scoped to the authenticated freelancer" time="0.004" classname="05IncomeIncomeFreelancerWithoutBookings"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Reject Client Role" id="720ae901-eecb-4014-8512-e571e5620890" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="05IncomeIncomeRejectClientRole"/>
+    <testcase name="Client cannot read freelancer income" time="0.002" classname="05IncomeIncomeRejectClientRole"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Reject Missing JWT" id="293339a0-2d8a-4627-8698-525d0518a671" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="05IncomeIncomeRejectMissingJwt"/>
+    <testcase name="Income requires authentication" time="0.002" classname="05IncomeIncomeRejectMissingJwt"/>
+  </testsuite>
+  <testsuite name="06 Admin / Admin - List Users" id="17e8f74d-dc26-41e8-bee1-8e349adc42e8" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Response does not leak stack traces or server internals" time="0.004" classname="06AdminAdminListUsers"/>
+    <testcase name="Admin sees the accounts from this run with safe fields only" time="0.004" classname="06AdminAdminListUsers"/>
+  </testsuite>
+  <testsuite name="06 Admin / Admin - List Bookings" id="8b44184b-8771-43f1-8ba8-033a100bcf27" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Response does not leak stack traces or server internals" time="0.004" classname="06AdminAdminListBookings"/>
+    <testcase name="Admin sees the booking from this run" time="0.004" classname="06AdminAdminListBookings"/>
+  </testsuite>
+  <testsuite name="06 Admin / Admin - Create Gig For Removal" id="e4914e37-a68b-47b1-bc99-b2c0aaffdd9f" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.006">
+    <testcase name="Response does not leak stack traces or server internals" time="0.006" classname="06AdminAdminCreateGigForRemoval"/>
+    <testcase name="Freelancer creates a gig for the admin removal tests" time="0.006" classname="06AdminAdminCreateGigForRemoval"/>
+  </testsuite>
+  <testsuite name="06 Admin / Admin - Reject Client Gig Removal" id="7e5da74d-8a1d-43ef-b3d4-bbdb9e83f627" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="06AdminAdminRejectClientGigRemoval"/>
+    <testcase name="Client cannot use the admin gig removal route" time="0.002" classname="06AdminAdminRejectClientGigRemoval"/>
+  </testsuite>
+  <testsuite name="06 Admin / Admin - Gig Survives Client Attempt" id="218e4594-ce63-48b3-97c4-1386859f1955" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Response does not leak stack traces or server internals" time="0.004" classname="06AdminAdminGigSurvivesClientAttempt"/>
+    <testcase name="Gig still exists after the rejected client attempt" time="0.004" classname="06AdminAdminGigSurvivesClientAttempt"/>
+  </testsuite>
+  <testsuite name="06 Admin / Admin - Remove Gig" id="36f0ad1b-2afe-431d-853f-578d9f1181cc" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.006">
+    <testcase name="Response does not leak stack traces or server internals" time="0.006" classname="06AdminAdminRemoveGig"/>
+    <testcase name="Admin removes a gig owned by another user" time="0.006" classname="06AdminAdminRemoveGig"/>
+  </testsuite>
+  <testsuite name="06 Admin / Admin - Removed Gig Gone" id="8e9ee607-94b5-467d-aa8f-e06b03b65420" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Response does not leak stack traces or server internals" time="0.004" classname="06AdminAdminRemovedGigGone"/>
+    <testcase name="Removed gig is no longer retrievable" time="0.004" classname="06AdminAdminRemovedGigGone"/>
+  </testsuite>
+  <testsuite name="06 Admin / Admin - Remove Gig Invalid ID" id="2cedef0f-fa15-4675-a083-96372c4b454c" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="06AdminAdminRemoveGigInvalidId"/>
+    <testcase name="Malformed gig ID is rejected" time="0.002" classname="06AdminAdminRemoveGigInvalidId"/>
+  </testsuite>
+  <testsuite name="06 Admin / Admin - Remove Nonexistent Gig" id="0d8c7b0e-398a-44b0-99b7-25cdb30cb981" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Response does not leak stack traces or server internals" time="0.004" classname="06AdminAdminRemoveNonexistentGig"/>
+    <testcase name="Unknown gig ID returns a controlled 404" time="0.004" classname="06AdminAdminRemoveNonexistentGig"/>
+  </testsuite>
+  <testsuite name="06 Admin / Admin - Reject Client Role" id="501e3cb3-0eb0-4a37-a78b-a0d2d251520f" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="06AdminAdminRejectClientRole"/>
+    <testcase name="Client cannot list users" time="0.002" classname="06AdminAdminRejectClientRole"/>
+  </testsuite>
+  <testsuite name="06 Admin / Admin - Reject Freelancer Role" id="d8d9fd98-1384-4514-aa5f-0c6fc81cd017" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="06AdminAdminRejectFreelancerRole"/>
+    <testcase name="Freelancer cannot list users" time="0.002" classname="06AdminAdminRejectFreelancerRole"/>
+  </testsuite>
+  <testsuite name="06 Admin / Admin - Reject Missing JWT" id="db6eb70e-e322-43b5-80bc-b3b9415541a1" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="06AdminAdminRejectMissingJwt"/>
+    <testcase name="Admin routes require authentication" time="0.002" classname="06AdminAdminRejectMissingJwt"/>
+  </testsuite>
+  <testsuite name="07 Security and Errors / Malformed JSON" id="cca76310-0b60-48bb-89d3-2cd28dc9e09d" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="07SecurityAndErrorsMalformedJson"/>
+    <testcase name="Malformed JSON receives a controlled 400" time="0.002" classname="07SecurityAndErrorsMalformedJson"/>
+  </testsuite>
+  <testsuite name="07 Security and Errors / Unknown Route" id="18d330b0-9e8f-4b19-8226-d0eb81d7552b" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="07SecurityAndErrorsUnknownRoute"/>
+    <testcase name="Unknown route receives a controlled 404" time="0.002" classname="07SecurityAndErrorsUnknownRoute"/>
+  </testsuite>
+  <testsuite name="07 Security and Errors / Oversized Body" id="97c6fb05-a2bd-4803-89d7-699567854c3f" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Response does not leak stack traces or server internals" time="0.003" classname="07SecurityAndErrorsOversizedBody"/>
+    <testcase name="Body over the 10kb limit receives a controlled 413" time="0.003" classname="07SecurityAndErrorsOversizedBody"/>
+  </testsuite>
+  <testsuite name="07 Security and Errors / NoSQL Operator - Login Email" id="bfb2266c-85b0-496c-b519-2524692b4938" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="07SecurityAndErrorsNoSqlOperatorLoginEmail"/>
+    <testcase name="Operator object in login email is rejected" time="0.002" classname="07SecurityAndErrorsNoSqlOperatorLoginEmail"/>
+  </testsuite>
+  <testsuite name="07 Security and Errors / NoSQL Operator - Gig Update Title" id="4d0e1350-4b2b-4f77-ab05-48129da230f1" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Response does not leak stack traces or server internals" time="0.003" classname="07SecurityAndErrorsNoSqlOperatorGigUpdateTitle"/>
+    <testcase name="Operator object in gig title is rejected" time="0.003" classname="07SecurityAndErrorsNoSqlOperatorGigUpdateTitle"/>
+  </testsuite>
+  <testsuite name="07 Security and Errors / NoSQL Operator - Booking Gig ID" id="7d771af3-5045-4dc0-85d3-a00637eea5a3" timestamp="2026-10-08T12:21:25.737Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Response does not leak stack traces or server internals" time="0.003" classname="07SecurityAndErrorsNoSqlOperatorBookingGigId"/>
+    <testcase name="Operator object in booking gig ID is rejected" time="0.003" classname="07SecurityAndErrorsNoSqlOperatorBookingGigId"/>
+  </testsuite>
+  <testsuite name="08 Rate Limiting / Login Limit - Blocks After 5 Attempts" id="bb5523a9-a454-4515-ad6d-d4a575168800" timestamp="2026-10-08T12:21:25.737Z" tests="3" failures="0" errors="0" time="0.003">
+    <testcase name="Response does not leak stack traces or server internals" time="0.002" classname="08RateLimitingLoginLimitBlocksAfter5Attempts"/>
+    <testcase name="Attempt 1 below the limit is rejected as invalid credentials" time="0.002" classname="08RateLimitingLoginLimitBlocksAfter5Attempts"/>
+    <testcase name="Attempt 2 below the limit is rejected as invalid credentials" time="0.002" classname="08RateLimitingLoginLimitBlocksAfter5Attempts"/>
+    <testcase name="Attempt 3 below the limit is rejected as invalid credentials" time="0.002" classname="08RateLimitingLoginLimitBlocksAfter5Attempts"/>
+    <testcase name="Auth limiter blocks further login attempts" time="0.002" classname="08RateLimitingLoginLimitBlocksAfter5Attempts"/>
+    <testcase name="Rate-limit headers describe the policy" time="0.002" classname="08RateLimitingLoginLimitBlocksAfter5Attempts"/>
+  </testsuite>
+  <testsuite name="08 Rate Limiting / Login Limit - Spoofed X-Forwarded-For Still Blocked" id="07104c29-7d9a-408f-8b34-b625f99727dc" timestamp="2026-10-08T12:21:25.737Z" tests="3" failures="0" errors="0" time="0.003">
+    <testcase name="Response does not leak stack traces or server internals" time="0.003" classname="08RateLimitingLoginLimitSpoofedXForwardedForStillBlocked"/>
+    <testcase name="Forged client IP header does not reset the limit" time="0.003" classname="08RateLimitingLoginLimitSpoofedXForwardedForStillBlocked"/>
+    <testcase name="Frontend can read Retry-After on a 429" time="0.003" classname="08RateLimitingLoginLimitSpoofedXForwardedForStillBlocked"/>
+  </testsuite>
+</testsuites>

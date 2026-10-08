@@ -270,20 +270,54 @@ The default address is `https://localhost:4000`. The certificate is self-signed,
 
 The [`postman`](postman/) folder contains:
 
-- `HustleHubPlus-Part1.postman_collection.json`
-- `HustleHubPlus-Local.postman_environment.json`
-- Import and execution instructions in [`postman/README.md`](postman/README.md)
+- `postman_collection.json` - the **HustleHub+ Part 2 - API Tests** collection
+- `postman_environment.json` - the **HustleHub+ Part 2 - Local** environment
+- Folder details, admin set-up, run instructions and caveats in [`postman/README.md`](postman/README.md)
 
-The concise collection contains 11 ordered requests covering:
+The collection contains 79 requests grouped by domain and run in order:
 
-- HTTPS health and security headers
-- Successful client and freelancer registration
-- Missing-field, forbidden-role, malicious-input, and duplicate-email failures
-- Successful login and automatic JWT capture
-- Generic invalid-login handling
-- Protected access with and without a JWT
+| Folder | Requests | Covers |
+|---|---|---|
+| `01 Health and Security Headers` | 3 | HTTPS, Helmet headers and the CORS allow-list |
+| `02 Authentication` | 18 | Admin login, registration, login, invalid login, JWT capture and invalid tokens |
+| `03 Gigs` | 21 | Gig browsing, freelancer CRUD, ownership, role checks, sanitisation and validation |
+| `04 Bookings` | 13 | Client bookings, simulated transactions, ownership and invalid gigs |
+| `05 Income` | 4 | Freelancer income and wrong-role rejection |
+| `06 Admin` | 12 | Admin user and booking lists, admin gig removal and rejection of non-admin requests |
+| `07 Security and Errors` | 6 | Malformed JSON, unknown routes, oversized bodies and NoSQL operator payloads on login, gigs and bookings |
+| `08 Rate Limiting` | 2 | Failed-login rate limiting, `Retry-After` headers and forged `X-Forwarded-For` headers |
 
-Select the supplied environment, temporarily disable Postman's SSL verification for this local self-signed certificate, and run the collection once in its existing order.
+Each run generates unique test accounts, so it works against the persistent MongoDB database. Test scripts capture user IDs, JWTs, gig IDs and booking IDs automatically, and every response is checked for leaked stack traces or server internals.
+
+### Admin Account
+
+The admin tests log in as `admin.demo@hustlehub.test`. Public registration rejects the `admin` role, so create the account once per database: register it as a normal user, then set its role in MongoDB. With the API running, in PowerShell 7 (replace `<admin-password>` and use the database named in your `MONGO_URI`):
+
+```powershell
+Invoke-RestMethod -Method Post -Uri https://localhost:4000/api/auth/register -SkipCertificateCheck -ContentType 'application/json' -Body (@{ fullName = 'Demo Admin'; email = 'admin.demo@hustlehub.test'; password = '<admin-password>'; role = 'client' } | ConvertTo-Json)
+```
+
+```powershell
+docker exec hustlehub-mongo mongosh hustlehub-test --quiet --eval "db.users.updateOne({ email: 'admin.demo@hustlehub.test' }, { `$set: { role: 'admin' } })"
+```
+
+The backtick before `$set` stops PowerShell expanding it. Restart the API afterwards, because the registration counts towards the register limit.
+
+### Automated Run With Newman
+
+With the API running over HTTPS and the local certificate in `api/certs/`, run the suite from the repository root in PowerShell, passing the admin password at run time:
+
+```powershell
+cd api; npm run test:api --silent -- --env-var 'adminPassword=<admin-password>'
+```
+
+The admin password is never stored in the collection or environment file. `--silent` stops npm echoing it above the results. If it is missing or the admin login fails, the run stops early with one failure explaining what to fix.
+
+Newman runs every folder, prints the results and writes a JUnit report to `evidence/part2/newman-report.xml`. A valid run finishes with zero failed assertions.
+
+The rate limiters are keyed by IP address and keep their counters in memory. A full run makes 8 of the 10 registrations allowed per hour, 8 of the 10 booking requests allowed per 15 minutes, and 2 failed logins before `08 Rate Limiting` uses up the rest of the 5 failed logins allowed per 15 minutes to confirm the `429` response. Successful logins do not count. Restart the API before running the collection again, because the counters reset on restart; otherwise wait up to 1 hour. If the budget is already used, the run stops at the admin login or the first registration with a message saying to restart the API.
+
+To run the collection in the Postman app instead, import both files, select the environment, set the current value of `adminPassword`, trust `api/certs/localhost-cert.pem` as a CA certificate or temporarily disable SSL verification, and run the collection in its existing order.
 
 ## Screenshot Evidence
 

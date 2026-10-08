@@ -65,6 +65,56 @@ The root redirects to /gigs. Unknown paths show a page-not-found screen. All rou
 
 The booking API was completed by James following reassignment. The table above assigns the later frontend pages, not ownership of already completed backend work.
 
+## Demonstration Accounts
+
+HustleHub+ supports three application roles: Client, Freelancer and Administrator.
+
+### Administrator Access
+
+A dedicated administrator account is available for assessment and demonstration.
+
+| Field | Details |
+|---|---|
+| Role | Administrator |
+| Email | `admin.demo@hustlehub.test` |
+| Password | testingtesting |
+| Login | `http://localhost:5173/login` |
+| Dashboard | `http://localhost:5173/admin` |
+
+The administrator can:
+
+- View registered users without accessing password hashes.
+- View platform booking records.
+- View active marketplace gigs.
+- Remove gigs through a protected administrative endpoint.
+
+The demonstration account must exist in the MongoDB database configured through the backend's `MONGO_URI`.
+
+### Administrator Security
+
+Administrator accounts cannot be created through public registration.
+
+The demonstration account was created as a normal user and assigned the `admin` role directly through MongoDB Atlas.
+
+All administration API endpoints require a valid JWT and the `admin` role.
+
+The React frontend hides administration navigation from normal users, but the backend remains responsible for enforcing access restrictions.
+
+Requests without authentication receive `401 Unauthorized`. Authenticated clients and freelancers attempting administrator-only operations receive `403 Forbidden`.
+
+### Assessment Instructions
+
+1. Start the Express backend and React frontend using the setup instructions in this README.
+2. Use the demonstration administrator email and the password supplied privately with the assessment.
+3. Open the Administration dashboard.
+4. Inspect the registered user and booking lists.
+5. Test gig removal using a disposable demonstration listing.
+6. Sign out and verify that the administrator interface is no longer accessible.
+
+For a fresh, separate MongoDB database, an administrator account must first be provisioned by an authorised database operator. The application deliberately provides no public endpoint for creating administrators.
+
+**Security note:** Administrator credentials, JWT signing secrets and MongoDB connection strings must never be committed to GitHub.
+
 ## Shared architecture
 
 - `services/api.js`: JSON transport, safe errors, abort/timeout support and token storage primitives.

@@ -1,3 +1,4 @@
+
 require('dotenv').config();
 
 const express = require('express');
@@ -13,6 +14,7 @@ const authRoutes = require('./routes/authRoutes');
 const gigRoutes = require('./routes/gigRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const incomeRoutes = require('./routes/incomeRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const {
   notFoundHandler,
@@ -58,11 +60,11 @@ app.use(
   cors({
     origin: CLIENT_ORIGIN,
     methods: [
-  'GET',
-  'POST',
-  'PUT',
-  'DELETE'
-],
+      'GET',
+      'POST',
+      'PUT',
+      'DELETE'
+    ],
     allowedHeaders: ['Content-Type', 'Authorization'],
     // Lets the React client tell users how long a rate limit lasts.
     exposedHeaders: ['Retry-After']
@@ -100,6 +102,9 @@ app.use('/api/bookings', bookingRoutes);
 
 // Income endpoints.
 app.use('/api/income', incomeRoutes);
+
+// Administration endpoints.
+app.use('/api/admin', adminRoutes);
 
 // Handle requests that do not match any defined route.
 app.use(notFoundHandler);

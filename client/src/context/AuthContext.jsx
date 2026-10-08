@@ -1,3 +1,4 @@
+
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ApiError, apiRequest, clearToken, getToken, saveToken } from '../services/api';
 import { AuthContext } from './auth-context';
@@ -88,6 +89,7 @@ export function AuthProvider({ children }) {
 
   const request = useCallback(async (path, options = {}) => {
     const token = tokenRef.current;
+    const version = versionRef.current;
 
     if (session.status !== 'authenticated' || !token) {
       throw new ApiError('Please sign in to continue.', 401);
@@ -95,13 +97,18 @@ export function AuthProvider({ children }) {
 
     try {
       const data = await apiRequest(path, { ...options, token });
-      if (tokenRef.current !== token) {
+
+      // The session version also detects logout and rapid re-login with the same JWT.
+      if (version !== versionRef.current || tokenRef.current !== token) {
         throw new DOMException('The session changed.', 'AbortError');
       }
+
       return data;
     } catch (error) {
       // A stale request must not sign out a newer session.
-      if (error.status === 401 && tokenRef.current === token) logout();
+      if (error.status === 401 && version === versionRef.current && tokenRef.current === token) {
+        logout();
+      }
       throw error;
     }
   }, [logout, session.status]);
