@@ -1,0 +1,66 @@
+/* Client bookings: inline confirmation on gig cards and a ruled history table. */
+
+.booking-confirm, .booking-done { display: grid; gap: 0.75rem; width: 100%; }
+.booking-confirm p, .booking-done p { margin: 0; font-size: 0.875rem; line-height: 1.6; }
+.booking-done-title { font-weight: 650; }
+.booking-confirm .booking-note, .booking-done .booking-note { color: var(--muted); font-size: 0.8125rem; }
+.booking-buttons { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.booking-buttons button { min-height: 40px; padding: 0.6rem 0.9rem; }
+.booking-done a { color: #ffffff; font-size: 0.875rem; text-underline-offset: 5px; }
+.booking-ref { color: #ffffff; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.04em; }
+
+.bookings-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.bookings-summary > div { flex: 1 1 200px; padding: 1.5rem 1.75rem; background: #000000; }
+.bookings-summary dt { color: var(--muted); font-size: 0.65rem; font-weight: 650; letter-spacing: 0.16em; text-transform: uppercase; }
+.bookings-summary dd { margin: 0.5rem 0 0; font-size: 1.75rem; font-weight: 600; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+
+.bookings-table { width: 100%; margin-top: 2.5rem; border-collapse: collapse; font-size: 0.875rem; }
+.bookings-table th {
+  padding: 0 1rem 0.85rem 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.bookings-table td { padding: 1.1rem 1rem 1.1rem 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+.bookings-table .num { padding-right: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.booking-title { font-weight: 600; overflow-wrap: anywhere; }
+.booking-sub { display: block; margin-top: 0.25rem; color: var(--muted); font-size: 0.75rem; }
+.booking-missing { color: var(--muted); font-style: italic; }
+.booking-status {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--border);
+  font-size: 0.65rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.booking-status-confirmed { border-color: #f5f5f5; }
+
+/* Rows become labelled stacks on narrow screens. */
+@media (max-width: 720px) {
+  .bookings-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .bookings-table, .bookings-table tbody, .bookings-table tr, .bookings-table td { display: block; width: 100%; }
+  .bookings-table tr { padding: 1rem 0; border-bottom: 1px solid var(--border); }
+  .bookings-table td { display: flex; justify-content: space-between; gap: 1rem; padding: 0.35rem 0; border: 0; text-align: right; }
+  .bookings-table td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: 0.65rem;
+    font-weight: 650;
+    letter-spacing: 0.16em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+}
