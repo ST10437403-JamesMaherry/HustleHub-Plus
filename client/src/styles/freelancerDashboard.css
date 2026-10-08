@@ -1,0 +1,193 @@
+
+/* Freelancer dashboard layout */
+.freelancer-dashboard {
+  width: 100%;
+}
+
+.fd-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 3.5rem;
+  margin-bottom: 1rem;
+}
+
+.fd-caption {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.fd-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.fd-metric {
+  min-width: 0;
+  padding: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+.fd-metric-label {
+  margin: 0 0 2rem;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.fd-metric-value {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 550;
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
+}
+
+.fd-metric-description {
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+/* Booking section */
+.fd-bookings {
+  margin-top: 4rem;
+}
+
+.fd-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.fd-section-heading .eyebrow {
+  margin-bottom: 0.75rem;
+}
+
+.fd-section-heading h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 550;
+  letter-spacing: -0.035em;
+}
+
+.fd-booking-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
+}
+
+.fd-booking {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.fd-booking-main {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.fd-booking-reference {
+  color: #ffffff;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.fd-booking-date {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.fd-booking-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.fd-booking-status {
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: #dddddd;
+  font-size: 0.75rem;
+  text-transform: capitalize;
+}
+
+.fd-booking-amount {
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Controlled loading, empty and error states */
+.fd-empty,
+.fd-error {
+  padding: 1.75rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+
+.fd-empty p {
+  margin: 0;
+}
+
+.fd-empty p + p {
+  margin-top: 0.5rem;
+}
+
+.fd-error {
+  margin-top: 1rem;
+  color: #f5f5f5;
+}
+
+/* Preserve readability on smaller screens. */
+@media (max-width: 640px) {
+  .fd-toolbar {
+    margin-top: 2.5rem;
+  }
+
+  .fd-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .fd-metric {
+    padding: 1.5rem;
+  }
+
+  .fd-bookings {
+    margin-top: 3rem;
+  }
+
+  .fd-booking {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .fd-booking-meta {
+    width: 100%;
+  }
+
+  .fd-section-heading {
+    align-items: flex-start;
+  }
+}
