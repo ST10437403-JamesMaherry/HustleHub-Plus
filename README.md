@@ -1,10 +1,18 @@
 # HustleHub+
 
-**INSY7314 Portfolio of Evidence - Part 1: Secure Foundations**
+**INSY7314 Portfolio of Evidence — Part 2: Secure Stack**
+
+HustleHub+ is a secure freelance marketplace built with MongoDB, Express, React and Node.js. Freelancers advertise services, clients browse and book those services, and administrators review users and bookings and remove gigs when necessary.
+
+Part 2 extends the Part 1 authentication foundation into a working full-stack application. It adds persistent MongoDB storage, a React interface, role-based access control, gig management, bookings, simulated transactions, freelancer income and automated backend and frontend testing.
 
 ## Demonstration Video
 
-[**Watch the HustleHub+ Part 1 demonstration on YouTube**](https://youtu.be/fm5UVAwE3pM)
+[Watch the HustleHub+ Part 2 demonstration on YouTube](https://youtu.be/laT6uWLJGro)
+
+**Video link placeholder:** replace the URL above with the recorded Part 2 demonstration link before submission.
+
+The demonstration covers registration and login, freelancer gig creation and editing, client booking and history, transaction recording, freelancer income, administration, security controls and test evidence.
 
 ## Group Members
 
@@ -14,419 +22,760 @@
 | Ewald Pagel | ST10257942 | [ST10257942](https://github.com/ST10257942) |
 | Mark Mansvelt | ST10438365 | [ST10438365MarkMansvelt](https://github.com/ST10438365MarkMansvelt) |
 
----
+## Contents
 
-HustleHub+ is a secure freelance marketplace for clients, freelancers, and administrators. The completed platform will allow freelancers to advertise services, clients to make bookings, and the system to record transactions, income, and estimated tax.
-
-Part 1 implements the secure backend foundation: an Express API with registration, login, password hashing, JWT authentication, HTTPS, input validation, security headers, and controlled error responses. MongoDB, the React frontend, marketplace features, RBAC, financial reporting, DevSecOps, and monitoring are introduced in later parts.
-
-## Table of Contents
-
-- [Demonstration Video](#demonstration-video)
-- [Group Members](#group-members)
-- [Architecture](#architecture)
+- [Implemented Features and Roles](#implemented-features-and-roles)
+- [Architecture and Frontend Integration](#architecture-and-frontend-integration)
 - [Technology Stack](#technology-stack)
 - [Project Structure](#project-structure)
+- [Installation and Configuration](#installation-and-configuration)
+- [Administrator Account](#administrator-account)
 - [API Endpoints](#api-endpoints)
 - [Security Design](#security-design)
-- [Installation and HTTPS Setup](#installation-and-https-setup)
-- [Postman Testing](#postman-testing)
+- [Automated Testing](#automated-testing)
+- [Assessment Evidence Map](#assessment-evidence-map)
 - [Screenshot Evidence](#screenshot-evidence)
 - [Response Status Codes](#response-status-codes)
-- [Part 1 Limitations and Part 2 Direction](#part-1-limitations-and-part-2-direction)
+- [Part 3 Direction](#part-3-direction)
 - [References](#references)
 
-## Architecture
+## Implemented Features and Roles
+
+| User | Available functionality | Access restrictions |
+|---|---|---|
+| Visitor | Browse active gigs; register as a client or freelancer; log in. | Booking, management, income and administration require authentication. |
+| Client | Browse and search gigs, confirm bookings, and view their booking history. | Cannot manage freelancer gigs, access another client's bookings, or use administrator endpoints. |
+| Freelancer | Create, view, edit, activate/deactivate and delete their own gigs; view their bookings and income. | Cannot manage another freelancer's gigs, create client bookings, or access another freelancer's income. |
+| Administrator | View safe user information and platform bookings; remove gigs. | Administrator access requires a verified JWT and the administrator role. Public registration cannot grant this role. |
+
+Bookings use simulated payments. No real payment processor or card details are required. Each successful booking creates a confirmed transaction associated with the booking, client and freelancer.
+
+Income is calculated from confirmed transactions belonging to the authenticated freelancer. The stored booking amount is a snapshot of the server-side gig price at the time of booking. Updating or deleting a gig does not remove the existing booking and transaction history.
+
+## Architecture and Frontend Integration
 
 ```mermaid
-flowchart LR
-    subgraph U["Untrusted zone"]
-        USERS["Client / Freelancer / Admin"]
-        POSTMAN["Postman test client"]
-        REACT["React frontend - Part 2"]
+flowchart TB
+    subgraph BROWSER["Browser and test clients"]
+        USER["Client / Freelancer / Administrator"]
+        REACT["React pages and components"]
+        AUTH["AuthContext and shared API service"]
+        TESTS["Postman / Newman"]
+        USER --> REACT --> AUTH
     end
 
-    TLS{{"HTTPS / TLS boundary"}}
+    TLS["HTTPS API boundary"]
 
-    subgraph A["Trusted application server"]
-        SEC["Helmet + CSP + CORS"]
-        BODY["10 KB JSON limit"]
-        ROUTES["Express routes"]
-        VALIDATE["Validation + JWT middleware"]
-        CTRL["Authentication controllers"]
-        BCRYPT["bcrypt hashing"]
-        JWT["JWT signing and verification"]
-        ERR["Controlled error handler"]
+    subgraph SERVER["Node.js and Express application"]
+        HTTP["Helmet / CSP / CORS / JSON body limit"]
+        ROUTES["Routes and endpoint middleware"]
+        GUARDS["JWT / Roles / Validation / Sanitisation / Rate limits"]
+        AUTHCTRL["Authentication"]
+        GIGCTRL["Gigs"]
+        MONEYCTRL["Bookings and income"]
+        ADMINCTRL["Administration"]
+        ERRORS["Controlled JSON errors"]
+        HTTP --> ROUTES --> GUARDS
+        GUARDS --> AUTHCTRL
+        GUARDS --> GIGCTRL
+        GUARDS --> MONEYCTRL
+        GUARDS --> ADMINCTRL
+        ROUTES --> ERRORS
     end
 
-    subgraph D["Data zone"]
-        MEMORY["In-memory user store - Part 1"]
-        MONGO[("MongoDB - Part 2")]
+    subgraph DATA["MongoDB Atlas data boundary"]
+        MODELS["Mongoose models and schemas"]
+        DATABASE[("Users / Gigs / Bookings / Transactions")]
+        MODELS --> DATABASE
     end
 
-    USERS --> POSTMAN
-    USERS --> REACT
-    POSTMAN --> TLS --> SEC --> BODY --> ROUTES --> VALIDATE --> CTRL
-    REACT --> TLS
-    CTRL --> BCRYPT --> MEMORY
-    CTRL --> JWT
-    CTRL --> ERR
-    MEMORY -.->|"replaced later"| MONGO
+    AUTH --> TLS
+    TESTS --> TLS
+    TLS --> HTTP
+    AUTHCTRL --> MODELS
+    GIGCTRL --> MODELS
+    MONEYCTRL --> MODELS
+    ADMINCTRL --> MODELS
 ```
 
-The main trust boundaries are:
+The diagram groups the endpoint controls for readability. Their exact order is defined in each route file. For example, booking creation verifies the JWT and client role before applying the booking limiter and request validation.
 
-| Boundary | Protection |
+### How React connects to the API
+
+1. A React page or component collects user input and displays validation feedback.
+2. `AuthContext` manages login, logout and authenticated requests. It restores a saved session by checking `/api/auth/me` with the API.
+3. `client/src/services/api.js` builds requests against `VITE_API_URL`. Protected requests include `Authorization: Bearer <token>`; public requests omit the token.
+4. Express routes apply authentication, authorisation and input controls before the appropriate controller accesses MongoDB through Mongoose.
+5. The API returns JSON. React updates its state to show data, confirmation, loading feedback or a controlled error message.
+
+The React interface never connects directly to MongoDB. Database credentials and the JWT signing secret remain in the backend configuration.
+
+### Booking and income flow
+
+The client sends only the selected `gigId`. `bookingController.js` obtains the client ID from the verified JWT and the freelancer and price from the active gig in MongoDB. Client-supplied price or ownership overrides are rejected.
+
+The controller uses a MongoDB session and `withTransaction()` to save the booking and its simulated transaction together. Both records contain matching client, freelancer, amount and confirmed status information. If a database operation fails, the transaction prevents a partial financial record from being committed.
+
+`incomeController.js` aggregates confirmed transactions for the authenticated freelancer and returns `totalIncome` and `transactionCount`. The freelancer dashboard retrieves that summary and the freelancer's booking records through protected endpoints.
+
+### Trust boundaries
+
+| Boundary | Applied control |
 |---|---|
-| Network | HTTPS encrypts credentials, tokens, and responses in transit. |
-| Request | The body limit and validation middleware reject unsafe input before controller processing. |
-| Identity | Protected routes verify the Bearer token's signature and expiry. |
-| Storage | Only bcrypt password hashes are stored; plaintext passwords are never retained. |
-| Response | Fixed client-safe errors prevent stack traces, paths, configuration, and secrets from leaking. |
+| Browser to API | HTTPS encrypts API requests and responses. CORS specifies the frontend origin allowed to read API responses in a browser. |
+| Request to application logic | JSON size limits, expected field types, allowed fields, sanitisation and validation reject invalid input. |
+| Anonymous to authenticated operations | JWT signature and expiry verification run before protected controllers. |
+| Authenticated user to resources | Role checks and ownership-filtered queries restrict access to the user's permitted records. |
+| Application to database | Mongoose schemas, authenticated Atlas access, server-derived ownership and atomic booking transactions protect persistence. |
+| Server to response | Safe response objects and controlled errors keep password hashes and internal diagnostic information out of API responses. |
 
-See [`docs/architecture/hustlehub-architecture.md`](docs/architecture/hustlehub-architecture.md) for the detailed request flow and [`docs/architecture/hustlehub-architecture.mmd`](docs/architecture/hustlehub-architecture.mmd) for the editable diagram source.
+See the [detailed architecture document](docs/architecture/hustlehub-architecture.md) and [editable diagram source](docs/architecture/hustlehub-architecture.mmd).
 
 ## Technology Stack
 
-- Node.js and Express 5
-- JavaScript
-- bcrypt for password hashing
-- JSON Web Tokens through `jsonwebtoken`
-- Helmet and Content Security Policy headers
-- CORS allow-listing
-- HTTPS using Node's built-in `https` module
-- dotenv for local configuration
-- Postman for endpoint testing
-- An in-memory user store for Part 1
+| Area | Technology |
+|---|---|
+| Frontend | React, React Router, Vite and CSS |
+| Backend | Node.js, Express 5 and JavaScript |
+| Persistence | MongoDB Atlas and Mongoose |
+| Authentication | bcrypt password hashing and JWTs through `jsonwebtoken` |
+| API security | Helmet, CSP, CORS, validation, sanitisation and `express-rate-limit` |
+| Transport and configuration | Node HTTPS, local development certificates and dotenv |
+| Backend testing | Postman collections and Newman with JUnit evidence |
+| Frontend testing | Vitest, React Testing Library, user-event and jsdom |
 
 ## Project Structure
 
-```text
-INSY7314POE/
-|-- api/
-|   |-- controllers/       Authentication workflows
-|   |-- middleware/        Validation, JWT protection, and errors
-|   |-- models/            Temporary in-memory user store
-|   |-- routes/            Authentication routes
-|   |-- utils/             bcrypt and JWT helpers
-|   |-- .env.example       Safe configuration template
-|   |-- index.js           Express and HTTPS entry point
-|   `-- package.json
-|-- docs/architecture/     Architecture documentation and diagram source
-|-- evidence/part1/        Submission evidence
-|   `-- screenshots/       Setup, authentication, security, and Postman screenshots
-|-- postman/               Collection, environment, and import instructions
-|-- .gitignore
-`-- README.md
-```
+| Location | Purpose |
+|---|---|
+| `api/index.js` | Express setup, security headers, CORS, body limits, database startup and HTTPS. |
+| `api/config/db.js` | MongoDB connection configuration. |
+| `api/routes/` | Authentication, gig, booking, income and administrator endpoints. |
+| `api/middleware/` | JWT and role checks, validation, sanitisation, rate limits and controlled errors. |
+| `api/controllers/` | Authentication, marketplace, booking, income and administration workflows. |
+| `api/models/` | `User`, `Gig`, `Booking` and `Transaction` Mongoose schemas. |
+| `api/utils/` | Password hashing/comparison and JWT signing/verification. |
+| `client/src/App.jsx` | Frontend routing and role-specific pages. |
+| `client/src/context/` | Authentication state, session restoration and authenticated requests. |
+| `client/src/services/api.js` | Shared API requests, safe responses, timeouts and controlled errors. |
+| `client/src/pages/` | Registration, login, marketplace and role-specific management/dashboard pages. |
+| `client/src/components/` | Reusable forms, route guards, gig controls and booking interactions. |
+| `client/src/test/` | Automated frontend rendering, interaction and API-service tests. |
+| `postman/` | API collection, local environment and detailed runner instructions. |
+| `docs/architecture/` | Architecture documentation and Mermaid source. |
+| `evidence/part1/screenshots/` | Retained Part 1 foundation evidence. |
+| `evidence/part2/` | Part 2 application screenshots, API captures and automated test reports. |
 
-Local `.env`, certificate, private-key, dependency, and log files are excluded from Git.
+## Installation and Configuration
 
-## API Endpoints
+### Prerequisites
 
-| Method | Endpoint | Access | Purpose |
-|---|---|---|---|
-| `GET` | `/` | Public | Returns basic API information. |
-| `GET` | `/health` | Public | Confirms availability and reports HTTP or HTTPS mode. |
-| `POST` | `/api/auth/register` | Public | Registers a client or freelancer. |
-| `POST` | `/api/auth/login` | Public | Verifies credentials and returns a signed JWT. |
-| `GET` | `/api/auth/me` | Bearer JWT | Returns the authenticated user's safe profile. |
+- Node.js and npm compatible with the project dependencies.
+- Git and OpenSSL.
+- A MongoDB Atlas database with database-user credentials and network access configured for the machine running the API.
+- Postman Desktop for manual collection runs, if required.
 
-### Register
+Use the committed `package-lock.json` files for repeatable dependency installation. The following setup commands are for a fresh clone.
 
-```json
-{
-  "fullName": "Test Client",
-  "email": "client@example.com",
-  "password": "Password123!",
-  "role": "client"
-}
-```
-
-Registration applies these rules before hashing or storage:
-
-- All four fields are required and must be strings.
-- Names are trimmed, limited to 2-80 characters, and checked for invalid or control characters.
-- Emails are trimmed, converted to lowercase, limited to 254 characters, and format-checked.
-- Passwords must contain 8-72 UTF-8 bytes and are not trimmed.
-- Public roles are limited to `client` and `freelancer`; public `admin` registration is rejected.
-- Unexpected properties are removed before the controller runs.
-- Duplicate emails return `409 Conflict`.
-
-A successful response contains the new UUID, full name, normalised email, and role. It never contains the password or password hash.
-
-### Login
-
-```json
-{
-  "email": "client@example.com",
-  "password": "Password123!"
-}
-```
-
-The email is normalised before lookup and the submitted password is compared with the stored bcrypt hash. Unknown users and incorrect passwords both return the generic response below to reduce account-enumeration information:
-
-```json
-{
-  "error": "Invalid credentials"
-}
-```
-
-Successful login returns safe user data and a signed JWT. The application-specific token claims are limited to the user's `id` and `role`; the library also adds issued-at and expiry timestamps.
-
-### Protected Profile
-
-Send the token returned by login as:
-
-```text
-Authorization: Bearer <token>
-```
-
-`GET /api/auth/me` verifies the token signature and expiry on every request, then returns the matching user's safe profile. Missing, malformed, invalid, tampered, and expired tokens are rejected with controlled responses.
-
-## Security Design
-
-### Password Storage
-
-Passwords are hashed with bcrypt before storage and checked with bcrypt comparison during login. The work factor is configured through `BCRYPT_SALT_ROUNDS`; invalid or weak configuration falls back to 12 rounds. The 72-byte maximum is enforced because bcrypt implementations only process a limited input length. See the [OWASP Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html).
-
-### JWT Authentication
-
-Tokens are signed using the server-only `JWT_SECRET` and expire according to `JWT_EXPIRES_IN`. JWTs are signed, not encrypted, so sensitive values are never placed in the payload. Protected routes trust claims only after verification. JWT structure is defined by [RFC 7519](https://www.rfc-editor.org/rfc/rfc7519.html).
-
-### HTTPS and Headers
-
-Normal Part 1 execution uses a locally generated self-signed certificate. Helmet adds browser security headers, including a restrictive Content Security Policy and Cross-Origin Resource Policy. Express's `X-Powered-By` header is disabled. Production must use a certificate issued by a trusted Certificate Authority or managed hosting platform.
-
-### CORS and Request Limits
-
-`CLIENT_ORIGIN` defines the browser origin permitted to read API responses. The current API advertises only `GET` and `POST`, with `Content-Type` and `Authorization` request headers. CORS is browser-enforced and does not replace authentication. JSON bodies are limited to `10kb`; oversized bodies receive a controlled `413` response.
-
-### Error Handling
-
-Unknown routes pass to a controlled `404` handler. Other forwarded failures reach the final four-argument Express error middleware, following Express's [error-handling model](https://expressjs.com/en/guide/error-handling/). Client responses use fixed safe messages, while diagnostic details remain in server logs. Responses never intentionally expose stack traces, filesystem paths, environment values, JWT secrets, certificates, or password hashes.
-
-### Secret Management
-
-The real `.env`, JWT secret, SSL key, and certificate remain local and must never be committed, pasted into documentation, or included in screenshots or Postman exports. Only `.env.example` belongs in source control.
-
-## Installation and HTTPS Setup
-
-Prerequisites: Node.js, npm, Git, OpenSSL, and Postman.
-
-From the repository root:
+### 1. Clone and install
 
 ```bash
-cd api
-npm install
-cp .env.example .env
-mkdir -p certs
+git clone https://github.com/ST10437403-JamesMaherry/INSY7314POE.git
+cd INSY7314POE
+git switch dev
+
+npm --prefix api ci
+npm --prefix client ci
+
+cp api/.env.example api/.env
+cp client/.env.example client/.env
+mkdir -p api/certs
 ```
 
-Generate a JWT secret and place the result in the local `.env` file:
+### 2. Configure the API
+
+Generate a local signing secret:
 
 ```bash
 openssl rand -hex 32
 ```
 
-Generate the local development certificate and private key:
-
-```bash
-openssl req -x509 -newkey rsa:2048 -nodes -sha256 -days 365 -keyout certs/localhost-key.pem -out certs/localhost-cert.pem -subj "/CN=localhost" -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
-```
-
-Git Bash users may need `//CN=localhost` for the subject to avoid path rewriting.
-
-The local `.env` should contain:
+Set the following values in `api/.env`, replacing the placeholders with local configuration. The current assessment database is `hustlehub` in MongoDB Atlas.
 
 ```env
 PORT=4000
 APP_NAME=HustleHubPlusAPI
 NODE_ENV=development
 CLIENT_ORIGIN=http://localhost:5173
+
 USE_HTTPS=true
 SSL_KEY_PATH=./certs/localhost-key.pem
 SSL_CERT_PATH=./certs/localhost-cert.pem
+
+MONGO_URI=mongodb+srv://<database-user>:<database-password>@<cluster-host>/hustlehub?appName=HustleHubPlus
+
 BCRYPT_SALT_ROUNDS=12
-JWT_SECRET=replace_with_your_generated_secret
+JWT_SECRET=replace_with_your_generated_local_secret
 JWT_EXPIRES_IN=1h
 ```
 
-Start the API:
+Use database-user credentials in `MONGO_URI`. The Atlas connection must be available before the API starts; startup fails if the database connection cannot be established.
 
-```bash
-npm start
+### 3. Configure the frontend
+
+Set `client/.env` to:
+
+```env
+VITE_API_URL=https://localhost:4000
 ```
 
-Development mode uses:
+`VITE_API_URL` is the API origin only, without `/api` or a trailing path. Only the public API address belongs in the frontend configuration. Restart Vite after changing its environment values.
+
+### 4. Generate the local HTTPS certificate
+
+From the repository root:
 
 ```bash
-npm run dev
+openssl req -x509 -newkey rsa:2048 -nodes -sha256 -days 365 \
+  -keyout api/certs/localhost-key.pem \
+  -out api/certs/localhost-cert.pem \
+  -subj "/CN=localhost" \
+  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
 ```
 
-The default address is `https://localhost:4000`. The certificate is self-signed, so a local browser or Postman may display a trust warning. HTTP is available only for troubleshooting by setting `USE_HTTPS=false`; the Part 1 demonstration should use HTTPS.
+Trust `api/certs/localhost-cert.pem` in the local browser/operating system so the React application can call the HTTPS API. In Postman, add the certificate under **Settings > Certificates > CA certificates**. Newman uses `--ssl-extra-ca-certs` through the existing npm script.
 
-## Postman Testing
+The certificate is for local development. A deployed application requires a trusted certificate and the corresponding deployed frontend/API origins.
 
-The [`postman`](postman/) folder contains:
+### 5. Run the API and frontend
 
-- `postman_collection.json` - the **HustleHub+ Part 2 - API Tests** collection
-- `postman_environment.json` - the **HustleHub+ Part 2 - Local** environment
-- Folder details, admin set-up, run instructions and caveats in [`postman/README.md`](postman/README.md)
+Open two terminals at the repository root.
 
-The collection contains 79 requests grouped by domain and run in order:
+**API terminal:**
 
-| Folder | Requests | Covers |
+```bash
+npm --prefix api start
+```
+
+**Frontend terminal:**
+
+```bash
+npm --prefix client run dev
+```
+
+| Application | Local address |
+|---|---|
+| React frontend | `http://localhost:5173` |
+| HTTPS API | `https://localhost:4000` |
+| API health check | `https://localhost:4000/health` |
+
+Vite serves the frontend locally on port 5173. Authentication, marketplace and financial API requests use HTTPS on port 4000.
+
+For frontend linting and a production build:
+
+```bash
+npm --prefix client run lint
+npm --prefix client run build
+```
+
+## Administrator Account
+
+Public registration allows only `client` and `freelancer`. Administrator access is assigned directly in the assessment database rather than through the registration interface.
+
+Reuse the existing assessment account if it is already provisioned. For a fresh database:
+
+1. With the API running, register `admin.demo@hustlehub.test` as a normal client through the registration screen, using the chosen assessment password.
+2. In Atlas, open the `hustlehub` database and the `users` collection.
+3. Find the account by its email and change its `role` from `client` to `admin`. Preserve its existing password hash and other fields.
+4. Sign in again to obtain a JWT containing the administrator role.
+5. Set `adminEmail` and `adminPassword` in the selected local Postman environment, or supply the password at Newman run time.
+
+Provisioning registration consumes the registration allowance. Stop the API with `Ctrl+C` and restart it before a complete automated API cycle:
+
+```bash
+npm --prefix api start
+```
+
+Demonstration credentials supplied for marking are assessment credentials and will be removed and rotated after marking. The collection itself contains no administrator password or generated JWTs. Backend database credentials, the JWT signing secret and private keys remain outside the frontend and assessment documentation.
+
+## API Endpoints
+
+The default API origin is `https://localhost:4000`.
+
+| Method | Endpoint | Access | Purpose |
+|---|---|---|---|
+| `GET` | `/` | Public | Basic API information. |
+| `GET` | `/health` | Public | Availability and HTTP/HTTPS mode. |
+| `POST` | `/api/auth/register` | Public | Register a client or freelancer. |
+| `POST` | `/api/auth/login` | Public | Authenticate and return a signed JWT with safe user data. |
+| `GET` | `/api/auth/me` | Verified JWT | Retrieve the authenticated account's safe profile. |
+| `GET` | `/api/gigs` | Public | Browse active marketplace gigs. |
+| `GET` | `/api/gigs/mine` | Freelancer | List the freelancer's own active and inactive gigs. |
+| `GET` | `/api/gigs/:id` | Public | View an active gig. |
+| `POST` | `/api/gigs` | Freelancer | Create a gig owned by the authenticated freelancer. |
+| `PUT` | `/api/gigs/:id` | Owning freelancer | Update allowed gig fields. |
+| `DELETE` | `/api/gigs/:id` | Owning freelancer | Delete an owned gig. |
+| `POST` | `/api/bookings` | Client | Create a booking and its simulated transaction. |
+| `GET` | `/api/bookings/mine` | Client | Retrieve the client's own booking history. |
+| `GET` | `/api/bookings/freelancer` | Freelancer | Retrieve bookings associated with the freelancer. |
+| `GET` | `/api/bookings/:id` | Owning client | Retrieve one owned booking. |
+| `GET` | `/api/income/me` | Freelancer | Retrieve income and confirmed transaction count. |
+| `GET` | `/api/admin/users` | Administrator | View safe user records. |
+| `GET` | `/api/admin/bookings` | Administrator | View platform booking records. |
+| `DELETE` | `/api/admin/gigs/:id` | Administrator | Remove a marketplace gig. |
+
+### Example request bodies
+
+**Registration:**
+
+```json
+{
+  "fullName": "Demo Freelancer",
+  "email": "freelancer@example.com",
+  "password": "DemoPassword123!",
+  "role": "freelancer"
+}
+```
+
+**Gig creation:**
+
+```json
+{
+  "title": "Website design service",
+  "description": "A responsive website design service for a small business.",
+  "category": "Web Development",
+  "price": 800.25,
+  "active": true
+}
+```
+
+**Booking creation:** replace the sample ID with the actual active gig ID.
+
+```json
+{
+  "gigId": "000000000000000000000001"
+}
+```
+
+Protected requests use:
+
+```text
+Authorization: Bearer <token-from-login>
+```
+
+The example password is fictional. User and resource identifiers are MongoDB ObjectIds. Successful user responses contain only the fields required by the API contract, with no password or password hash.
+
+## Security Design
+
+### Passwords and JWTs
+
+Passwords are hashed with bcrypt before storage. Login compares the submitted password with the stored hash. The bcrypt work factor is configurable, with a secure default of 12 and a minimum configured value of 10. Registration and login enforce bcrypt's supported password-byte limit.
+
+Unknown accounts and incorrect passwords receive the same `Invalid credentials` response. JWT application claims contain the user ID and role; the token library adds issue and expiry timestamps. JWTs are signed using the backend-only secret, and protected routes verify the signature and expiry before using the claims.
+
+The frontend keeps the token in the tab's `sessionStorage`. `AuthContext` checks the account with `/api/auth/me` during session restoration and clears the session when an authenticated request returns `401`.
+
+### Roles and ownership
+
+Frontend route guards provide role-appropriate navigation. The API independently applies `protect` and `authorizeRoles` before sensitive operations.
+
+Ownership is included in database queries. Freelancer gig updates/deletions use the verified freelancer ID, client booking queries use the verified client ID, and income aggregation uses the verified freelancer ID. Administrator routes require the administrator role.
+
+The booking controller derives ownership and price from trusted server-side sources. Clients cannot choose the booking's freelancer, client ID or amount through request fields.
+
+### Validation and sanitisation
+
+- Request bodies must have the expected shape and field types. Arrays, object-valued credentials and unsupported fields are rejected where the endpoint contract requires primitive values.
+- Registration normalises names and email addresses, validates their format/length, enforces the password-byte limits and rejects public administrator registration.
+- Gig validation checks text lengths, category, boolean activity state and numeric price. Prices must be at least `0.01`, use no more than two decimal places and remain within the supported numeric range.
+- Gig text sanitisation removes script/style blocks, HTML comments, markup and unsafe control characters before validation.
+- Booking validation accepts the required gig identifier and rejects price or ownership overrides.
+- MongoDB identifiers are checked before lookups. Expected primitive inputs are used to construct queries rather than forwarding arbitrary request objects as database filters.
+- React renders text through JSX and displays validation, loading, confirmation and controlled error states.
+
+### HTTPS, security headers and CORS
+
+`api/index.js` configures HTTPS, Helmet and a restrictive API Content Security Policy. The configured directives include self-origin defaults, restrictions on scripts, no embedded objects and no framing. API responses also include headers such as HSTS, `X-Content-Type-Options` and `Referrer-Policy`; `X-Powered-By` is disabled.
+
+`CLIENT_ORIGIN` identifies the frontend origin permitted to read API responses in a browser. Allowed methods include `GET`, `POST`, `PUT` and `DELETE`; allowed request headers include `Content-Type` and `Authorization`. `Retry-After` is exposed so the frontend can explain rate limits.
+
+CORS controls browser response access; it does not grant application permissions. Browser document CSP is a separate policy from the API's response headers.
+
+### Rate limits and request size
+
+| Limiter | Endpoint | Allowance | Behaviour |
+|---|---|---|---|
+| Authentication | `POST /api/auth/login` | 5 failed attempts per 15 minutes | Successful logins do not consume the failed-login allowance. Once exhausted, further login requests are blocked until reset. |
+| Registration | `POST /api/auth/register` | 10 attempts per hour | Counts requests that reach the registration limiter. |
+| Booking | `POST /api/bookings` | 10 attempts per 15 minutes | Applied after JWT and client-role checks. |
+
+Limiters use the client IP and keep their counters in API process memory. Rejected requests receive `429`, a controlled message, `RateLimit-*` headers and `Retry-After`. The test suite checks that forged `X-Forwarded-For` headers do not bypass the limits.
+
+JSON bodies are limited to `10kb`. Malformed JSON returns `400`; oversized bodies return `413` before the route controller runs.
+
+### Controlled errors and configuration
+
+The final Express error handler produces bounded, safe JSON error responses. Unknown routes return `404`. Internal diagnostics remain on the server rather than in client responses; public responses omit stack traces, database error details, configuration values and password hashes.
+
+Local `.env` files, private keys, certificates and dependency directories are excluded from Git. Safe `.env.example` files document the configuration contract. The public frontend API URL is separate from backend credentials.
+
+## Automated Testing
+
+### Postman collection
+
+The [Postman folder](postman/) contains the **HustleHub+ Part 2 - Automated API Review** collection and **HustleHub+ Part 2 - Local** environment. See [postman/README.md](postman/README.md) for detailed runner instructions and troubleshooting.
+
+| Folder | Request definitions | Coverage |
+|---|---:|---|
+| 01 Health and Security Headers | 4 | HTTPS health, Helmet/CSP headers, CORS origins and preflight. |
+| 02 Authentication | 21 | Administrator login, unique account creation, registration/login failures, JWTs and protected profiles. |
+| 03 Gigs | 36 | Freelancer CRUD, ownership, roles, sanitisation, visibility and price boundaries. |
+| 04 Bookings | 18 | Booking/transaction consistency, history, ownership, roles and rejected fields or unavailable gigs. |
+| 05 Income | 4 | Confirmed income, freelancer isolation and authentication/role failures. |
+| 06 Administration | 18 | Safe user/booking views, restricted gig removal, preserved financial history and cleanup. |
+| 07 Security and Controlled Errors | 7 | Malformed JSON, body limits, unknown routes, NoSQL operator inputs and arrays. |
+| 08 Rate Limiting | 4 | Login and booking exhaustion, `429` response headers and forwarded-IP bypass rejection. |
+
+There are **112 request definitions**. Two bounded limiter loops can repeat requests, so executed request and assertion totals can be higher.
+
+Each complete cycle creates unique test clients and freelancers. Scripts capture tokens and resource IDs automatically. Later folders reuse that state and check prerequisites. The existing administrator is authenticated separately. The suite verifies safe responses and controlled failure cases as well as the successful marketplace workflow.
+
+### Run in Postman
+
+1. Start a fresh API process using `npm --prefix api start` from the repository root.
+2. Import `postman/postman_collection.json` and `postman/postman_environment.json`.
+3. Select **HustleHub+ Part 2 - Local** and set the assessment administrator values if needed.
+4. Trust the local certificate through Postman's CA certificate settings.
+5. Use the desktop/local Collection Runner with one iteration and no data file.
+6. Enable **Keep variable values** and **Stop run if an error occurs**.
+7. Run the complete collection, or run folders 01–08 individually in order. Keep the API running between folders.
+
+Save/export corrected requests back to the repository collection so Postman and Newman use the same configuration. Exported collection state should exclude generated JWTs and captured run identifiers.
+
+### Run with Newman
+
+Start a fresh API process in one terminal:
+
+```bash
+npm --prefix api start
+```
+
+In a second terminal at the repository root, run the existing npm script and explicitly select the evidence report path:
+
+```bash
+npm --prefix api run test:api --silent -- \
+  --reporter-junit-export ../evidence/part2/newman/newman-report.xml
+```
+
+If the exported environment has a blank administrator password, supply it at run time. Replace `<admin-password>` with the assessment password:
+
+```bash
+npm --prefix api run test:api --silent -- \
+  --env-var 'adminPassword=<admin-password>' \
+  --reporter-junit-export ../evidence/part2/newman/newman-report.xml
+```
+
+The script uses the repository collection/environment, trusts `api/certs/localhost-cert.pem`, and runs the CLI and JUnit reporters. The report path is relative to the npm script's `api` working directory. `--silent` suppresses npm's script-command echo.
+
+**Committed Newman evidence:** [JUnit report](evidence/part2/newman/newman-report.xml), [terminal summary](evidence/part2/newman/newman-summary.png) and [Postman Runner summary](evidence/part2/newman/postman-runner-summary.png).
+
+A successful cycle must complete all eight folders with zero failed assertions and no script errors. The committed reports and screenshots record the submitted results.
+
+### Repeatability and limiter capacity
+
+Before folder 08, the normal cycle uses eight registration attempts, nine authenticated client booking attempts and three failed login attempts. Folder 08 deliberately exhausts the remaining login and booking capacity. Its booking probes use an invalid gig ID and create no additional financial records.
+
+Stop the API with `Ctrl+C`, then restart before another complete cycle:
+
+```bash
+npm --prefix api start
+```
+
+This resets the in-memory counters. A full Postman run and a full Newman run each need their own fresh API process. The database persists across restarts, while unique test accounts prevent fixture collisions. Test accounts and the booking/transaction pair remain available for persistence evidence; the suite removes its captured test gigs during its cleanup checks.
+
+### Frontend tests
+
+`client/src/test/app.test.jsx` exercises login feedback, allowed registration roles, marketplace rendering/search, gig form validation, booking confirmation and role-based route behaviour. `client/src/test/api.test.js` checks the shared API service's token/destination behaviour. The frontend tests use jsdom and mocked API responses; the Newman suite separately exercises the real API and database.
+
+Run from the repository root:
+
+```bash
+npm --prefix client test
+```
+
+To write a JUnit report explicitly into the submitted frontend evidence folder:
+
+```bash
+npm --prefix client test -- \
+  --reporter=default \
+  --reporter=junit \
+  --outputFile=../evidence/part2/frontend-tests/react-tests.xml
+```
+
+**Committed frontend evidence:** [JUnit report](evidence/part2/frontend-tests/react-tests.xml) and [test summary](evidence/part2/frontend-tests/react-tests-summary.png).
+
+## Assessment Evidence Map
+
+This map connects the Part 2 assessment areas to implementation and evidence without requiring a reviewer to search the entire codebase.
+
+| Assessment area | Implementation to review | Evidence |
 |---|---|---|
-| `01 Health and Security Headers` | 3 | HTTPS, Helmet headers and the CORS allow-list |
-| `02 Authentication` | 18 | Admin login, registration, login, invalid login, JWT capture and invalid tokens |
-| `03 Gigs` | 21 | Gig browsing, freelancer CRUD, ownership, role checks, sanitisation and validation |
-| `04 Bookings` | 13 | Client bookings, simulated transactions, ownership and invalid gigs |
-| `05 Income` | 4 | Freelancer income and wrong-role rejection |
-| `06 Admin` | 12 | Admin user and booking lists, admin gig removal and rejection of non-admin requests |
-| `07 Security and Errors` | 6 | Malformed JSON, unknown routes, oversized bodies and NoSQL operator payloads on login, gigs and bookings |
-| `08 Rate Limiting` | 2 | Failed-login rate limiting, `Retry-After` headers and forged `X-Forwarded-For` headers |
-
-Each run generates unique test accounts, so it works against the persistent MongoDB database. Test scripts capture user IDs, JWTs, gig IDs and booking IDs automatically, and every response is checked for leaked stack traces or server internals.
-
-### Admin Account
-
-The admin tests log in as `admin.demo@hustlehub.test`. Public registration rejects the `admin` role, so create the account once per database: register it as a normal user, then set its role in MongoDB. With the API running, in PowerShell 7 (replace `<admin-password>` and use the database named in your `MONGO_URI`):
-
-```powershell
-Invoke-RestMethod -Method Post -Uri https://localhost:4000/api/auth/register -SkipCertificateCheck -ContentType 'application/json' -Body (@{ fullName = 'Demo Admin'; email = 'admin.demo@hustlehub.test'; password = '<admin-password>'; role = 'client' } | ConvertTo-Json)
-```
-
-```powershell
-docker exec hustlehub-mongo mongosh hustlehub-test --quiet --eval "db.users.updateOne({ email: 'admin.demo@hustlehub.test' }, { `$set: { role: 'admin' } })"
-```
-
-The backtick before `$set` stops PowerShell expanding it. Restart the API afterwards, because the registration counts towards the register limit.
-
-### Automated Run With Newman
-
-With the API running over HTTPS and the local certificate in `api/certs/`, run the suite from the repository root in PowerShell, passing the admin password at run time:
-
-```powershell
-cd api; npm run test:api --silent -- --env-var 'adminPassword=<admin-password>'
-```
-
-The admin password is never stored in the collection or environment file. `--silent` stops npm echoing it above the results. If it is missing or the admin login fails, the run stops early with one failure explaining what to fix.
-
-Newman runs every folder, prints the results and writes a JUnit report to `evidence/part2/newman/newman-report.xml`. A valid run finishes with zero failed assertions.
-
-The rate limiters are keyed by IP address and keep their counters in memory. A full run makes 8 of the 10 registrations allowed per hour, 8 of the 10 booking requests allowed per 15 minutes, and 2 failed logins before `08 Rate Limiting` uses up the rest of the 5 failed logins allowed per 15 minutes to confirm the `429` response. Successful logins do not count. Restart the API before running the collection again, because the counters reset on restart; otherwise wait up to 1 hour. If the budget is already used, the run stops at the admin login or the first registration with a message saying to restart the API.
-
-To run the collection in the Postman app instead, import both files, select the environment, set the current value of `adminPassword`, trust `api/certs/localhost-cert.pem` as a CA certificate or temporarily disable SSL verification, and run the collection in its existing order.
+| Application functionality | React [pages](client/src/pages/), [gig controller](api/controllers/gigController.js), [booking controller](api/controllers/bookingController.js), [income controller](api/controllers/incomeController.js). | [Marketplace and gigs](#marketplace-and-gigs), [bookings](#bookings-and-client-history), [database records](#database-persistence), [income](#freelancer-income). |
+| Roles and ownership | [JWT/role middleware](api/middleware/authMiddleware.js), [gig routes](api/routes/gigRoutes.js), [booking routes](api/routes/bookingRoutes.js), ownership-filtered controllers. | [Administration and access control](#administration-and-access-control) and the role/ownership cases in the API captures. |
+| JWT, validation and sanitisation | [Token helpers](api/utils/token.js), [middleware](api/middleware/), [shared frontend API service](client/src/services/api.js). | [Authentication](#authentication-evidence) and [security tests](#security-headers-errors-and-rate-limits). |
+| Rate limiting | [Rate limiter configuration](api/middleware/rateLimiters.js) and protected booking/login routes. | [Rate-limit captures](#security-headers-errors-and-rate-limits). |
+| Security headers | [Express/Helmet configuration](api/index.js). | [Health and security headers](evidence/part2/security/postman-01-health-headers.png). |
+| React integration and UX | [AuthContext](client/src/context/AuthContext.jsx), [route guards](client/src/components/ProtectedRoute.jsx), [booking interaction](client/src/components/bookings/BookGigAction.jsx). | Application screenshots and the [demonstration video](#demonstration-video). |
+| Backend API tests | [Postman collection](postman/postman_collection.json) and [Newman script](api/package.json). | [Newman JUnit](evidence/part2/newman/newman-report.xml) and [summary](evidence/part2/newman/newman-summary.png). |
+| Frontend rendering/interaction tests | [Component tests](client/src/test/app.test.jsx) and [API-service tests](client/src/test/api.test.js). | [React JUnit](evidence/part2/frontend-tests/react-tests.xml) and [summary](evidence/part2/frontend-tests/react-tests-summary.png). |
+| Documentation | This README, [Postman instructions](postman/README.md) and [architecture documentation](docs/architecture/hustlehub-architecture.md). | Setup, security explanations, endpoint contracts and evidence links. |
 
 ## Screenshot Evidence
 
-The screenshots below are stored in [`evidence/part1/screenshots/`](evidence/part1/screenshots/) and referenced using paths relative to this repository-root README.
+All paths below are relative to this repository-root README. Main application screenshots are embedded directly; detailed API captures are grouped in expandable sections.
 
-### Setup and HTTPS
+### Authentication Evidence
 
-**Fresh Clone Setup**
+**Successful frontend login**
 
-![Fresh clone setup](evidence/part1/screenshots/NewCloneSetUp.png)
+![Successful frontend login](evidence/part2/authentication/login-success.png)
 
-**HTTPS Health Check**
+<details>
+<summary>Authentication API test captures</summary>
 
-![HTTPS health check](evidence/part1/screenshots/HTTPS_HealthCheck.png)
+![Authentication API tests, capture 1](evidence/part2/authentication/postman-02-authentication.png)
 
-### Registration
+![Authentication API tests, capture 2](evidence/part2/authentication/postman-02-authentication-2.png)
 
-**Successful Registration**
+![Authentication API tests, capture 3](evidence/part2/authentication/postman-02-authentication-3.png)
 
-![Successful registration](evidence/part1/screenshots/RegisterSuccess.png)
+</details>
 
-**Duplicate Registration**
+### Marketplace and Gigs
 
-![Duplicate registration test](evidence/part1/screenshots/RegisterDuplicate.png)
+**Active marketplace listings**
 
-### Login
+![Marketplace listings](evidence/part2/gigs/marketplace.png)
 
-**Successful Login**
+**Freelancer gig creation**
 
-![Successful login](evidence/part1/screenshots/LoginSuccessful.png)
+![Freelancer gig created](evidence/part2/gigs/freelancer-gig-created.png)
 
-**Failed Login**
+**Freelancer gig update**
 
-![Failed login test](evidence/part1/screenshots/LoginFailed.png)
+![Freelancer gig edited](evidence/part2/gigs/freelancer-gig-edited.png)
 
-### JWT Authentication
+<details>
+<summary>Gig CRUD, validation and ownership API captures</summary>
 
-**Valid JWT**
+![Gig API tests, capture 1](evidence/part2/gigs/postman-03-gigs.png)
 
-![Protected-route test with a valid JWT](evidence/part1/screenshots/JWT_Valid.png)
+![Gig API tests, capture 2](evidence/part2/gigs/postman-03-gigs-2.png)
 
-**Invalid JWT**
+![Gig API tests, capture 3](evidence/part2/gigs/postman-03-gigs-3.png)
 
-![Protected-route test with an invalid JWT](evidence/part1/screenshots/JWT_Invalid.png)
+</details>
 
-### Input Validation and Request Limits
+### Bookings and Client History
 
-**Invalid Field Types**
+**Booking confirmation and simulated payment**
 
-![Invalid field types test](evidence/part1/screenshots/InvalidFieldTypes.png)
+![Booking confirmed](evidence/part2/bookings/booking-confirmed.png)
 
-**Malformed JSON**
+**Client booking history**
 
-![Malformed JSON test](evidence/part1/screenshots/Malformed_JSON.png)
+![Client booking history](evidence/part2/bookings/client-history.png)
 
-**Oversized Request Body**
+<details>
+<summary>Booking and transaction API captures</summary>
 
-![Oversized request body test](evidence/part1/screenshots/OversizedBody.png)
+![Booking API tests, capture 1](evidence/part2/bookings/postman-04-bookings.png)
 
-### CORS and Security Headers
+![Booking API tests, capture 2](evidence/part2/bookings/postman-04-bookings-2.png)
 
-**Allowed CORS Origin**
+</details>
 
-![Allowed CORS origin test](evidence/part1/screenshots/CORS_AllowedOrigin.png)
+### Database Persistence
 
-**Untrusted CORS Origin**
+These captures show the database side of the marketplace workflow. The booking and transaction records can be compared using their booking reference, client, freelancer, amount and status fields.
 
-![Untrusted CORS origin test](evidence/part1/screenshots/CORS_UntrustedOrigin.png)
+<details>
+<summary>MongoDB Atlas persistence and linked financial records</summary>
 
-**Security Headers — Screenshot 1**
+**Database persistence overview**
 
-![Security headers screenshot 1](evidence/part1/screenshots/SecurityHeaders1.png)
+![MongoDB persistence overview](evidence/part2/database/mongodb-persistence.png)
 
-**Security Headers — Screenshot 2**
+**Stored gig**
 
-![Security headers screenshot 2](evidence/part1/screenshots/SecurityHeaders2.png)
+![Gig record in MongoDB](evidence/part2/database/hustlehub-gig.png)
 
-### Postman Collection
+**Stored booking**
 
-**Postman Collection — Screenshot 1**
+![Booking record in MongoDB](evidence/part2/database/booking-record.png)
 
-![Postman collection screenshot 1](evidence/part1/screenshots/PostmanCollection1.jpeg)
+**Matching transaction**
 
-**Postman Collection — Screenshot 2**
+![Transaction record in MongoDB](evidence/part2/database/transaction-record.png)
 
-![Postman collection screenshot 2](evidence/part1/screenshots/PostmanCollection2.jpeg)
+</details>
+
+### Freelancer Income
+
+**Freelancer bookings and income dashboard**
+
+![Freelancer income dashboard](evidence/part2/income/freelancer-income.png)
+
+<details>
+<summary>Income API test capture</summary>
+
+![Income API tests](evidence/part2/income/postman-05-income.png)
+
+</details>
+
+### Administration and Access Control
+
+**Administrator dashboard**
+
+![Administrator dashboard](evidence/part2/admin/admin-dashboard.png)
+
+**Rejected administrator access**
+
+![Administrator access rejected](evidence/part2/security/admin-access-rejected.png)
+
+<details>
+<summary>Administrator API permissions and data-view captures</summary>
+
+![Administrator API tests, capture 1](evidence/part2/admin/postman-06-admin.png)
+
+![Administrator API tests, capture 2](evidence/part2/admin/postman-06-admin-2.png)
+
+</details>
+
+### Security Headers, Errors and Rate Limits
+
+<details>
+<summary>Health, security headers and controlled error captures</summary>
+
+![Health and API security header tests](evidence/part2/security/postman-01-health-headers.png)
+
+![Security and controlled error tests](evidence/part2/security/postman-07-security-errors.png)
+
+</details>
+
+**Rate-limit rejection**
+
+![429 rate-limit response](evidence/part2/security/rate-limit-429.png)
+
+<details>
+<summary>Automated rate-limit test capture</summary>
+
+![Automated rate-limit tests](evidence/part2/security/postman-08-rate-limit.png)
+
+</details>
+
+### Automated Test Results
+
+**Newman terminal summary**
+
+![Newman test summary](evidence/part2/newman/newman-summary.png)
+
+[Open the Newman JUnit report](evidence/part2/newman/newman-report.xml).
+
+**Postman Runner summary**
+
+![Postman Runner summary](evidence/part2/newman/postman-runner-summary.png)
+
+**React rendering and interaction test summary**
+
+![React test summary](evidence/part2/frontend-tests/react-tests-summary.png)
+
+[Open the frontend JUnit report](evidence/part2/frontend-tests/react-tests.xml).
+
+### Retained Part 1 Evidence
+
+The Part 1 captures document the original secure authentication foundation. Current Part 2 behaviour is demonstrated in the sections above.
+
+<details>
+<summary>Part 1 setup, authentication and API security screenshots</summary>
+
+[Watch the earlier Part 1 demonstration](https://youtu.be/fm5UVAwE3pM).
+
+**Fresh-clone setup and HTTPS**
+
+![Part 1 fresh-clone setup](evidence/part1/screenshots/NewCloneSetUp.png)
+
+![Part 1 HTTPS health check](evidence/part1/screenshots/HTTPS_HealthCheck.png)
+
+**Registration and login**
+
+![Part 1 successful registration](evidence/part1/screenshots/RegisterSuccess.png)
+
+![Part 1 duplicate registration](evidence/part1/screenshots/RegisterDuplicate.png)
+
+![Part 1 successful login](evidence/part1/screenshots/LoginSuccessful.png)
+
+![Part 1 failed login](evidence/part1/screenshots/LoginFailed.png)
+
+**JWT authentication**
+
+![Part 1 valid JWT](evidence/part1/screenshots/JWT_Valid.png)
+
+![Part 1 invalid JWT](evidence/part1/screenshots/JWT_Invalid.png)
+
+**Validation and request limits**
+
+![Part 1 invalid field types](evidence/part1/screenshots/InvalidFieldTypes.png)
+
+![Part 1 malformed JSON](evidence/part1/screenshots/Malfromed_JSON.png)
+
+![Part 1 oversized body](evidence/part1/screenshots/OversizedBody.png)
+
+**CORS and headers**
+
+![Part 1 allowed CORS origin](evidence/part1/screenshots/CORS_AllowedOrigin.png)
+
+![Part 1 untrusted CORS origin](evidence/part1/screenshots/CORS_UntrustedOrigin.png)
+
+![Part 1 security headers, capture 1](evidence/part1/screenshots/SecurityHeaders1.png)
+
+![Part 1 security headers, capture 2](evidence/part1/screenshots/SecurityHeaders2.png)
+
+**Postman collection**
+
+![Part 1 Postman collection, capture 1](evidence/part1/screenshots/PostmanCollection1.jpeg)
+
+![Part 1 Postman collection, capture 2](evidence/part1/screenshots/PostmanCollection2.jpeg)
+
+</details>
 
 ## Response Status Codes
 
 | Status | Use |
 |---|---|
-| `200 OK` | Information, health, login, and authenticated profile responses. |
-| `201 Created` | Successful user registration. |
-| `400 Bad Request` | Invalid fields or malformed JSON. |
-| `401 Unauthorized` | Invalid credentials or missing/invalid JWT. |
-| `404 Not Found` | Unknown route. |
-| `409 Conflict` | Duplicate email. |
-| `413 Payload Too Large` | JSON body exceeds `10kb`. |
+| `200 OK` | Successful reads, login, gig updates and deletion confirmations. |
+| `201 Created` | Successful registration, gig creation and booking/transaction creation. |
+| `400 Bad Request` | Invalid input, malformed JSON or invalid identifier format. |
+| `401 Unauthorized` | Invalid credentials or missing/invalid/expired JWT. |
+| `403 Forbidden` | Authenticated role is not permitted to perform the operation. |
+| `404 Not Found` | Unknown route, missing/unavailable gig, or resource not available to the requesting owner. |
+| `409 Conflict` | Duplicate registration email. |
+| `413 Payload Too Large` | JSON body exceeds the configured `10kb` limit. |
+| `429 Too Many Requests` | Authentication, registration or booking allowance exceeded. |
 | `500 Internal Server Error` | Controlled unexpected server failure. |
 
-## Part 1 Limitations and Part 2 Direction
+## Part 3 Direction
 
-The Part 1 user store is deliberately temporary: all accounts disappear whenever the API restarts. It is suitable only for demonstrating the secure authentication contract.
+Part 2 delivers the full-stack marketplace, persistent financial records, income tracking and the security/testing controls described above.
 
-Part 2 will replace the store with MongoDB and Mongoose, add the React frontend, enforce full role-based access control, and implement gigs, bookings, simulated transactions, and freelancer income tracking. Later work also adds tax estimates, rate limiting, automated tests, Docker, CI/CD, static analysis, logging, and monitoring.
+Part 3 will extend this baseline with estimated tax, Docker-based containerisation, CI/CD for backend and frontend, security/static analysis, event logging and monitoring, and the final security review. Those items are outside the current Part 2 implementation.
 
 ## References
 
 - [OWASP Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)
-- [RFC 7519 - JSON Web Token](https://www.rfc-editor.org/rfc/rfc7519.html)
+- [RFC 7519 — JSON Web Token](https://www.rfc-editor.org/rfc/rfc7519.html)
 - [Express error-handling guide](https://expressjs.com/en/guide/error-handling/)
-- [Helmet documentation](https://helmetjs.github.io/)
+- [Helmet documentation](https://helmet.js.org/)
+- [Mongoose transactions](https://mongoosejs.com/docs/transactions.html)
+- [Newman command reference](https://learning.postman.com/docs/reference/newman-cli/newman-options/)
+- [Vitest reporters](https://vitest.dev/guide/reporters.html)
