@@ -240,7 +240,7 @@ Vitest, React Testing Library and jsdom cover the main user journeys. Network ca
 npm --prefix client install; npm --prefix client test
 ```
 
-`VITE_API_URL` is set to `https://localhost:4000` by the test config, so `client/.env` is not read or required. Each run also writes a JUnit report to `evidence/part2/react-tests.xml` for the Part 2 evidence folder.
+`VITE_API_URL` is set to `https://localhost:4000` by the test config, so `client/.env` is not read or required. Each run also writes a JUnit report to `evidence/part2/frontend-tests/react-tests.xml` for the Part 2 evidence folder.
 
 What is covered:
 

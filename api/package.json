@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "test:api": "newman run ../postman/postman_collection.json -e ../postman/postman_environment.json --ssl-extra-ca-certs ./certs/localhost-cert.pem -r cli,junit --reporter-junit-export ../evidence/part2/newman-report.xml"
+    "test:api": "newman run ../postman/postman_collection.json -e ../postman/postman_environment.json --ssl-extra-ca-certs ./certs/localhost-cert.pem -r cli,junit --reporter-junit-export ../evidence/part2/newman/newman-report.xml"
   },
   "keywords": [
     "node",
