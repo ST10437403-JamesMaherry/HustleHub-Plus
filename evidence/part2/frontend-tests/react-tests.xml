@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="12" failures="0" errors="0" time="3.6961706">
-    <testsuite name="src/test/api.test.js" timestamp="2026-10-08T09:39:37.028Z" hostname="Heatrazer" tests="4" failures="0" errors="0" skipped="0" time="0.0078241">
-        <testcase classname="src/test/api.test.js" name="apiRequest &gt; refuses //evil.example/steal so the JWT cannot leave the API origin" time="0.0028254">
+<testsuites name="vitest tests" tests="12" failures="0" errors="0" time="0.626650292">
+    <testsuite name="src/test/api.test.js" timestamp="2026-10-09T06:53:05.935Z" hostname="Jamess-MacBook-Air.local" tests="4" failures="0" errors="0" skipped="0" time="0.003570417">
+        <testcase classname="src/test/api.test.js" name="apiRequest &gt; refuses //evil.example/steal so the JWT cannot leave the API origin" time="0.001164833">
         </testcase>
-        <testcase classname="src/test/api.test.js" name="apiRequest &gt; refuses https://evil.example/steal so the JWT cannot leave the API origin" time="0.0003341">
+        <testcase classname="src/test/api.test.js" name="apiRequest &gt; refuses https://evil.example/steal so the JWT cannot leave the API origin" time="0.000134458">
         </testcase>
-        <testcase classname="src/test/api.test.js" name="apiRequest &gt; refuses /..\evil so the JWT cannot leave the API origin" time="0.0002638">
+        <testcase classname="src/test/api.test.js" name="apiRequest &gt; refuses /..\evil so the JWT cannot leave the API origin" time="0.000103375">
         </testcase>
-        <testcase classname="src/test/api.test.js" name="apiRequest &gt; sends the bearer token to the configured API origin only" time="0.0032203">
+        <testcase classname="src/test/api.test.js" name="apiRequest &gt; sends the bearer token to the configured API origin only" time="0.001646458">
         </testcase>
     </testsuite>
-    <testsuite name="src/test/app.test.jsx" timestamp="2026-10-08T09:39:37.036Z" hostname="Heatrazer" tests="8" failures="0" errors="0" skipped="0" time="3.6883465">
-        <testcase classname="src/test/app.test.jsx" name="login &gt; shows a generic error for bad credentials and never echoes the password" time="0.8165434">
+    <testsuite name="src/test/app.test.jsx" timestamp="2026-10-09T06:53:05.935Z" hostname="Jamess-MacBook-Air.local" tests="8" failures="0" errors="0" skipped="0" time="0.623079875">
+        <testcase classname="src/test/app.test.jsx" name="login &gt; shows a generic error for bad credentials and never echoes the password" time="0.16210075">
         </testcase>
-        <testcase classname="src/test/app.test.jsx" name="registration &gt; offers only client and freelancer, and sends no admin role or password confirmation" time="1.1283988">
+        <testcase classname="src/test/app.test.jsx" name="registration &gt; offers only client and freelancer, and sends no admin role or password confirmation" time="0.167350375">
         </testcase>
-        <testcase classname="src/test/app.test.jsx" name="marketplace &gt; lists gigs from the API and narrows them with the search box" time="0.1659528">
+        <testcase classname="src/test/app.test.jsx" name="marketplace &gt; lists gigs from the API and narrows them with the search box" time="0.035389375">
         </testcase>
-        <testcase classname="src/test/app.test.jsx" name="freelancer gig form &gt; blocks an invalid gig, then publishes a valid one with the expected payload" time="1.3389312">
+        <testcase classname="src/test/app.test.jsx" name="freelancer gig form &gt; blocks an invalid gig, then publishes a valid one with the expected payload" time="0.191418792">
         </testcase>
-        <testcase classname="src/test/app.test.jsx" name="client booking &gt; books a gig after confirmation and sends only the gig id" time="0.1584808">
+        <testcase classname="src/test/app.test.jsx" name="client booking &gt; books a gig after confirmation and sends only the gig id" time="0.035336292">
         </testcase>
-        <testcase classname="src/test/app.test.jsx" name="route guards &gt; sends an anonymous visitor to the login page" time="0.0225506">
+        <testcase classname="src/test/app.test.jsx" name="route guards &gt; sends an anonymous visitor to the login page" time="0.0100155">
         </testcase>
-        <testcase classname="src/test/app.test.jsx" name="route guards &gt; shows access denied when the role does not match" time="0.0249034">
+        <testcase classname="src/test/app.test.jsx" name="route guards &gt; shows access denied when the role does not match" time="0.009075375">
         </testcase>
-        <testcase classname="src/test/app.test.jsx" name="route guards &gt; shows the page to the matching role" time="0.0309925">
+        <testcase classname="src/test/app.test.jsx" name="route guards &gt; shows the page to the matching role" time="0.01164375">
         </testcase>
     </testsuite>
 </testsuites>
