@@ -1,107 +1,155 @@
-# HustleHub+ Part 2 Postman and Newman Tests
+# HustleHub+ Part 2 API Tests
 
-This folder contains the automated API test suite for HustleHub+. The same collection runs in the Postman app and from the command line through Newman.
+The Postman collection automates the Part 2 API review. It creates unique test
+accounts, captures JWTs and identifiers, verifies the marketplace workflow, and
+checks role restrictions, ownership, validation and rate limiting.
+
+The same collection runs in Postman and through the existing Newman npm script.
 
 ## Files
 
-- `postman_collection.json` - the **HustleHub+ Part 2 - API Tests** collection
-- `postman_environment.json` - the **HustleHub+ Part 2 - Local** environment (`baseUrl`, `clientOrigin`, `adminEmail` and an empty `adminPassword`)
+- `postman_collection.json` — HustleHub+ Part 2 - Automated API Review.
+- `postman_environment.json` — local API configuration and assessment admin credentials.
 
-## Folder Structure
-
-The folders run in order. Later folders reuse the accounts, JWTs and IDs captured by earlier ones.
-
-| Folder | Requests | Covers |
-|---|---|---|
-| `01 Health and Security Headers` | 3 | HTTPS health check, Helmet headers (CSP, `X-Content-Type-Options`, `X-Frame-Options`, HSTS, no `X-Powered-By`) and the CORS allow-list. Initialises the per-run accounts and checks `adminPassword` was supplied. |
-| `02 Authentication` | 18 | Admin login, registration success and failures, login success, invalid login, JWT capture, missing, tampered and non-Bearer tokens. Checks the register and login limiters have enough capacity before the run continues. |
-| `03 Gigs` | 21 | Public and authenticated browsing, freelancer create, owner update and delete, non-owner and client rejection, markup sanitisation and invalid input. |
-| `04 Bookings` | 13 | Client booking with its simulated transaction, booking history, freelancer view, role and ownership checks, invalid, missing and inactive gigs, rejected price or ownership overrides. |
-| `05 Income` | 4 | Freelancer income totals, per-freelancer scoping, wrong-role and missing-JWT rejection. |
-| `06 Admin` | 12 | Admin user list (safe fields only) and booking list, admin removal of a freelancer's gig, invalid and unknown gig IDs, and rejection of client, freelancer and anonymous requests. |
-| `07 Security and Errors` | 6 | Malformed JSON (`400`), unknown route (`404`), oversized body (`413`) and NoSQL operator payloads such as `{"$gt": ""}` on login, gig update and booking. |
-| `08 Rate Limiting` | 2 | Failed-login limiter returns `429` with `RateLimit-*` and `Retry-After` headers, a forged `X-Forwarded-For` header does not bypass it, and the frontend origin can read `Retry-After`. Always last. |
-
-A collection-level test also runs after every response and fails if a body exposes stack traces, `node_modules` paths or database error names, or if `X-Powered-By` is present.
+The demonstration admin credential is intentionally supplied for assessment and
+will be removed and rotated after marking. The collection itself contains no
+admin password or generated JWTs.
 
 ## Prerequisites
 
-- The API is running over HTTPS on `https://localhost:4000` with a working MongoDB connection (see the root `README.md`).
-- The local certificate exists at `api/certs/localhost-cert.pem`. Newman trusts it through `--ssl-extra-ca-certs`, so the certificate must include `subjectAltName=DNS:localhost`, as the root README's OpenSSL command does.
-- `CLIENT_ORIGIN` in `api/.env` matches `clientOrigin` in the environment file (`http://localhost:5173` by default).
-- Dependencies are installed in `api` (`npm install`), which includes Newman as a development dependency.
-- The admin account exists in your local database (see below).
+- API dependencies are installed.
+- The API uses the implemented MongoDB-backed system.
+- `MONGO_URI` selects the Atlas database `hustlehub`.
+- `USE_HTTPS=true`.
+- The existing administrator account matches `adminEmail` and `adminPassword`.
+- `CLIENT_ORIGIN` matches the environment's `clientOrigin`.
+- The gig price validation correction is applied.
 
-## Admin Account
+The React frontend may remain running, but these API tests do not require it.
+React rendering and interaction tests remain a separate frontend test suite.
 
-Public registration rejects the `admin` role, so the admin account is created once per database: register it as a normal user, then change its role directly in MongoDB. The suite logs in as `adminEmail` (default `admin.demo@hustlehub.test`) and never stores the admin password; you pass it at run time.
+## Start a Fresh API Process
 
-With the API running, register the account in PowerShell 7 (`-SkipCertificateCheck` accepts the local self-signed certificate). Replace `<admin-password>` with the demo password from `client/README.md` or your own 8-72 character password:
+The limiters keep their counters in process memory. Stop an existing API process
+with `Ctrl+C`, then start it from a terminal inside the repository:
 
-```powershell
-Invoke-RestMethod -Method Post -Uri https://localhost:4000/api/auth/register -SkipCertificateCheck -ContentType 'application/json' -Body (@{ fullName = 'Demo Admin'; email = 'admin.demo@hustlehub.test'; password = '<admin-password>'; role = 'client' } | ConvertTo-Json)
+```bash
+cd "$(git rev-parse --show-toplevel)"
+npm --prefix api start
 ```
 
-A `409` response means the account already exists. Next, assign the admin role in the `users` collection. This example uses the `hustlehub-mongo` Docker container and the `hustlehub-test` database; use the database named in your `MONGO_URI`. The backtick before `$set` stops PowerShell expanding it as a variable:
+The API must report a successful MongoDB connection and HTTPS startup.
 
-```powershell
-docker exec hustlehub-mongo mongosh hustlehub-test --quiet --eval "db.users.updateOne({ email: 'admin.demo@hustlehub.test' }, { `$set: { role: 'admin' } })"
-```
+Start a fresh API process before each new complete test cycle. Do not restart
+between folders during one cycle.
 
-The output should show `matchedCount: 1`. The registration counted towards the register limit, so restart the API before running the suite.
+## Folder Order
 
-## Run With Newman
+| Folder | Request definitions | Coverage |
+|---|---:|---|
+| 01 Health and Security Headers | 4 | HTTPS health, API Helmet/CSP headers, trusted and untrusted CORS origins, preflight. |
+| 02 Authentication | 21 | Existing admin login, four unique accounts, JWT capture, registration failures, login failure and protected profiles. |
+| 03 Gigs | 36 | Freelancer CRUD, ownership, role restrictions, active/inactive visibility, sanitisation and price boundaries. |
+| 04 Bookings | 18 | Booking and matching transaction, client/freelancer views, cross-client rejection and invalid or overridden fields. |
+| 05 Income | 4 | Confirmed transaction income, freelancer isolation, wrong-role and missing-token rejection. |
+| 06 Administration | 18 | Safe user and booking views, restricted gig removal, history preservation and fixture gig cleanup. |
+| 07 Security and Controlled Errors | 7 | Malformed JSON, oversized bodies, unknown routes, NoSQL operators and array input. |
+| 08 Rate Limiting | 4 | Automatic login and booking exhaustion, `429` headers and forwarded-IP bypass rejection. |
 
-Start the API in one PowerShell terminal from the repository root:
-
-```powershell
-cd api; npm start
-```
-
-Run the suite in a second terminal, passing the admin password:
-
-```powershell
-cd api; npm run test:api --silent -- --env-var 'adminPassword=<admin-password>'
-```
-
-`--silent` stops npm echoing the full Newman command, which would otherwise print the password above the results. Keep the single quotes so PowerShell does not expand characters such as `$` in the password.
-
-The command runs every folder in order, prints the results in the terminal and writes a JUnit report to `evidence/part2/newman-report.xml`. A valid run finishes with zero failed assertions. Restart the API (`Ctrl+C`, then `npm start`) before each further run; see the rate-limit caveat below.
-
-If `adminPassword` is missing, the run stops after the first request with *adminPassword is provided*. If the admin login fails, the run stops at the first request in `02 Authentication` with *Admin account is provisioned and adminPassword is correct*, before any registration uses the register limit.
+There are 112 request definitions. The two bounded rate-limit loops can execute
+their requests more than once.
 
 ## Run in Postman
 
-1. Import `postman_collection.json` and `postman_environment.json`.
-2. Select the **HustleHub+ Part 2 - Local** environment and set the current value of `adminPassword`. Do not save the password into the exported environment file.
-3. Either add `api/certs/localhost-cert.pem` under **Settings > Certificates > CA certificates**, or temporarily turn off **SSL certificate verification** for this local self-signed certificate.
-4. Run the whole collection in its existing order.
+1. Import both JSON files.
+2. Open **HustleHub+ Part 2 - Automated API Review**.
+3. Select **HustleHub+ Part 2 - Local** in the Collection Runner.
+4. Trust `api/certs/localhost-cert.pem` through Postman's CA certificate settings.
+5. Use one iteration, no data file, and keep every request selected.
+6. Enable **Keep variable values** and **Stop run if an error occurs**.
+7. Run the whole collection, or run folders 01 through 08 individually in order.
 
-## Repeatability
+No manual registration, login, JWT copying or identifier editing is needed
+after starting the run. For separate folder runs, Keep variable values must be
+enabled so later folders receive the earlier folder's captured state.
 
-The database persists between runs, so the suite never relies on fixed test accounts:
+Use the desktop/local runner for the localhost API.
 
-- The first request generates unique client and freelancer email addresses from a timestamp and clears every captured value from the previous run.
-- Registration and login scripts capture user IDs and JWTs automatically.
-- The gig requests create fresh gigs and capture their IDs, owner and price for the booking, income and admin checks. `06 Admin` creates its own gig to remove, so later requests are unaffected.
-- The test-user password is a fake value stored as a collection variable. The admin password is supplied at run time. No real credential, JWT secret, certificate or private key is stored in these files.
+Folder 02 starts a new set of unique test accounts and clears the collection's
+previous test state. Later folders check that their preceding folder completed.
+Request bodies and Authorization headers are constructed automatically.
 
-## Rate-Limit Caveat
+Folder 08 must run last. It deliberately exhausts the login and booking limits.
+Before another complete run, restart the API or wait for the limiter windows
+to expire.
 
-Three limiters in `api/middleware/rateLimiters.js` affect the suite. All are keyed by client IP address and keep their counters in the API's memory.
+## Run With Newman
 
-| Limiter | Route | Limit | What counts | One full run uses |
-|---|---|---|---|---|
-| `authLimiter` | `POST /api/auth/login` | 5 per 15 minutes | Failed logins only (status `400` or above); successful logins are not counted | 2 failed logins, then `08 Rate Limiting` uses the rest |
-| `registerLimiter` | `POST /api/auth/register` | 10 per hour | Every request that reaches the route | 8 (four accounts and four rejected registrations) |
-| `bookingLimiter` | `POST /api/bookings` | 10 per 15 minutes | Every request past the JWT and role checks | 8 |
+After a fresh API start, open a second terminal inside the repository:
 
-Malformed JSON and oversized bodies are rejected by the JSON body parser before the route runs, so those two tests do not count towards the register limit. The NoSQL operator test uses the login route because failed logins are cheaper than registrations. The admin routes have no limiter.
+```bash
+cd "$(git rev-parse --show-toplevel)"
+npm --prefix api run test:api --silent
+```
 
-All five successful logins, including the admin login, run before the invalid-password check because, once the failed-login limit is reached, the limiter blocks every login, including valid ones. `08 Rate Limiting` then repeats invalid logins until the limiter responds with `429 Too Many Requests`, checks the `RateLimit-*` and `Retry-After` headers, and confirms the frontend origin can read `Retry-After`. It loops on its own, so it also works when run separately.
+The existing npm script reads both JSON files, trusts the local certificate,
+executes every folder, and writes:
 
-An immediate re-run against the same API process cannot pass: the failed-login limit is used up for 15 minutes and a second run would need 16 registrations against a limit of 10 per hour. **Restart the API before running the collection again** (the in-memory counters reset on restart), or wait up to 1 hour. If an earlier run has already used the budget, the admin login or the first registration fails with *... rate limiter has capacity for this run (restart the API if this fails)* and the run stops there instead of producing a cascade of failures. Avoid sending extra registration or failed login requests by hand before an evidence run for the same reason.
+```text
+evidence/part2/newman-report.xml
+```
 
-## Evidence
+The expected outcome is completion of all eight folders with zero failed
+assertions and no execution errors.
 
-Submit the JUnit report from `evidence/part2/newman-report.xml` together with a screenshot of the terminal summary. Generate it against the real MongoDB-backed API after a fresh API start.
+A Postman run followed by a Newman run requires a fresh API start between them,
+because the Postman rate-limit checks intentionally exhaust the counters.
+
+Use the supplied repository collection for Newman. Generated Postman tokens and
+run identifiers belong to local test state and should not be copied into the
+repository collection.
+
+## Test Data and Consistency
+
+Each cycle creates two clients and two freelancers with unique email addresses.
+The existing administrator is authenticated; the suite never creates or promotes
+an administrator.
+
+The suite creates and modifies only its own captured gig records. It removes
+those gigs during the CRUD and administration checks. The test accounts and one
+booking/transaction pair remain in MongoDB for persistence verification.
+
+The successful booking uses the gig's updated server-side price of `800.25`.
+The transaction must match the booking's client, freelancer, amount and status.
+The freelancer income endpoint must return `800.25` and one confirmed transaction.
+
+Deleting the booked test gig must preserve the booking and its derived income.
+
+Before folder 08, a normal cycle uses:
+
+- Eight registration attempts.
+- Nine authenticated client booking attempts.
+- Three failed login attempts.
+
+The remaining limiter capacity is exhausted automatically in folder 08. Booking
+rate-limit probes use an invalid gig ID, so they do not create additional bookings
+or transactions.
+
+## Failure Diagnosis
+
+The HTTP assertion includes the API's controlled error message.
+
+| Result | Meaning |
+|---|---|
+| Admin login `400` | The API rejected the request body or credential format. Read the returned error. |
+| Admin login `401` | The supplied credentials did not authenticate against the configured database. |
+| Admin login `200`, role assertion fails | The authenticated account does not have the admin role. |
+| Unexpected `429` before folder 08 | Existing activity consumed the limiter allowance. Start a fresh API process. |
+| Missing token or preceding-folder error | Run folders in order with Keep variable values enabled. |
+| Certificate or connection error | Verify HTTPS startup, the API origin and local certificate trust. |
+
+Failed setup or assertions stop the current runner sequence to avoid misleading
+follow-on failures. Fix the reported cause before starting a new complete cycle.
+
+API header tests do not prove React document CSP. Frontend document CSP evidence,
+React automated tests and Atlas screenshots are verified separately.
