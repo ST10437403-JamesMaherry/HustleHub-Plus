@@ -66,7 +66,7 @@ cd api; npm run test:api --silent -- --env-var 'adminPassword=<admin-password>'
 
 `--silent` stops npm echoing the full Newman command, which would otherwise print the password above the results. Keep the single quotes so PowerShell does not expand characters such as `$` in the password.
 
-The command runs every folder in order, prints the results in the terminal and writes a JUnit report to `evidence/part2/newman-report.xml`. A valid run finishes with zero failed assertions. Restart the API (`Ctrl+C`, then `npm start`) before each further run; see the rate-limit caveat below.
+The command runs every folder in order, prints the results in the terminal and writes a JUnit report to `evidence/part2/newman/newman-report.xml`. A valid run finishes with zero failed assertions. Restart the API (`Ctrl+C`, then `npm start`) before each further run; see the rate-limit caveat below.
 
 If `adminPassword` is missing, the run stops after the first request with *adminPassword is provided*. If the admin login fails, the run stops at the first request in `02 Authentication` with *Admin account is provisioned and adminPassword is correct*, before any registration uses the register limit.
 
@@ -104,4 +104,4 @@ An immediate re-run against the same API process cannot pass: the failed-login l
 
 ## Evidence
 
-Submit the JUnit report from `evidence/part2/newman-report.xml` together with a screenshot of the terminal summary. Generate it against the real MongoDB-backed API after a fresh API start.
+Submit the JUnit report from `evidence/part2/newman/newman-report.xml` together with a screenshot of the terminal summary. Generate it against the real MongoDB-backed API after a fresh API start.

@@ -313,7 +313,7 @@ cd api; npm run test:api --silent -- --env-var 'adminPassword=<admin-password>'
 
 The admin password is never stored in the collection or environment file. `--silent` stops npm echoing it above the results. If it is missing or the admin login fails, the run stops early with one failure explaining what to fix.
 
-Newman runs every folder, prints the results and writes a JUnit report to `evidence/part2/newman-report.xml`. A valid run finishes with zero failed assertions.
+Newman runs every folder, prints the results and writes a JUnit report to `evidence/part2/newman/newman-report.xml`. A valid run finishes with zero failed assertions.
 
 The rate limiters are keyed by IP address and keep their counters in memory. A full run makes 8 of the 10 registrations allowed per hour, 8 of the 10 booking requests allowed per 15 minutes, and 2 failed logins before `08 Rate Limiting` uses up the rest of the 5 failed logins allowed per 15 minutes to confirm the `429` response. Successful logins do not count. Restart the API before running the collection again, because the counters reset on restart; otherwise wait up to 1 hour. If the budget is already used, the run stops at the admin login or the first registration with a message saying to restart the API.
 

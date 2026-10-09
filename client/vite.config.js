@@ -20,6 +20,6 @@ export default defineConfig({
     // api.js reads this once at import; tests never reach a real server.
     env: { VITE_API_URL: 'https://localhost:4000' },
     // Console output plus a JUnit file for the Part 2 evidence folder.
-    reporters: ['default', ['junit', { outputFile: '../evidence/part2/react-tests.xml' }]]
+    reporters: ['default', ['junit', { outputFile: '../evidence/part2/frontend-tests/react-tests.xml' }]]
   }
 });
