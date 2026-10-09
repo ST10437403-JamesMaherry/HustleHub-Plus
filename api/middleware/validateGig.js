@@ -138,6 +138,21 @@ const validateGig = (requireAllFields) => {
         });
       }
 
+      // Keep stored prices aligned with the UI's two-decimal currency values.
+      const roundedPrice = Number(body.price.toFixed(2));
+      const cents = Math.round(body.price * 100);
+
+      if (
+        body.price < 0.01 ||
+        roundedPrice !== body.price ||
+        !Number.isSafeInteger(cents)
+      ) {
+        return res.status(400).json({
+          error:
+            'Price must be at least 0.01 with up to two decimal places and within the supported range'
+        });
+      }
+
       validatedGig.price = body.price;
     }
 
