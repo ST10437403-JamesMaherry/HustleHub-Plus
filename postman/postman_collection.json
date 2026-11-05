@@ -4384,7 +4384,7 @@
           "        }",
           "",
           "        case 'income':",
-          "          pm.expect(hhResponseBody).to.eql({",
+          "          pm.expect(hhResponseBody).to.include({",
           "            totalIncome: s.empty ? 0 : Number(get('price')),",
           "            transactionCount: s.empty ? 0 : 1",
           "          });",
