@@ -1,0 +1,22 @@
+# Allow only files needed to produce the Vite bundle and serve its assets.
+**
+!package.json
+!package-lock.json
+!index.html
+!vite.config.js
+!public/
+!public/**
+!src/
+!src/**
+!docker/
+!docker/validate-build-url.mjs
+!nginx/
+!nginx/default.conf
+
+# Exclude tests and local configurations from the Docker build context.
+src/test/
+src/test/**
+.env
+.env.*
+**/.env
+**/.env.*
