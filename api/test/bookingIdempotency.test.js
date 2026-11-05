@@ -10,6 +10,7 @@ const Transaction = require('../models/Transaction');
 const validateBooking = require('../middleware/validateBooking');
 const { createBooking } = require('../controllers/bookingController');
 const { createHttpContext } = require('./helpers/http');
+const eventLogger = require('../utils/logger');
 
 const CLIENT_A = '507f191e810c19729de860ea';
 const CLIENT_B = '507f191e810c19729de860eb';
@@ -122,7 +123,9 @@ test('database startup creates booking indexes before reporting readiness', asyn
 
   t.mock.method(mongoose, 'connect', async () => { events.push('connect'); });
   t.mock.method(Booking, 'createIndexes', async () => { events.push('indexes'); });
-  t.mock.method(console, 'log', () => { events.push('ready'); });
+  t.mock.method(eventLogger, 'logEvent', (event, outcome) => {
+    if (event === 'database.ready' && outcome === 'success') events.push('ready');
+  });
   process.env.MONGO_URI = 'mongodb://localhost:27017/hustlehub_test';
 
   try {

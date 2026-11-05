@@ -7,6 +7,9 @@ const path = require('path');
 const helmet = require('helmet');
 const cors = require('cors');
 
+const eventLogger = require('./utils/logger');
+const { requestContext } = require('./middleware/requestContext');
+
 const connectDB = require('./config/db');
 
 const authRoutes = require('./routes/authRoutes');
@@ -29,6 +32,9 @@ const USE_HTTPS = process.env.USE_HTTPS === 'true';
 // Read the permitted frontend origin from the environment.
 const CLIENT_ORIGIN =
   process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+
+// Generate a server-owned correlation ID before request processing.
+app.use(requestContext);
 
 // Hide the Express implementation detail from responses.
 app.disable('x-powered-by');
@@ -66,7 +72,7 @@ app.use(
     ],
     allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key'],
     // Lets the React client tell users how long a rate limit lasts.
-    exposedHeaders: ['Retry-After']
+    exposedHeaders: ['Retry-After', 'X-Request-ID']
   })
 );
 
@@ -136,9 +142,7 @@ const startServer = async () => {
 
       // Run the Express application through an HTTPS server.
       https.createServer(httpsOptions, app).listen(PORT, () => {
-        console.log(
-          `${APP_NAME} HTTPS server running on port ${PORT}`
-        );
+        eventLogger.logEvent('app.start', 'success', { phase: 'https' });
       });
 
       return;
@@ -146,15 +150,11 @@ const startServer = async () => {
 
     // HTTP remains available only for local troubleshooting.
     app.listen(PORT, () => {
-      console.log(
-        `${APP_NAME} HTTP server running on port ${PORT}`
-      );
+      eventLogger.logEvent('app.start', 'success', { phase: 'http' });
     });
   } catch (error) {
     // A missing database connection prevents a safe application startup.
-    console.error(
-      `[startup] HustleHub+ failed to start: ${error.message}`
-    );
+    eventLogger.logEvent('app.start', 'failure', { error });
 
     process.exit(1);
   }
