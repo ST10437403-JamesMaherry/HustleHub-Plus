@@ -1,0 +1,57 @@
+name: hustlehub
+
+services:
+  tls-init:
+    image: alpine:3.22
+    restart: "no"
+    entrypoint: ["/bin/sh", "/workspace/cert-init.sh"]
+    volumes:
+      - ./docker/cert-init.sh:/workspace/cert-init.sh:ro
+      - tls_certs:/certs
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    image: hustlehub-api:p3-11
+    restart: "on-failure:3"
+    depends_on:
+      tls-init:
+        condition: service_completed_successfully
+    ports:
+      - "127.0.0.1:4000:4000"
+    environment:
+      NODE_ENV: production
+      PORT: "4000"
+      APP_NAME: HustleHubPlusAPI
+      USE_HTTPS: "true"
+      CLIENT_ORIGIN: ${CLIENT_ORIGIN:-http://localhost:5173}
+      SSL_KEY_PATH: /app/certs/localhost-key.pem
+      SSL_CERT_PATH: /app/certs/localhost-cert.pem
+      HEALTHCHECK_CA_CERT_PATH: /app/certs/localhost-cert.pem
+      MONGO_URI: ${MONGO_URI:-}
+      JWT_SECRET: ${JWT_SECRET:-}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1h}
+      BCRYPT_SALT_ROUNDS: ${BCRYPT_SALT_ROUNDS:-12}
+      GRAFANA_LOKI_URL: ${GRAFANA_LOKI_URL:-}
+      GRAFANA_LOKI_USER: ${GRAFANA_LOKI_USER:-}
+      GRAFANA_LOKI_TOKEN: ${GRAFANA_LOKI_TOKEN:-}
+    volumes:
+      - tls_certs:/app/certs:ro
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-https://localhost:4000}
+    image: hustlehub-client:p3-11
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:5173:8080"
+
+volumes:
+  tls_certs:
