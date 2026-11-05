@@ -1,0 +1,4509 @@
+{
+  "info": {
+    "_postman_id": "3f6c2a8e-9b4d-4c71-a5e2-7d18f0b6c943",
+    "name": "HustleHub+ Part 3 - Security Matrix",
+    "description": "Part 3 security negative-test matrix. Run the 'Security Matrix' and 'Rate Limits' folders as separate cycles, each against a freshly started API process. Supply adminPassword and jwtSecret at run time only. See docs/testing/security-postman-suite.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Security Matrix",
+      "description": "Run on a fresh API process with --env-var adminPassword and --env-var jwtSecret. Never exhausts a rate-limit allowance.",
+      "item": [
+        {
+          "name": "01 Setup",
+          "description": "Checks run configuration, authenticates the provisioned administrator, registers four unique accounts, captures JWTs and creates two fixture gigs.",
+          "item": [
+            {
+              "name": "Setup - Configuration Guard",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/health",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Setup - Admin Login",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Setup - Register Client A",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Setup - Register Freelancer A",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Setup - Register Client B",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Setup - Register Freelancer B",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Setup - Login Client A",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Setup - Login Freelancer A",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Setup - Login Client B and Verify jwtSecret",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Setup - Login Freelancer B",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Setup - Freelancer A Creates Gig G1",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Setup - Freelancer A Creates Gig G2",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "02 Authentication and Forged Tokens",
+          "description": "Missing, malformed, tampered, unsigned, wrongly signed and expired JWTs. Forged tokens are minted from Client B's real claims with CryptoJS; a correctly minted control token must be accepted.",
+          "item": [
+            {
+              "name": "Auth - Missing Authorization Header",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Auth - Basic Scheme Rejected",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Auth - Bearer Without Token",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Auth - Bearer With Extra Segment",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Auth - Malformed JWT",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Auth - Control Minted Token Accepted",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Auth - Expired Token With Valid Signature",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Auth - Tampered Role Claim Keeps Old Signature",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/admin/users",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Auth - Wrong Signing Secret",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Auth - Unsigned alg none Token",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Auth - Signed Token Without Session Version",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Auth - Signed Token With Future Session Version",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Auth - Signed Admin Role Claim For Client",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/admin/users",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Auth - Signed Token For Unknown User",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "03 Session Revocation",
+          "description": "Logout increments the session version: every earlier token for the account is rejected, a revoked token cannot book, and a new login works.",
+          "item": [
+            {
+              "name": "Session - Client A Second Login",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Session - First Token Valid Before Logout",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Session - Second Token Valid Before Logout",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Session - Logout Without JWT",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/logout",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "logout"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Session - Logout With First Token",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/logout",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "logout"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Session - Revoked First Token Rejected",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Session - Second Token Revoked By Same Logout",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Session - Revoked Token Cannot Book",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Session - Revoked Token Cannot Log Out Again",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/logout",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "logout"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Session - Fresh Login After Logout",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Session - Fresh Token Accepted",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Session - Revoked Booking Attempt Created Nothing",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/mine",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "mine"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "04 Role Isolation",
+          "description": "Each role is refused the routes of every other role, and public registration cannot self-assign the administrator role.",
+          "item": [
+            {
+              "name": "Role - Self-assigned Admin Registration Rejected",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Role - Client Cannot List Users",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/admin/users",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Role - Client Cannot List All Bookings",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/admin/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Role - Client Cannot Remove Gigs As Admin",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/admin/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Role - Freelancer Cannot List Users",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/admin/users",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Role - Freelancer Cannot Book",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Role - Admin Cannot Book",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Role - Client Cannot Create Gigs",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Role - Admin Cannot Create Gigs",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Role - Client Cannot Read Income",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/income/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "income",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Role - Client Cannot Read Freelancer Bookings",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/freelancer",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "freelancer"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Role - Freelancer Cannot Read Client Bookings",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/mine",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "mine"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Role - Gig Survives Rejected Removal",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Role - Admin Lists Users With Safe Fields",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/admin/users",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "05 Cross-account Isolation",
+          "description": "Client A books G1. Other clients and freelancers cannot read, modify or count records they do not own.",
+          "item": [
+            {
+              "name": "Isolation - Client A Books G1",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Isolation - Client A Reads Own Booking",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/{{sec.aBookingId}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "{{sec.aBookingId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Isolation - Client B Cannot Read Client A Booking",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/{{sec.aBookingId}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "{{sec.aBookingId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Isolation - Client B History Excludes Client A",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/mine",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "mine"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Isolation - Freelancer A Sees Own Sale",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/freelancer",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "freelancer"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Isolation - Freelancer B Sees No Foreign Sales",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/freelancer",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "freelancer"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Isolation - Freelancer B Cannot Update Freelancer A Gig",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Isolation - Freelancer B Cannot Delete Freelancer A Gig",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Isolation - G1 Unchanged After Foreign Writes",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Isolation - Freelancer B Gig List Excludes A",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/mine",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "mine"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Isolation - Freelancer B Income Excludes A",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/income/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "income",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Isolation - Freelancer A Income Includes Sale",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/income/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "income",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "06 Idempotency Misuse",
+          "description": "Replayed, re-cased, altered and cross-client reuse of Client A's Idempotency-Key, plus missing, non-v4 and body-supplied keys.",
+          "item": [
+            {
+              "name": "Idempotency - Same Key Same Gig Replays",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Uppercase Key Normalised To Replay",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Same Key Different Gig Conflicts",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Key Scoped Per Client",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Missing Key Rejected",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Non-v4 UUID Key Rejected",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Key In Body Rejected",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Client A Has Exactly One Booking",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/mine",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "mine"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Client B Has Exactly One Booking",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/mine",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "mine"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Freelancer A Income Counts Two Transactions",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/income/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "income",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "07 Malformed Input and Safe Errors",
+          "description": "Malformed and oversized bodies, NoSQL operator objects, smuggled update operators, prototype keys, invalid identifiers and unknown routes all return fixed messages.",
+          "item": [
+            {
+              "name": "Errors - Malformed JSON On Login",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"email\":\"broken@hustlehub.test\",\"password\":",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Malformed JSON On Booking",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"gigId\":",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Oversized Body",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - NoSQL Operator In Login Email",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - NoSQL Operator In Gig Title",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - NoSQL Operator In Gig Price",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Update Operator Smuggled In Gig Body",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Prototype Key In Gig Body",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"__proto__\":{\"active\":false},\"price\":1}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - G1 Unchanged After Injection Attempts",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Invalid Gig ID Path",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/not-an-object-id",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "not-an-object-id"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Operator Object In Gig ID Path",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/%7B%22%24ne%22%3Anull%7D",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "%7B%22%24ne%22%3Anull%7D"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Invalid Booking ID Path",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/not-an-object-id",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "not-an-object-id"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Invalid Admin Gig ID Path",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/admin/gigs/not-an-object-id",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "gigs",
+                    "not-an-object-id"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Unknown Route",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/does-not-exist",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "does-not-exist"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Unsupported Method",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "08 Security Protections",
+          "description": "Helmet and CSP headers on success and error responses, server-owned request IDs, CORS for trusted and untrusted origins, and markup sanitisation of gig text.",
+          "item": [
+            {
+              "name": "Protections - Security Headers On Health",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/health",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - Security Headers On Error Response",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/not-a-route",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "not-a-route"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - Caller Request ID Not Trusted",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Request-ID",
+                    "value": "attacker-supplied-request-id"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/health",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - CORS Trusted Origin",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/health",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - CORS Untrusted Origin",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "https://untrusted.example"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/health",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - CORS Booking Preflight",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "OPTIONS",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Access-Control-Request-Method",
+                    "value": "POST"
+                  },
+                  {
+                    "key": "Access-Control-Request-Headers",
+                    "value": "Content-Type, Authorization, Idempotency-Key"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - CORS Untrusted Preflight",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "OPTIONS",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "https://untrusted.example"
+                  },
+                  {
+                    "key": "Access-Control-Request-Method",
+                    "value": "POST"
+                  },
+                  {
+                    "key": "Access-Control-Request-Headers",
+                    "value": "Content-Type, Authorization, Idempotency-Key"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - Gig Markup Sanitised On Create",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - Sanitised Gig Stored Without Markup",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g3Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g3Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - Markup-only Title Rejected After Sanitising",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g3Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g3Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - Sanitisation Gig Removed By Owner",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g3Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g3Id}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "09 Cleanup",
+          "description": "The administrator removes the fixture gigs; booking history survives the removal.",
+          "item": [
+            {
+              "name": "Cleanup - Admin Removes G1",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/admin/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cleanup - Admin Removes G2",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/admin/gigs/{{sec.g2Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "gigs",
+                    "{{sec.g2Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cleanup - Booking History Survives Gig Removal",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/{{sec.aBookingId}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "{{sec.aBookingId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rate Limits",
+      "description": "Run alone on a fresh API process. Exhausts the booking, registration and login allowances, so restart the API before any other cycle.",
+      "item": [
+        {
+          "name": "10 Limits Setup",
+          "description": "Registers and signs in one unique client on a fresh API process.",
+          "item": [
+            {
+              "name": "Limits Setup - Start Rate-limit Cycle",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/health",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Limits Setup - Register Client",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Limits Setup - Login Client",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "11 Booking Limiter",
+          "description": "Rejected booking probes still spend the per-IP allowance; the limiter blocks at 10 and a forged X-Forwarded-For does not reset it.",
+          "item": [
+            {
+              "name": "Booking Limit - Short Key Spends Allowance",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Booking Limit - NoSQL Gig ID Spends Allowance",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Booking Limit - Price And Owner Override Spends Allowance",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Booking Limit - Loop Until 429",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Booking Limit - Forwarded IP Cannot Bypass",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "X-Forwarded-For",
+                    "value": "198.51.100.42"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "12 Registration Limiter",
+          "description": "Invalid registrations count towards the hourly allowance, so the limiter is reached without creating accounts.",
+          "item": [
+            {
+              "name": "Register Limit - Loop Until 429",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Register Limit - Valid Signup Via Forwarded IP Blocked",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "X-Forwarded-For",
+                    "value": "198.51.100.43"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "13 Login Limiter",
+          "description": "Five failed logins exhaust the allowance; a forged X-Forwarded-For and even the correct password are then refused.",
+          "item": [
+            {
+              "name": "Login Limit - Loop Until 429",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login Limit - Forwarded IP Cannot Bypass",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "X-Forwarded-For",
+                    "value": "198.51.100.44"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login Limit - Valid Credentials Also Blocked",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Collection values are copied to local scope so stale environment values cannot shadow this run.",
+          "['sec.body', 'sec.authz', 'sec.key', 'sec.halt'].forEach((key) => pm.variables.set(key, ''));",
+          "pm.variables.set('sec.spec', '{}');",
+          "const base = String(pm.environment.get('baseUrl') || 'https://localhost:4000').replace(/\\/$/, '');",
+          "if (!/^https:\\/\\/(?:localhost|127\\.0\\.0\\.1|\\[::1\\])(?::\\d+)?$/.test(base)) {",
+          "  pm.variables.set('sec.halt', 'baseUrl');",
+          "  pm.execution.setNextRequest(null);",
+          "  throw new Error('baseUrl must be a local HTTPS API origin without a path.');",
+          "}",
+          "pm.variables.set('sec.baseUrl', base);",
+          "pm.variables.set('sec.origin', pm.environment.get('clientOrigin') || 'http://localhost:5173');",
+          "const copyCollectionValues = () => Object.entries(pm.collectionVariables.toObject()).forEach(([key, value]) => {",
+          "  if (key.startsWith('sec.')) pm.variables.set(key, value);",
+          "});",
+          "copyCollectionValues();",
+          "",
+          "// A tripped guard swaps the request for a health check, so no rate-limit allowance is spent.",
+          "const halt = (message) => {",
+          "  pm.variables.set('sec.halt', message);",
+          "  pm.request.method = 'GET';",
+          "  pm.request.url = base + '/health';",
+          "  pm.request.body = undefined;",
+          "  pm.execution.setNextRequest(null);",
+          "  throw new Error(message);",
+          "};",
+          "const get = (key) => pm.collectionVariables.get('sec.' + key);",
+          "const set = (key, value) => pm.collectionVariables.set('sec.' + key, value);",
+          "",
+          "// Scenario inputs and assertions are shared by Postman and Newman.",
+          "const scenarios = {",
+          "  \"Setup - Configuration Guard\": {\"status\":200,\"check\":\"config\",\"bootstrap\":\"matrix\"},",
+          "  \"Setup - Admin Login\": {\"status\":200,\"check\":\"login\",\"account\":\"admin\",\"role\":\"admin\",\"adminBody\":true,\"fresh\":true},",
+          "  \"Setup - Register Client A\": {\"status\":201,\"check\":\"register\",\"account\":\"clientA\",\"role\":\"client\",\"fresh\":true,\"body\":{\"fullName\":\"Security Client Alpha\",\"email\":\"{{sec.clientAEmail}}\",\"password\":\"{{sec.password}}\",\"role\":\"client\"}},",
+          "  \"Setup - Register Freelancer A\": {\"status\":201,\"check\":\"register\",\"account\":\"freelancerA\",\"role\":\"freelancer\",\"body\":{\"fullName\":\"Security Freelancer Alpha\",\"email\":\"{{sec.freelancerAEmail}}\",\"password\":\"{{sec.password}}\",\"role\":\"freelancer\"}},",
+          "  \"Setup - Register Client B\": {\"status\":201,\"check\":\"register\",\"account\":\"clientB\",\"role\":\"client\",\"body\":{\"fullName\":\"Security Client Beta\",\"email\":\"{{sec.clientBEmail}}\",\"password\":\"{{sec.password}}\",\"role\":\"client\"}},",
+          "  \"Setup - Register Freelancer B\": {\"status\":201,\"check\":\"register\",\"account\":\"freelancerB\",\"role\":\"freelancer\",\"body\":{\"fullName\":\"Security Freelancer Beta\",\"email\":\"{{sec.freelancerBEmail}}\",\"password\":\"{{sec.password}}\",\"role\":\"freelancer\"}},",
+          "  \"Setup - Login Client A\": {\"status\":200,\"check\":\"login\",\"account\":\"clientA\",\"role\":\"client\",\"body\":{\"email\":\"{{sec.clientAEmail}}\",\"password\":\"{{sec.password}}\"}},",
+          "  \"Setup - Login Freelancer A\": {\"status\":200,\"check\":\"login\",\"account\":\"freelancerA\",\"role\":\"freelancer\",\"body\":{\"email\":\"{{sec.freelancerAEmail}}\",\"password\":\"{{sec.password}}\"}},",
+          "  \"Setup - Login Client B and Verify jwtSecret\": {\"status\":200,\"check\":\"login\",\"account\":\"clientB\",\"role\":\"client\",\"verifySecret\":true,\"body\":{\"email\":\"{{sec.clientBEmail}}\",\"password\":\"{{sec.password}}\"}},",
+          "  \"Setup - Login Freelancer B\": {\"status\":200,\"check\":\"login\",\"account\":\"freelancerB\",\"role\":\"freelancer\",\"body\":{\"email\":\"{{sec.freelancerBEmail}}\",\"password\":\"{{sec.password}}\"}},",
+          "  \"Setup - Freelancer A Creates Gig G1\": {\"status\":201,\"check\":\"gig\",\"store\":\"g1\",\"expected\":{\"price\":450.75,\"active\":true},\"auth\":\"freelancerA\",\"body\":{\"title\":\"Security Review Logo Pack\",\"description\":\"Vector logo design with three revision rounds.\",\"category\":\"Design\",\"price\":450.75}},",
+          "  \"Setup - Freelancer A Creates Gig G2\": {\"status\":201,\"check\":\"gig\",\"store\":\"g2\",\"expected\":{\"price\":120.5,\"active\":true},\"auth\":\"freelancerA\",\"body\":{\"title\":\"Security Review Banner\",\"description\":\"Social media banner set in three sizes.\",\"category\":\"Design\",\"price\":120.5},\"done\":\"01\"},",
+          "  \"Auth - Missing Authorization Header\": {\"status\":401,\"error\":\"Authentication required\",\"after\":\"01\"},",
+          "  \"Auth - Basic Scheme Rejected\": {\"status\":401,\"error\":\"Invalid authentication token\",\"auth\":\"clientB\",\"authz\":\"Basic {token}\",\"after\":\"01\"},",
+          "  \"Auth - Bearer Without Token\": {\"status\":401,\"error\":\"Invalid authentication token\",\"authz\":\"Bearer\",\"after\":\"01\"},",
+          "  \"Auth - Bearer With Extra Segment\": {\"status\":401,\"error\":\"Invalid authentication token\",\"auth\":\"clientB\",\"authz\":\"Bearer {token} extra\",\"after\":\"01\"},",
+          "  \"Auth - Malformed JWT\": {\"status\":401,\"error\":\"Invalid or expired authentication token\",\"authz\":\"Bearer not.a.jwt\",\"after\":\"01\"},",
+          "  \"Auth - Control Minted Token Accepted\": {\"status\":200,\"check\":\"me\",\"account\":\"clientB\",\"role\":\"client\",\"jwt\":{\"from\":\"clientB\",\"iat\":-60,\"exp\":600},\"after\":\"01\"},",
+          "  \"Auth - Expired Token With Valid Signature\": {\"status\":401,\"error\":\"Invalid or expired authentication token\",\"jwt\":{\"from\":\"clientB\",\"iat\":-7200,\"exp\":-3600},\"after\":\"01\"},",
+          "  \"Auth - Tampered Role Claim Keeps Old Signature\": {\"status\":401,\"error\":\"Invalid or expired authentication token\",\"jwt\":{\"from\":\"clientB\",\"keepSignature\":true,\"set\":{\"role\":\"admin\"}},\"after\":\"01\"},",
+          "  \"Auth - Wrong Signing Secret\": {\"status\":401,\"error\":\"Invalid or expired authentication token\",\"jwt\":{\"from\":\"clientB\",\"iat\":-60,\"exp\":600,\"wrongSecret\":true},\"after\":\"01\"},",
+          "  \"Auth - Unsigned alg none Token\": {\"status\":401,\"error\":\"Invalid or expired authentication token\",\"jwt\":{\"from\":\"clientB\",\"iat\":-60,\"exp\":600,\"alg\":\"none\"},\"after\":\"01\"},",
+          "  \"Auth - Signed Token Without Session Version\": {\"status\":401,\"error\":\"Invalid or expired authentication token\",\"jwt\":{\"from\":\"clientB\",\"iat\":-60,\"exp\":600,\"drop\":[\"sessionVersion\"]},\"after\":\"01\"},",
+          "  \"Auth - Signed Token With Future Session Version\": {\"status\":401,\"error\":\"Invalid or expired authentication token\",\"jwt\":{\"from\":\"clientB\",\"iat\":-60,\"exp\":600,\"bump\":1},\"after\":\"01\"},",
+          "  \"Auth - Signed Admin Role Claim For Client\": {\"status\":401,\"error\":\"Invalid or expired authentication token\",\"jwt\":{\"from\":\"clientB\",\"iat\":-60,\"exp\":600,\"set\":{\"role\":\"admin\"}},\"after\":\"01\"},",
+          "  \"Auth - Signed Token For Unknown User\": {\"status\":401,\"error\":\"Invalid or expired authentication token\",\"jwt\":{\"from\":\"clientB\",\"iat\":-60,\"exp\":600,\"set\":{\"id\":\"0000000000000000000000ff\"}},\"after\":\"01\",\"done\":\"02\"},",
+          "  \"Session - Client A Second Login\": {\"status\":200,\"check\":\"login\",\"account\":\"clientA\",\"role\":\"client\",\"saveAs\":\"clientA2\",\"body\":{\"email\":\"{{sec.clientAEmail}}\",\"password\":\"{{sec.password}}\"},\"after\":\"02\"},",
+          "  \"Session - First Token Valid Before Logout\": {\"status\":200,\"check\":\"me\",\"account\":\"clientA\",\"role\":\"client\",\"auth\":\"clientA\",\"after\":\"02\"},",
+          "  \"Session - Second Token Valid Before Logout\": {\"status\":200,\"check\":\"me\",\"account\":\"clientA\",\"role\":\"client\",\"auth\":\"clientA2\",\"after\":\"02\"},",
+          "  \"Session - Logout Without JWT\": {\"status\":401,\"error\":\"Authentication required\",\"after\":\"02\"},",
+          "  \"Session - Logout With First Token\": {\"status\":200,\"check\":\"message\",\"message\":\"Signed out successfully\",\"auth\":\"clientA\",\"after\":\"02\"},",
+          "  \"Session - Revoked First Token Rejected\": {\"status\":401,\"error\":\"Invalid or expired authentication token\",\"auth\":\"clientA\",\"after\":\"02\"},",
+          "  \"Session - Second Token Revoked By Same Logout\": {\"status\":401,\"error\":\"Invalid or expired authentication token\",\"auth\":\"clientA2\",\"after\":\"02\"},",
+          "  \"Session - Revoked Token Cannot Book\": {\"status\":401,\"error\":\"Invalid or expired authentication token\",\"auth\":\"clientA2\",\"key\":\"request\",\"body\":{\"gigId\":\"{{sec.g1Id}}\"},\"after\":\"02\"},",
+          "  \"Session - Revoked Token Cannot Log Out Again\": {\"status\":401,\"error\":\"Invalid or expired authentication token\",\"auth\":\"clientA\",\"after\":\"02\"},",
+          "  \"Session - Fresh Login After Logout\": {\"status\":200,\"check\":\"login\",\"account\":\"clientA\",\"role\":\"client\",\"sessionVersion\":1,\"differsFrom\":\"clientA2\",\"body\":{\"email\":\"{{sec.clientAEmail}}\",\"password\":\"{{sec.password}}\"},\"after\":\"02\"},",
+          "  \"Session - Fresh Token Accepted\": {\"status\":200,\"check\":\"me\",\"account\":\"clientA\",\"role\":\"client\",\"auth\":\"clientA\",\"after\":\"02\"},",
+          "  \"Session - Revoked Booking Attempt Created Nothing\": {\"status\":200,\"check\":\"bookings\",\"ownerField\":\"client\",\"account\":\"clientA\",\"count\":0,\"auth\":\"clientA\",\"after\":\"02\",\"done\":\"03\"},",
+          "  \"Role - Self-assigned Admin Registration Rejected\": {\"status\":400,\"error\":\"Role must be client or freelancer\",\"body\":{\"fullName\":\"Escalation Attempt\",\"email\":\"sec.escalate.{{sec.runId}}@hustlehub.test\",\"password\":\"{{sec.password}}\",\"role\":\"admin\"},\"after\":\"03\"},",
+          "  \"Role - Client Cannot List Users\": {\"status\":403,\"error\":\"Access denied\",\"auth\":\"clientA\",\"after\":\"03\"},",
+          "  \"Role - Client Cannot List All Bookings\": {\"status\":403,\"error\":\"Access denied\",\"auth\":\"clientB\",\"after\":\"03\"},",
+          "  \"Role - Client Cannot Remove Gigs As Admin\": {\"status\":403,\"error\":\"Access denied\",\"auth\":\"clientA\",\"after\":\"03\"},",
+          "  \"Role - Freelancer Cannot List Users\": {\"status\":403,\"error\":\"Access denied\",\"auth\":\"freelancerA\",\"after\":\"03\"},",
+          "  \"Role - Freelancer Cannot Book\": {\"status\":403,\"error\":\"Access denied\",\"auth\":\"freelancerA\",\"key\":\"request\",\"body\":{\"gigId\":\"{{sec.g1Id}}\"},\"after\":\"03\"},",
+          "  \"Role - Admin Cannot Book\": {\"status\":403,\"error\":\"Access denied\",\"auth\":\"admin\",\"key\":\"request\",\"body\":{\"gigId\":\"{{sec.g1Id}}\"},\"after\":\"03\"},",
+          "  \"Role - Client Cannot Create Gigs\": {\"status\":403,\"error\":\"Access denied\",\"auth\":\"clientA\",\"body\":{\"title\":\"Security Review Logo Pack\",\"description\":\"Vector logo design with three revision rounds.\",\"category\":\"Design\",\"price\":450.75},\"after\":\"03\"},",
+          "  \"Role - Admin Cannot Create Gigs\": {\"status\":403,\"error\":\"Access denied\",\"auth\":\"admin\",\"body\":{\"title\":\"Security Review Logo Pack\",\"description\":\"Vector logo design with three revision rounds.\",\"category\":\"Design\",\"price\":450.75},\"after\":\"03\"},",
+          "  \"Role - Client Cannot Read Income\": {\"status\":403,\"error\":\"Access denied\",\"auth\":\"clientA\",\"after\":\"03\"},",
+          "  \"Role - Client Cannot Read Freelancer Bookings\": {\"status\":403,\"error\":\"Access denied\",\"auth\":\"clientA\",\"after\":\"03\"},",
+          "  \"Role - Freelancer Cannot Read Client Bookings\": {\"status\":403,\"error\":\"Access denied\",\"auth\":\"freelancerA\",\"after\":\"03\"},",
+          "  \"Role - Gig Survives Rejected Removal\": {\"status\":200,\"check\":\"gig\",\"id\":\"g1\",\"expected\":{\"title\":\"Security Review Logo Pack\",\"description\":\"Vector logo design with three revision rounds.\",\"category\":\"Design\",\"price\":450.75},\"after\":\"03\"},",
+          "  \"Role - Admin Lists Users With Safe Fields\": {\"status\":200,\"check\":\"users\",\"auth\":\"admin\",\"after\":\"03\",\"done\":\"04\"},",
+          "  \"Isolation - Client A Books G1\": {\"status\":201,\"check\":\"booking\",\"created\":\"a\",\"fresh\":true,\"gig\":\"g1\",\"client\":\"clientA\",\"auth\":\"clientA\",\"key\":\"request\",\"body\":{\"gigId\":\"{{sec.g1Id}}\"},\"after\":\"04\"},",
+          "  \"Isolation - Client A Reads Own Booking\": {\"status\":200,\"check\":\"booking\",\"get\":\"a\",\"gig\":\"g1\",\"client\":\"clientA\",\"auth\":\"clientA\",\"after\":\"04\"},",
+          "  \"Isolation - Client B Cannot Read Client A Booking\": {\"status\":404,\"error\":\"Booking not found\",\"auth\":\"clientB\",\"after\":\"04\"},",
+          "  \"Isolation - Client B History Excludes Client A\": {\"status\":200,\"check\":\"bookings\",\"ownerField\":\"client\",\"account\":\"clientB\",\"count\":0,\"auth\":\"clientB\",\"after\":\"04\"},",
+          "  \"Isolation - Freelancer A Sees Own Sale\": {\"status\":200,\"check\":\"bookings\",\"ownerField\":\"freelancer\",\"account\":\"freelancerA\",\"count\":1,\"includes\":[\"a\"],\"auth\":\"freelancerA\",\"after\":\"04\"},",
+          "  \"Isolation - Freelancer B Sees No Foreign Sales\": {\"status\":200,\"check\":\"bookings\",\"ownerField\":\"freelancer\",\"account\":\"freelancerB\",\"count\":0,\"auth\":\"freelancerB\",\"after\":\"04\"},",
+          "  \"Isolation - Freelancer B Cannot Update Freelancer A Gig\": {\"status\":404,\"error\":\"Gig not found\",\"auth\":\"freelancerB\",\"body\":{\"title\":\"Hijacked Listing\",\"price\":1},\"after\":\"04\"},",
+          "  \"Isolation - Freelancer B Cannot Delete Freelancer A Gig\": {\"status\":404,\"error\":\"Gig not found\",\"auth\":\"freelancerB\",\"after\":\"04\"},",
+          "  \"Isolation - G1 Unchanged After Foreign Writes\": {\"status\":200,\"check\":\"gig\",\"id\":\"g1\",\"expected\":{\"title\":\"Security Review Logo Pack\",\"description\":\"Vector logo design with three revision rounds.\",\"category\":\"Design\",\"price\":450.75},\"after\":\"04\"},",
+          "  \"Isolation - Freelancer B Gig List Excludes A\": {\"status\":200,\"check\":\"gigs\",\"account\":\"freelancerB\",\"count\":0,\"auth\":\"freelancerB\",\"after\":\"04\"},",
+          "  \"Isolation - Freelancer B Income Excludes A\": {\"status\":200,\"check\":\"income\",\"count\":0,\"auth\":\"freelancerB\",\"after\":\"04\"},",
+          "  \"Isolation - Freelancer A Income Includes Sale\": {\"status\":200,\"check\":\"income\",\"count\":1,\"auth\":\"freelancerA\",\"after\":\"04\",\"done\":\"05\"},",
+          "  \"Idempotency - Same Key Same Gig Replays\": {\"status\":200,\"check\":\"booking\",\"replayOf\":\"a\",\"gig\":\"g1\",\"client\":\"clientA\",\"auth\":\"clientA\",\"key\":\"request\",\"body\":{\"gigId\":\"{{sec.g1Id}}\"},\"after\":\"05\"},",
+          "  \"Idempotency - Uppercase Key Normalised To Replay\": {\"status\":200,\"check\":\"booking\",\"replayOf\":\"a\",\"gig\":\"g1\",\"client\":\"clientA\",\"auth\":\"clientA\",\"key\":\"upper\",\"body\":{\"gigId\":\"{{sec.g1Id}}\"},\"after\":\"05\"},",
+          "  \"Idempotency - Same Key Different Gig Conflicts\": {\"status\":409,\"error\":\"Idempotency-Key has already been used for a different booking\",\"auth\":\"clientA\",\"key\":\"request\",\"body\":{\"gigId\":\"{{sec.g2Id}}\"},\"after\":\"05\"},",
+          "  \"Idempotency - Key Scoped Per Client\": {\"status\":201,\"check\":\"booking\",\"created\":\"b\",\"distinctFrom\":\"a\",\"gig\":\"g1\",\"client\":\"clientB\",\"auth\":\"clientB\",\"key\":\"request\",\"body\":{\"gigId\":\"{{sec.g1Id}}\"},\"after\":\"05\"},",
+          "  \"Idempotency - Missing Key Rejected\": {\"status\":400,\"error\":\"A valid UUID v4 Idempotency-Key header is required\",\"auth\":\"clientA\",\"body\":{\"gigId\":\"{{sec.g2Id}}\"},\"after\":\"05\"},",
+          "  \"Idempotency - Non-v4 UUID Key Rejected\": {\"status\":400,\"error\":\"A valid UUID v4 Idempotency-Key header is required\",\"auth\":\"clientA\",\"key\":\"v1\",\"body\":{\"gigId\":\"{{sec.g2Id}}\"},\"after\":\"05\"},",
+          "  \"Idempotency - Key In Body Rejected\": {\"status\":400,\"error\":\"Booking request contains unsupported fields\",\"auth\":\"clientA\",\"body\":{\"gigId\":\"{{sec.g2Id}}\",\"idempotencyKey\":\"{{sec.requestKey}}\"},\"after\":\"05\"},",
+          "  \"Idempotency - Client A Has Exactly One Booking\": {\"status\":200,\"check\":\"bookings\",\"ownerField\":\"client\",\"account\":\"clientA\",\"count\":1,\"includes\":[\"a\"],\"auth\":\"clientA\",\"after\":\"05\"},",
+          "  \"Idempotency - Client B Has Exactly One Booking\": {\"status\":200,\"check\":\"bookings\",\"ownerField\":\"client\",\"account\":\"clientB\",\"count\":1,\"includes\":[\"b\"],\"auth\":\"clientB\",\"after\":\"05\"},",
+          "  \"Idempotency - Freelancer A Income Counts Two Transactions\": {\"status\":200,\"check\":\"income\",\"count\":2,\"auth\":\"freelancerA\",\"after\":\"05\",\"done\":\"06\"},",
+          "  \"Errors - Malformed JSON On Login\": {\"status\":400,\"error\":\"Request body is not valid JSON\",\"after\":\"06\"},",
+          "  \"Errors - Malformed JSON On Booking\": {\"status\":400,\"error\":\"Request body is not valid JSON\",\"auth\":\"clientA\",\"key\":\"fresh\",\"after\":\"06\"},",
+          "  \"Errors - Oversized Body\": {\"status\":413,\"error\":\"Request body too large\",\"oversized\":true,\"after\":\"06\"},",
+          "  \"Errors - NoSQL Operator In Login Email\": {\"status\":400,\"error\":\"Email and password must be valid text values\",\"body\":{\"email\":{\"$gt\":\"\"},\"password\":\"{{sec.password}}\"},\"after\":\"06\"},",
+          "  \"Errors - NoSQL Operator In Gig Title\": {\"status\":400,\"error\":\"Title must be a valid text value\",\"auth\":\"freelancerA\",\"body\":{\"title\":{\"$ne\":null}},\"after\":\"06\"},",
+          "  \"Errors - NoSQL Operator In Gig Price\": {\"status\":400,\"error\":\"Price must be a positive number\",\"auth\":\"freelancerA\",\"body\":{\"price\":{\"$gt\":0}},\"after\":\"06\"},",
+          "  \"Errors - Update Operator Smuggled In Gig Body\": {\"status\":400,\"error\":\"Gig request contains unsupported fields\",\"auth\":\"freelancerA\",\"body\":{\"$set\":{\"freelancer\":\"{{sec.freelancerBId}}\"}},\"after\":\"06\"},",
+          "  \"Errors - Prototype Key In Gig Body\": {\"status\":400,\"error\":\"Gig request contains unsupported fields\",\"auth\":\"freelancerA\",\"after\":\"06\"},",
+          "  \"Errors - G1 Unchanged After Injection Attempts\": {\"status\":200,\"check\":\"gig\",\"id\":\"g1\",\"expected\":{\"title\":\"Security Review Logo Pack\",\"description\":\"Vector logo design with three revision rounds.\",\"category\":\"Design\",\"price\":450.75},\"after\":\"06\"},",
+          "  \"Errors - Invalid Gig ID Path\": {\"status\":400,\"error\":\"Invalid gig ID\",\"after\":\"06\"},",
+          "  \"Errors - Operator Object In Gig ID Path\": {\"status\":400,\"error\":\"Invalid gig ID\",\"after\":\"06\"},",
+          "  \"Errors - Invalid Booking ID Path\": {\"status\":400,\"error\":\"Invalid booking ID\",\"auth\":\"clientA\",\"after\":\"06\"},",
+          "  \"Errors - Invalid Admin Gig ID Path\": {\"status\":400,\"error\":\"Invalid gig ID\",\"auth\":\"admin\",\"after\":\"06\"},",
+          "  \"Errors - Unknown Route\": {\"status\":404,\"error\":\"Route not found\",\"after\":\"06\"},",
+          "  \"Errors - Unsupported Method\": {\"status\":404,\"error\":\"Route not found\",\"auth\":\"freelancerA\",\"body\":{\"price\":1},\"after\":\"06\",\"done\":\"07\"},",
+          "  \"Protections - Security Headers On Health\": {\"status\":200,\"check\":\"headers\",\"after\":\"07\"},",
+          "  \"Protections - Security Headers On Error Response\": {\"status\":404,\"error\":\"Route not found\",\"check\":\"headers\",\"after\":\"07\"},",
+          "  \"Protections - Caller Request ID Not Trusted\": {\"status\":200,\"check\":\"requestId\",\"after\":\"07\"},",
+          "  \"Protections - CORS Trusted Origin\": {\"status\":200,\"check\":\"cors\",\"after\":\"07\"},",
+          "  \"Protections - CORS Untrusted Origin\": {\"status\":200,\"check\":\"untrustedCors\",\"after\":\"07\"},",
+          "  \"Protections - CORS Booking Preflight\": {\"status\":204,\"check\":\"preflight\",\"after\":\"07\"},",
+          "  \"Protections - CORS Untrusted Preflight\": {\"status\":204,\"check\":\"preflight\",\"untrusted\":true,\"after\":\"07\"},",
+          "  \"Protections - Gig Markup Sanitised On Create\": {\"status\":201,\"check\":\"gig\",\"store\":\"g3\",\"expected\":{\"title\":\"Secure Logo Pack\",\"description\":\"Vector logo design with source files.\",\"category\":\"Design\",\"price\":99.99},\"auth\":\"freelancerA\",\"body\":{\"title\":\"<script>alert(1)</script>Secure Logo Pack\",\"description\":\"<img src=x onerror=alert(1)><b>Vector</b> logo design with source files.\",\"category\":\"<i>Design</i>\",\"price\":99.99},\"after\":\"07\"},",
+          "  \"Protections - Sanitised Gig Stored Without Markup\": {\"status\":200,\"check\":\"gig\",\"id\":\"g3\",\"expected\":{\"title\":\"Secure Logo Pack\",\"description\":\"Vector logo design with source files.\",\"category\":\"Design\"},\"after\":\"07\"},",
+          "  \"Protections - Markup-only Title Rejected After Sanitising\": {\"status\":400,\"error\":\"Title must be between 3 and 100 characters\",\"auth\":\"freelancerA\",\"body\":{\"title\":\"<b></b><script>x</script>\"},\"after\":\"07\"},",
+          "  \"Protections - Sanitisation Gig Removed By Owner\": {\"status\":200,\"check\":\"message\",\"message\":\"Gig deleted successfully\",\"auth\":\"freelancerA\",\"after\":\"07\",\"done\":\"08\"},",
+          "  \"Cleanup - Admin Removes G1\": {\"status\":200,\"check\":\"message\",\"message\":\"Gig removed successfully\",\"auth\":\"admin\",\"after\":\"08\"},",
+          "  \"Cleanup - Admin Removes G2\": {\"status\":200,\"check\":\"message\",\"message\":\"Gig removed successfully\",\"auth\":\"admin\",\"after\":\"08\"},",
+          "  \"Cleanup - Booking History Survives Gig Removal\": {\"status\":200,\"check\":\"booking\",\"get\":\"a\",\"gig\":\"g1\",\"client\":\"clientA\",\"auth\":\"clientA\",\"after\":\"08\",\"done\":\"09\"},",
+          "  \"Limits Setup - Start Rate-limit Cycle\": {\"status\":200,\"check\":\"config\",\"bootstrap\":\"limits\"},",
+          "  \"Limits Setup - Register Client\": {\"status\":201,\"check\":\"register\",\"account\":\"clientA\",\"role\":\"client\",\"fresh\":true,\"body\":{\"fullName\":\"Limits Client Alpha\",\"email\":\"{{sec.clientAEmail}}\",\"password\":\"{{sec.password}}\",\"role\":\"client\"}},",
+          "  \"Limits Setup - Login Client\": {\"status\":200,\"check\":\"login\",\"account\":\"clientA\",\"role\":\"client\",\"fresh\":true,\"body\":{\"email\":\"{{sec.clientAEmail}}\",\"password\":\"{{sec.password}}\"},\"done\":\"10\"},",
+          "  \"Booking Limit - Short Key Spends Allowance\": {\"status\":400,\"error\":\"A valid UUID v4 Idempotency-Key header is required\",\"check\":\"remaining\",\"limit\":10,\"remaining\":9,\"auth\":\"clientA\",\"key\":\"short\",\"body\":{\"gigId\":\"000000000000000000000001\"},\"after\":\"10\"},",
+          "  \"Booking Limit - NoSQL Gig ID Spends Allowance\": {\"status\":400,\"error\":\"Gig ID is required\",\"check\":\"remaining\",\"limit\":10,\"remaining\":8,\"auth\":\"clientA\",\"key\":\"fresh\",\"body\":{\"gigId\":{\"$ne\":null}},\"after\":\"10\"},",
+          "  \"Booking Limit - Price And Owner Override Spends Allowance\": {\"status\":400,\"error\":\"Booking request contains unsupported fields\",\"check\":\"remaining\",\"limit\":10,\"remaining\":7,\"auth\":\"clientA\",\"key\":\"fresh\",\"body\":{\"gigId\":\"000000000000000000000001\",\"amount\":0.01,\"client\":\"{{sec.clientAId}}\",\"freelancer\":\"{{sec.clientAId}}\"},\"after\":\"10\"},",
+          "  \"Booking Limit - Loop Until 429\": {\"check\":\"limit\",\"limiter\":\"booking\",\"limit\":10,\"window\":900,\"before\":400,\"beforeError\":\"Invalid gig ID\",\"limitError\":\"Too many booking attempts. Please try again later.\",\"status\":[400,429],\"auth\":\"clientA\",\"key\":\"fresh\",\"body\":{\"gigId\":\"not-an-object-id\"},\"after\":\"10\"},",
+          "  \"Booking Limit - Forwarded IP Cannot Bypass\": {\"check\":\"limit\",\"limiter\":\"booking\",\"limit\":10,\"window\":900,\"before\":400,\"beforeError\":\"Invalid gig ID\",\"limitError\":\"Too many booking attempts. Please try again later.\",\"status\":429,\"auth\":\"clientA\",\"key\":\"fresh\",\"body\":{\"gigId\":\"not-an-object-id\"},\"after\":\"10\",\"done\":\"11\"},",
+          "  \"Register Limit - Loop Until 429\": {\"check\":\"limit\",\"limiter\":\"register\",\"limit\":10,\"window\":3600,\"before\":400,\"beforeError\":\"All registration fields are required\",\"limitError\":\"Too many registration attempts. Please try again later.\",\"status\":[400,429],\"body\":{},\"after\":\"11\"},",
+          "  \"Register Limit - Valid Signup Via Forwarded IP Blocked\": {\"check\":\"limit\",\"limiter\":\"register\",\"limit\":10,\"window\":3600,\"before\":400,\"beforeError\":\"All registration fields are required\",\"limitError\":\"Too many registration attempts. Please try again later.\",\"status\":429,\"body\":{\"fullName\":\"Limits Client Beta\",\"email\":\"{{sec.clientBEmail}}\",\"password\":\"{{sec.password}}\",\"role\":\"client\"},\"after\":\"11\",\"done\":\"12\"},",
+          "  \"Login Limit - Loop Until 429\": {\"check\":\"limit\",\"limiter\":\"login\",\"limit\":5,\"window\":900,\"before\":401,\"beforeError\":\"Invalid credentials\",\"limitError\":\"Too many authentication attempts. Please try again later.\",\"status\":[401,429],\"body\":{\"email\":\"{{sec.clientAEmail}}\",\"password\":\"{{sec.password}}-wrong\"},\"after\":\"12\"},",
+          "  \"Login Limit - Forwarded IP Cannot Bypass\": {\"check\":\"limit\",\"limiter\":\"login\",\"limit\":5,\"window\":900,\"before\":401,\"beforeError\":\"Invalid credentials\",\"limitError\":\"Too many authentication attempts. Please try again later.\",\"status\":429,\"body\":{\"email\":\"{{sec.clientAEmail}}\",\"password\":\"{{sec.password}}-wrong\"},\"after\":\"12\"},",
+          "  \"Login Limit - Valid Credentials Also Blocked\": {\"check\":\"limit\",\"limiter\":\"login\",\"limit\":5,\"window\":900,\"before\":401,\"beforeError\":\"Invalid credentials\",\"limitError\":\"Too many authentication attempts. Please try again later.\",\"status\":429,\"body\":{\"email\":\"{{sec.clientAEmail}}\",\"password\":\"{{sec.password}}\"},\"after\":\"12\",\"done\":\"13\"}",
+          "};",
+          "",
+          "const scenario = scenarios[pm.info.requestName];",
+          "if (!scenario) halt('Unknown security scenario: ' + pm.info.requestName);",
+          "pm.variables.set('sec.spec', JSON.stringify(scenario));",
+          "if (scenario.after && get('done.' + scenario.after) !== 'yes') {",
+          "  halt('Run folder ' + scenario.after + ' first in the same cycle, with Keep variable values enabled.');",
+          "}",
+          "",
+          "if (scenario.bootstrap) {",
+          "  const supplied = (value) => typeof value === 'string' && value !== '' && !/^\\{\\{.*\\}\\}$/.test(value);",
+          "  const email = pm.environment.get('adminEmail');",
+          "  if (scenario.bootstrap === 'matrix') {",
+          "    if (!supplied(email) || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(email.trim()) || !supplied(pm.environment.get('adminPassword'))) {",
+          "      halt('Supply adminEmail and adminPassword, for example --env-var \"adminPassword=<admin-password>\".');",
+          "    }",
+          "    if (!supplied(pm.environment.get('jwtSecret'))) {",
+          "      halt('Supply jwtSecret at run time with --env-var \"jwtSecret=<API JWT_SECRET>\". The matrix needs it to mint expired and forged tokens.');",
+          "    }",
+          "  }",
+          "  Object.keys(pm.collectionVariables.toObject())",
+          "    .filter((key) => key.startsWith('sec.'))",
+          "    .forEach((key) => pm.collectionVariables.unset(key));",
+          "  const runId = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);",
+          "  set('cycle', scenario.bootstrap);",
+          "  set('runId', runId);",
+          "  // Generated per run, so no account password is stored in the repository.",
+          "  set('password', 'Sec-' + runId + '-Pw9');",
+          "  ['clientA', 'clientB', 'freelancerA', 'freelancerB'].forEach((account) => {",
+          "    set(account + 'Email', 'sec.' + account.toLowerCase() + '.' + runId + '@hustlehub.test');",
+          "  });",
+          "  set('requestKey', pm.variables.replaceIn('{{$guid}}').toLowerCase());",
+          "  copyCollectionValues();",
+          "}",
+          "",
+          "const token = (account) => {",
+          "  const value = get(account + 'Token');",
+          "  if (!value) halt('Missing ' + account + ' token. Run the cycle from its setup folder with Keep variable values enabled.');",
+          "  return value;",
+          "};",
+          "",
+          "const cryptoJs = require('crypto-js');",
+          "const base64Url = (words) => cryptoJs.enc.Base64.stringify(words).replace(/=+$/, '').replace(/\\+/g, '-').replace(/\\//g, '_');",
+          "const encode = (value) => base64Url(cryptoJs.enc.Utf8.parse(JSON.stringify(value)));",
+          "const decode = (segment) => {",
+          "  const base64 = segment.replace(/-/g, '+').replace(/_/g, '/');",
+          "  return JSON.parse(cryptoJs.enc.Base64.parse(base64 + '='.repeat((4 - base64.length % 4) % 4)).toString(cryptoJs.enc.Utf8));",
+          "};",
+          "",
+          "// Forged tokens reuse a real account's claims, so only the property under test differs.",
+          "const mint = (spec) => {",
+          "  const [header, payload, signature] = token(spec.from).split('.');",
+          "  const real = decode(payload);",
+          "  if (spec.keepSignature) return header + '.' + encode(Object.assign({}, real, spec.set)) + '.' + signature;",
+          "  const now = Math.floor(Date.now() / 1000);",
+          "  const claims = Object.assign({",
+          "    id: real.id,",
+          "    role: real.role,",
+          "    sessionVersion: real.sessionVersion + (spec.bump || 0),",
+          "    iat: now + spec.iat,",
+          "    exp: now + spec.exp",
+          "  }, spec.set);",
+          "  (spec.drop || []).forEach((claim) => delete claims[claim]);",
+          "  const input = encode({alg: spec.alg || 'HS256', typ: 'JWT'}) + '.' + encode(claims);",
+          "  if (spec.alg === 'none') return input + '.';",
+          "  const secret = spec.wrongSecret ? 'not-the-api-secret-' + get('runId') : pm.environment.get('jwtSecret');",
+          "  return input + '.' + base64Url(cryptoJs.HmacSHA256(input, secret));",
+          "};",
+          "",
+          "if (scenario.jwt) {",
+          "  pm.variables.set('sec.authz', 'Bearer ' + mint(scenario.jwt));",
+          "} else if (scenario.authz) {",
+          "  pm.variables.set('sec.authz', scenario.authz.replace('{token}', () => token(scenario.auth)));",
+          "} else if (scenario.auth) {",
+          "  pm.variables.set('sec.authz', 'Bearer ' + token(scenario.auth));",
+          "}",
+          "",
+          "if (scenario.key) {",
+          "  const keys = {",
+          "    request: get('requestKey'),",
+          "    upper: String(get('requestKey')).toUpperCase(),",
+          "    v1: 'c232ab00-9414-11ec-b3c8-9f6bdeced846',",
+          "    short: 'abc',",
+          "    fresh: pm.variables.replaceIn('{{$guid}}')",
+          "  };",
+          "  pm.variables.set('sec.key', keys[scenario.key]);",
+          "}",
+          "",
+          "if (scenario.adminBody) {",
+          "  pm.variables.set('sec.body', JSON.stringify({",
+          "    email: pm.environment.get('adminEmail').trim(),",
+          "    password: pm.environment.get('adminPassword')",
+          "  }));",
+          "}",
+          "if (scenario.body !== undefined) {",
+          "  pm.variables.set('sec.body', pm.variables.replaceIn(JSON.stringify(scenario.body)));",
+          "}",
+          "if (scenario.oversized) {",
+          "  pm.variables.set('sec.body', JSON.stringify({fullName: 'A'.repeat(12000), email: 'oversized@hustlehub.test', password: 'x'.repeat(12), role: 'client'}));",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "(() => {",
+          "  if (pm.variables.get('sec.halt')) return;",
+          "",
+          "  const s = JSON.parse(pm.variables.get('sec.spec'));",
+          "  const get = (key) => pm.collectionVariables.get('sec.' + key);",
+          "  const save = (key, value) => pm.collectionVariables.set('sec.' + key, value);",
+          "  const header = (name) => pm.response.headers.get(name);",
+          "  const cryptoJs = require('crypto-js');",
+          "  const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;",
+          "",
+          "  let passed = true;",
+          "  let body;",
+          "  let repeat = false;",
+          "",
+          "  function test(name, fn) {",
+          "    pm.test(name, function () {",
+          "      try {",
+          "        fn();",
+          "      } catch (error) {",
+          "        passed = false;",
+          "        throw error;",
+          "      }",
+          "    });",
+          "  }",
+          "",
+          "  function id(value) {",
+          "    pm.expect(value).to.match(/^[a-f0-9]{24}$/);",
+          "  }",
+          "",
+          "  function base64Url(words) {",
+          "    return cryptoJs.enc.Base64.stringify(words).replace(/=+$/, '').replace(/\\+/g, '-').replace(/\\//g, '_');",
+          "  }",
+          "",
+          "  function decode(segment) {",
+          "    const base64 = segment.replace(/-/g, '+').replace(/_/g, '/');",
+          "    return JSON.parse(cryptoJs.enc.Base64.parse(base64 + '='.repeat((4 - base64.length % 4) % 4)).toString(cryptoJs.enc.Utf8));",
+          "  }",
+          "",
+          "  function safeUser(user, role) {",
+          "    pm.expect(user).to.be.an('object');",
+          "    pm.expect(Object.keys(user).sort()).to.eql(['email', 'fullName', 'id', 'role']);",
+          "    id(user.id);",
+          "    pm.expect(user.role).to.eql(role);",
+          "  }",
+          "",
+          "  function privateFields(value, path) {",
+          "    if (!value || typeof value !== 'object') return;",
+          "",
+          "    Object.entries(value).forEach(([key, child]) => {",
+          "      pm.expect(key, 'Private or internal field ' + path + key)",
+          "        .to.not.match(/^(?:password|passwordHash|salt|sessionVersion|requestKey|idempotencyKey|jwtSecret|secret|mongoUri|stack|_id|__v)$/i);",
+          "",
+          "      if (key === 'token') {",
+          "        pm.expect(s.check === 'login' && path === '', 'Tokens belong only in successful login responses').to.eql(true);",
+          "      }",
+          "",
+          "      privateFields(child, path + key + '.');",
+          "    });",
+          "  }",
+          "",
+          "  const allowed = [].concat(s.status);",
+          "",
+          "  test('Expected HTTP status', function () {",
+          "    let detail = '';",
+          "",
+          "    try {",
+          "      detail = pm.response.json().error || '';",
+          "    } catch (_) {}",
+          "",
+          "    pm.expect(allowed, 'HTTP ' + pm.response.code + (detail ? ': ' + String(detail).slice(0, 240) : ''))",
+          "      .to.include(pm.response.code);",
+          "  });",
+          "",
+          "  // Applies to every response: no internals, configuration names, secrets or stray tokens.",
+          "  test('Safe response without leaked secrets or internals', function () {",
+          "    const text = pm.response.text();",
+          "",
+          "    pm.expect(pm.response.headers.has('X-Powered-By'), 'X-Powered-By header').to.eql(false);",
+          "    pm.expect(header('X-Content-Type-Options')).to.eql('nosniff');",
+          "    pm.expect(pm.response.headers.has('Content-Security-Policy')).to.eql(true);",
+          "",
+          "    pm.expect(text, 'Stack trace or internal detail')",
+          "      .to.not.match(/node_modules|Mongo(?:Server|Network|Bulk)?Error|MongooseError|CastError|ValidationError|BSONError|E11000|SyntaxError|TypeError|ReferenceError|\"stack\"|\\bat [^\"\\n]*\\([^\"\\n]*:\\d+:\\d+\\)|[A-Za-z]:\\\\|\\/(?:home|Users|usr|var|opt|srv|sessions)\\//);",
+          "    pm.expect(text, 'Configuration name or connection string')",
+          "      .to.not.match(/JWT_SECRET|MONGO_URI|mongodb(?:\\+srv)?:\\/\\/|BEGIN [A-Z ]*PRIVATE KEY/);",
+          "",
+          "    if (s.check !== 'login') {",
+          "      pm.expect(text, 'JWT outside a login response').to.not.match(/eyJ[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\./);",
+          "    }",
+          "",
+          "    [pm.environment.get('adminPassword'), pm.environment.get('jwtSecret'), get('password'), get('requestKey')]",
+          "      .filter((value) => typeof value === 'string' && value.length >= 8 && !/^\\{\\{.*\\}\\}$/.test(value))",
+          "      .forEach((value) => {",
+          "        pm.expect(text.toLowerCase().includes(value.toLowerCase()), 'A secret, password or request key appears in the response')",
+          "          .to.eql(false);",
+          "      });",
+          "",
+          "    if (pm.response.code !== 204) {",
+          "      pm.expect(header('Content-Type')).to.include('application/json');",
+          "",
+          "      body = pm.response.json();",
+          "      privateFields(body, '');",
+          "",
+          "      if (pm.response.code >= 400) {",
+          "        pm.expect(Object.keys(body)).to.eql(['error']);",
+          "        pm.expect(body.error).to.be.a('string').and.not.empty;",
+          "        pm.expect(body.error.length).to.be.at.most(240);",
+          "",
+          "        if (s.error) pm.expect(body.error).to.eql(s.error);",
+          "      }",
+          "    }",
+          "  });",
+          "",
+          "  if (get('cycle') === 'matrix' && pm.response.headers.has('RateLimit-Remaining')) {",
+          "    test('Matrix stays within the rate-limit allowance', function () {",
+          "      pm.expect(Number(header('RateLimit-Remaining'))).to.be.at.least(1);",
+          "    });",
+          "  }",
+          "",
+          "  if (passed && s.check) {",
+          "    test('Scenario data and invariants', function () {",
+          "      switch (s.check) {",
+          "        case 'config':",
+          "          pm.expect(body.status).to.eql('OK');",
+          "          pm.expect(body.protocol).to.eql('HTTPS');",
+          "          pm.expect(get('requestKey')).to.match(UUID_V4);",
+          "          break;",
+          "",
+          "        case 'register':",
+          "          safeUser(body.user, s.role);",
+          "          pm.expect(body.user.email).to.eql(get(s.account + 'Email'));",
+          "",
+          "          if (s.fresh) {",
+          "            pm.expect(header('RateLimit-Remaining'), 'Start a fresh API process: the registration allowance is already partly used')",
+          "              .to.eql('9');",
+          "          }",
+          "",
+          "          save(s.account + 'Id', body.user.id);",
+          "          break;",
+          "",
+          "        case 'login': {",
+          "          safeUser(body.user, s.role);",
+          "",
+          "          const email = s.account === 'admin'",
+          "            ? pm.environment.get('adminEmail').trim().toLowerCase()",
+          "            : get(s.account + 'Email');",
+          "",
+          "          pm.expect(body.user.email).to.eql(email);",
+          "          if (s.account !== 'admin') pm.expect(body.user.id).to.eql(get(s.account + 'Id'));",
+          "",
+          "          pm.expect(/^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$/.test(body.token), 'Login must return a compact JWT').to.eql(true);",
+          "",
+          "          const parts = body.token.split('.');",
+          "          const claims = decode(parts[1]);",
+          "",
+          "          // The token carries only identifiers; no email, name or credential data.",
+          "          pm.expect(Object.keys(claims).sort(), 'JWT claims').to.eql(['exp', 'iat', 'id', 'role', 'sessionVersion']);",
+          "          pm.expect(claims.id).to.eql(body.user.id);",
+          "          pm.expect(claims.role).to.eql(s.role);",
+          "          pm.expect(claims.exp - claims.iat, 'JWT lifetime in seconds').to.be.within(1, 3600);",
+          "          if (s.account !== 'admin') pm.expect(claims.sessionVersion).to.eql(s.sessionVersion || 0);",
+          "",
+          "          if (s.fresh) {",
+          "            pm.expect(header('RateLimit-Remaining'), 'Start a fresh API process: failed logins are already recorded')",
+          "              .to.eql('4');",
+          "          }",
+          "",
+          "          if (s.verifySecret) {",
+          "            // Compared as a boolean so a mismatch never prints token material into reports.",
+          "            const signature = base64Url(cryptoJs.HmacSHA256(parts[0] + '.' + parts[1], pm.environment.get('jwtSecret')));",
+          "            pm.expect(signature === parts[2], 'jwtSecret does not match the API JWT_SECRET').to.eql(true);",
+          "          }",
+          "",
+          "          if (s.differsFrom) pm.expect(body.token === get(s.differsFrom + 'Token'), 'New login must issue a new token').to.eql(false);",
+          "",
+          "          save(s.account + 'Id', body.user.id);",
+          "          save((s.saveAs || s.account) + 'Token', body.token);",
+          "          break;",
+          "        }",
+          "",
+          "        case 'me':",
+          "          safeUser(body.user, s.role);",
+          "          pm.expect(body.user.id).to.eql(get(s.account + 'Id'));",
+          "          break;",
+          "",
+          "        case 'gig': {",
+          "          const gig = body.gig;",
+          "",
+          "          id(gig.id);",
+          "          pm.expect(Object.keys(gig).sort()).to.eql([",
+          "            'active', 'category', 'createdAt', 'description',",
+          "            'freelancer', 'id', 'price', 'title', 'updatedAt'",
+          "          ]);",
+          "          pm.expect(gig.freelancer).to.eql(get((s.owner || 'freelancerA') + 'Id'));",
+          "",
+          "          Object.entries(s.expected || {}).forEach(([key, value]) => {",
+          "            pm.expect(gig[key], key).to.eql(value);",
+          "          });",
+          "",
+          "          ['title', 'description', 'category'].forEach((field) => {",
+          "            pm.expect(gig[field], field + ' must not contain markup').to.not.match(/[<>]/);",
+          "          });",
+          "",
+          "          if (s.id) pm.expect(gig.id).to.eql(get(s.id + 'Id'));",
+          "",
+          "          if (s.store) {",
+          "            save(s.store + 'Id', gig.id);",
+          "            save(s.store + 'Price', gig.price);",
+          "          }",
+          "",
+          "          break;",
+          "        }",
+          "",
+          "        case 'gigs':",
+          "          pm.expect(body.gigs).to.be.an('array');",
+          "          body.gigs.forEach((gig) => pm.expect(gig.freelancer).to.eql(get(s.account + 'Id')));",
+          "          pm.expect(body.gigs, 'Gig count').to.have.lengthOf(s.count);",
+          "          break;",
+          "",
+          "        case 'booking': {",
+          "          const booking = body.booking;",
+          "",
+          "          id(booking.id);",
+          "          pm.expect(Object.keys(booking).sort()).to.eql([",
+          "            'amount', 'client', 'createdAt', 'freelancer',",
+          "            'gig', 'id', 'status', 'updatedAt'",
+          "          ]);",
+          "          pm.expect(booking.gig).to.eql(get(s.gig + 'Id'));",
+          "          pm.expect(booking.client).to.eql(get(s.client + 'Id'));",
+          "          pm.expect(booking.freelancer).to.eql(get('freelancerAId'));",
+          "          pm.expect(booking.amount).to.eql(Number(get(s.gig + 'Price')));",
+          "          pm.expect(booking.status).to.eql('confirmed');",
+          "",
+          "          if (s.created || s.replayOf) {",
+          "            const transaction = body.transaction;",
+          "",
+          "            id(transaction.id);",
+          "            pm.expect(Object.keys(transaction).sort()).to.eql([",
+          "              'amount', 'booking', 'client', 'createdAt',",
+          "              'freelancer', 'id', 'status'",
+          "            ]);",
+          "            pm.expect(transaction.booking).to.eql(booking.id);",
+          "            pm.expect(transaction.client).to.eql(booking.client);",
+          "            pm.expect(transaction.freelancer).to.eql(booking.freelancer);",
+          "            pm.expect(transaction.amount).to.eql(booking.amount);",
+          "            pm.expect(transaction.status).to.eql('confirmed');",
+          "          }",
+          "",
+          "          if (s.created) {",
+          "            pm.expect(body.replayed).to.eql(false);",
+          "            pm.expect(body.message).to.eql('Booking confirmed and simulated transaction recorded');",
+          "",
+          "            if (s.fresh) {",
+          "              pm.expect(header('RateLimit-Remaining'), 'Start a fresh API process: the booking allowance is already partly used')",
+          "                .to.eql('9');",
+          "            }",
+          "",
+          "            if (s.distinctFrom) {",
+          "              pm.expect(booking.id).to.not.eql(get(s.distinctFrom + 'BookingId'));",
+          "              pm.expect(body.transaction.id).to.not.eql(get(s.distinctFrom + 'TransactionId'));",
+          "            }",
+          "",
+          "            save(s.created + 'BookingId', booking.id);",
+          "            save(s.created + 'TransactionId', body.transaction.id);",
+          "            save(s.created + 'CreatedAt', booking.createdAt);",
+          "          } else if (s.replayOf) {",
+          "            pm.expect(body.replayed).to.eql(true);",
+          "            pm.expect(body.message).to.eql('Booking already confirmed for this request');",
+          "            pm.expect(booking.id, 'Replay must return the original booking').to.eql(get(s.replayOf + 'BookingId'));",
+          "            pm.expect(body.transaction.id, 'Replay must return the original transaction').to.eql(get(s.replayOf + 'TransactionId'));",
+          "            pm.expect(booking.createdAt).to.eql(get(s.replayOf + 'CreatedAt'));",
+          "          } else {",
+          "            pm.expect(booking.id).to.eql(get(s.get + 'BookingId'));",
+          "          }",
+          "",
+          "          break;",
+          "        }",
+          "",
+          "        case 'bookings': {",
+          "          pm.expect(body.bookings).to.be.an('array');",
+          "          body.bookings.forEach((booking) => pm.expect(booking[s.ownerField]).to.eql(get(s.account + 'Id')));",
+          "          pm.expect(body.bookings, 'Booking count').to.have.lengthOf(s.count);",
+          "",
+          "          const ids = body.bookings.map((booking) => booking.id);",
+          "          (s.includes || []).forEach((key) => pm.expect(ids).to.include(get(key + 'BookingId')));",
+          "          break;",
+          "        }",
+          "",
+          "        case 'income':",
+          "          pm.expect(body.totalIncome).to.eql(Math.round(s.count * Number(get('g1Price')) * 100) / 100);",
+          "          pm.expect(body.transactionCount).to.eql(s.count);",
+          "          break;",
+          "",
+          "        case 'users': {",
+          "          pm.expect(body.users).to.be.an('array');",
+          "          body.users.forEach((user) => {",
+          "            pm.expect(Object.keys(user).sort()).to.eql(['createdAt', 'email', 'fullName', 'id', 'role']);",
+          "          });",
+          "",
+          "          const ids = body.users.map((user) => user.id);",
+          "          ['admin', 'clientA', 'clientB', 'freelancerA', 'freelancerB'].forEach((account) => {",
+          "            pm.expect(ids).to.include(get(account + 'Id'));",
+          "          });",
+          "          break;",
+          "        }",
+          "",
+          "        case 'message':",
+          "          pm.expect(body).to.eql({message: s.message});",
+          "          break;",
+          "",
+          "        case 'headers': {",
+          "          const csp = header('Content-Security-Policy');",
+          "",
+          "          [",
+          "            \"default-src 'self'\",",
+          "            \"script-src 'self'\",",
+          "            \"style-src 'self'\",",
+          "            \"img-src 'self' data:\",",
+          "            \"connect-src 'self' \" + pm.variables.get('sec.origin'),",
+          "            \"object-src 'none'\",",
+          "            \"base-uri 'self'\",",
+          "            \"frame-ancestors 'none'\"",
+          "          ].forEach((directive) => pm.expect(csp).to.include(directive));",
+          "",
+          "          pm.expect(csp).to.not.match(/unsafe-inline|unsafe-eval|\\*/);",
+          "",
+          "          const hsts = header('Strict-Transport-Security') || '';",
+          "          pm.expect(Number((hsts.match(/max-age=(\\d+)/) || [])[1]), 'HSTS max-age').to.be.at.least(15552000);",
+          "          pm.expect(header('X-Frame-Options')).to.eql('SAMEORIGIN');",
+          "          pm.expect(header('Referrer-Policy')).to.eql('no-referrer');",
+          "          pm.expect(header('Cross-Origin-Resource-Policy')).to.eql('same-site');",
+          "          pm.expect(header('Cross-Origin-Opener-Policy')).to.eql('same-origin');",
+          "          pm.expect(header('X-Permitted-Cross-Domain-Policies')).to.eql('none');",
+          "          break;",
+          "        }",
+          "",
+          "        case 'requestId':",
+          "          pm.expect(header('X-Request-ID')).to.match(UUID_V4);",
+          "          pm.expect(header('X-Request-ID')).to.not.eql('attacker-supplied-request-id');",
+          "          break;",
+          "",
+          "        case 'cors':",
+          "          pm.expect(header('Access-Control-Allow-Origin')).to.eql(pm.variables.get('sec.origin'));",
+          "          pm.expect(header('Access-Control-Expose-Headers')).to.include('Retry-After');",
+          "          pm.expect(header('Access-Control-Expose-Headers')).to.include('X-Request-ID');",
+          "          break;",
+          "",
+          "        case 'untrustedCors': {",
+          "          const origin = header('Access-Control-Allow-Origin');",
+          "          pm.expect(origin).to.not.eql('https://untrusted.example');",
+          "          pm.expect(origin).to.not.eql('*');",
+          "          break;",
+          "        }",
+          "",
+          "        case 'preflight': {",
+          "          if (s.untrusted) {",
+          "            pm.expect(header('Access-Control-Allow-Origin')).to.not.eql('https://untrusted.example');",
+          "            pm.expect(header('Access-Control-Allow-Origin')).to.not.eql('*');",
+          "          } else {",
+          "            pm.expect(header('Access-Control-Allow-Origin')).to.eql(pm.variables.get('sec.origin'));",
+          "          }",
+          "",
+          "          pm.expect(header('Access-Control-Allow-Methods')).to.include('POST');",
+          "",
+          "          const headers = header('Access-Control-Allow-Headers').toLowerCase();",
+          "          ['content-type', 'authorization', 'idempotency-key'].forEach((name) => pm.expect(headers).to.include(name));",
+          "          break;",
+          "        }",
+          "",
+          "        case 'remaining':",
+          "          pm.expect(header('RateLimit-Limit')).to.eql(String(s.limit));",
+          "          pm.expect(header('RateLimit-Remaining'), 'Start a fresh API process before the rate-limit cycle')",
+          "            .to.eql(String(s.remaining));",
+          "          break;",
+          "",
+          "        case 'limit': {",
+          "          const attempts = Number(get(s.limiter + 'Attempts') || 0) + 1;",
+          "",
+          "          save(s.limiter + 'Attempts', attempts);",
+          "          pm.expect(header('RateLimit-Limit')).to.eql(String(s.limit));",
+          "          pm.expect(header('RateLimit-Policy')).to.include('w=' + s.window);",
+          "",
+          "          if (pm.response.code !== 429) {",
+          "            pm.expect(pm.response.code).to.eql(s.before);",
+          "            pm.expect(body.error).to.eql(s.beforeError);",
+          "            pm.expect(attempts, 'Rate limiter did not block within its configured allowance').to.be.at.most(s.limit);",
+          "            repeat = true;",
+          "          } else {",
+          "            pm.expect(body.error).to.eql(s.limitError);",
+          "            pm.expect(header('RateLimit-Remaining')).to.eql('0');",
+          "            pm.expect(header('RateLimit-Reset')).to.match(/^\\d+$/);",
+          "            pm.expect(Number(header('Retry-After'))).to.be.above(0);",
+          "            pm.expect(header('Access-Control-Expose-Headers')).to.include('Retry-After');",
+          "          }",
+          "",
+          "          break;",
+          "        }",
+          "      }",
+          "    });",
+          "  }",
+          "",
+          "  if (!passed) {",
+          "    pm.execution.setNextRequest(null);",
+          "  } else if (repeat) {",
+          "    pm.execution.setNextRequest(pm.info.requestName);",
+          "  } else if (s.done) {",
+          "    save('done.' + s.done, 'yes');",
+          "  }",
+          "})();"
+        ]
+      }
+    }
+  ]
+}

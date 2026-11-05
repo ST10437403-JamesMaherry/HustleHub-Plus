@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="HustleHub+ Part 3 - Security Matrix" tests="34" time="1.591">
+  <testsuite name="Rate Limits / 10 Limits Setup / Limits Setup - Start Rate-limit Cycle" id="49728cec-35a1-4bc5-8e32-6032d21f5e8b" timestamp="2026-11-05T14:54:07.633Z" tests="3" failures="0" errors="0" time="0.036">
+    <testcase name="Expected HTTP status" time="0.036" classname="RateLimits10LimitsSetupLimitsSetupStartRateLimitCycle"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.036" classname="RateLimits10LimitsSetupLimitsSetupStartRateLimitCycle"/>
+    <testcase name="Scenario data and invariants" time="0.036" classname="RateLimits10LimitsSetupLimitsSetupStartRateLimitCycle"/>
+  </testsuite>
+  <testsuite name="Rate Limits / 10 Limits Setup / Limits Setup - Register Client" id="e7c663b9-94e2-4e03-a30e-b44fe26b685c" timestamp="2026-11-05T14:54:07.633Z" tests="3" failures="0" errors="0" time="0.235">
+    <testcase name="Expected HTTP status" time="0.235" classname="RateLimits10LimitsSetupLimitsSetupRegisterClient"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.235" classname="RateLimits10LimitsSetupLimitsSetupRegisterClient"/>
+    <testcase name="Scenario data and invariants" time="0.235" classname="RateLimits10LimitsSetupLimitsSetupRegisterClient"/>
+  </testsuite>
+  <testsuite name="Rate Limits / 10 Limits Setup / Limits Setup - Login Client" id="6c1dfc76-a0e9-4e94-8c1c-4fde18c00cf8" timestamp="2026-11-05T14:54:07.633Z" tests="3" failures="0" errors="0" time="0.206">
+    <testcase name="Expected HTTP status" time="0.206" classname="RateLimits10LimitsSetupLimitsSetupLoginClient"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.206" classname="RateLimits10LimitsSetupLimitsSetupLoginClient"/>
+    <testcase name="Scenario data and invariants" time="0.206" classname="RateLimits10LimitsSetupLimitsSetupLoginClient"/>
+  </testsuite>
+  <testsuite name="Rate Limits / 11 Booking Limiter / Booking Limit - Short Key Spends Allowance" id="3ffba0bb-cb13-4cfb-ba1d-94ab8aaa611a" timestamp="2026-11-05T14:54:07.633Z" tests="3" failures="0" errors="0" time="0.006">
+    <testcase name="Expected HTTP status" time="0.006" classname="RateLimits11BookingLimiterBookingLimitShortKeySpendsAllowance"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.006" classname="RateLimits11BookingLimiterBookingLimitShortKeySpendsAllowance"/>
+    <testcase name="Scenario data and invariants" time="0.006" classname="RateLimits11BookingLimiterBookingLimitShortKeySpendsAllowance"/>
+  </testsuite>
+  <testsuite name="Rate Limits / 11 Booking Limiter / Booking Limit - NoSQL Gig ID Spends Allowance" id="05298e1d-8d91-42ba-b034-c8aaf0b7de43" timestamp="2026-11-05T14:54:07.633Z" tests="3" failures="0" errors="0" time="0.005">
+    <testcase name="Expected HTTP status" time="0.005" classname="RateLimits11BookingLimiterBookingLimitNoSqlGigIdSpendsAllowance"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.005" classname="RateLimits11BookingLimiterBookingLimitNoSqlGigIdSpendsAllowance"/>
+    <testcase name="Scenario data and invariants" time="0.005" classname="RateLimits11BookingLimiterBookingLimitNoSqlGigIdSpendsAllowance"/>
+  </testsuite>
+  <testsuite name="Rate Limits / 11 Booking Limiter / Booking Limit - Price And Owner Override Spends Allowance" id="52ad80ce-efd7-4e84-84ea-7a792210eefe" timestamp="2026-11-05T14:54:07.633Z" tests="3" failures="0" errors="0" time="0.005">
+    <testcase name="Expected HTTP status" time="0.005" classname="RateLimits11BookingLimiterBookingLimitPriceAndOwnerOverrideSpendsAllowance"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.005" classname="RateLimits11BookingLimiterBookingLimitPriceAndOwnerOverrideSpendsAllowance"/>
+    <testcase name="Scenario data and invariants" time="0.005" classname="RateLimits11BookingLimiterBookingLimitPriceAndOwnerOverrideSpendsAllowance"/>
+  </testsuite>
+  <testsuite name="Rate Limits / 11 Booking Limiter / Booking Limit - Loop Until 429" id="d1dc1ca1-cb4c-4527-9801-6ef5922f24a9" timestamp="2026-11-05T14:54:07.633Z" tests="3" failures="0" errors="0" time="0.005">
+    <testcase name="Expected HTTP status" time="0.004" classname="RateLimits11BookingLimiterBookingLimitLoopUntil429"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="RateLimits11BookingLimiterBookingLimitLoopUntil429"/>
+    <testcase name="Scenario data and invariants" time="0.004" classname="RateLimits11BookingLimiterBookingLimitLoopUntil429"/>
+  </testsuite>
+  <testsuite name="Rate Limits / 11 Booking Limiter / Booking Limit - Forwarded IP Cannot Bypass" id="bba811c7-f435-42c2-b928-4d905265de9a" timestamp="2026-11-05T14:54:07.633Z" tests="3" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="RateLimits11BookingLimiterBookingLimitForwardedIpCannotBypass"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="RateLimits11BookingLimiterBookingLimitForwardedIpCannotBypass"/>
+    <testcase name="Scenario data and invariants" time="0.004" classname="RateLimits11BookingLimiterBookingLimitForwardedIpCannotBypass"/>
+  </testsuite>
+  <testsuite name="Rate Limits / 12 Registration Limiter / Register Limit - Loop Until 429" id="9d935f0d-934b-43ad-a462-816623409b7c" timestamp="2026-11-05T14:54:07.633Z" tests="3" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="RateLimits12RegistrationLimiterRegisterLimitLoopUntil429"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="RateLimits12RegistrationLimiterRegisterLimitLoopUntil429"/>
+    <testcase name="Scenario data and invariants" time="0.002" classname="RateLimits12RegistrationLimiterRegisterLimitLoopUntil429"/>
+  </testsuite>
+  <testsuite name="Rate Limits / 12 Registration Limiter / Register Limit - Valid Signup Via Forwarded IP Blocked" id="06476e8b-6df1-488a-a45a-7e1f070e3a00" timestamp="2026-11-05T14:54:07.633Z" tests="3" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="RateLimits12RegistrationLimiterRegisterLimitValidSignupViaForwardedIpBlocked"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="RateLimits12RegistrationLimiterRegisterLimitValidSignupViaForwardedIpBlocked"/>
+    <testcase name="Scenario data and invariants" time="0.002" classname="RateLimits12RegistrationLimiterRegisterLimitValidSignupViaForwardedIpBlocked"/>
+  </testsuite>
+  <testsuite name="Rate Limits / 13 Login Limiter / Login Limit - Loop Until 429" id="dbe519e7-c596-42d2-bbb2-fc18e76c7880" timestamp="2026-11-05T14:54:07.633Z" tests="3" failures="0" errors="0" time="0.171">
+    <testcase name="Expected HTTP status" time="0.003" classname="RateLimits13LoginLimiterLoginLimitLoopUntil429"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.003" classname="RateLimits13LoginLimiterLoginLimitLoopUntil429"/>
+    <testcase name="Scenario data and invariants" time="0.003" classname="RateLimits13LoginLimiterLoginLimitLoopUntil429"/>
+  </testsuite>
+  <testsuite name="Rate Limits / 13 Login Limiter / Login Limit - Forwarded IP Cannot Bypass" id="e1b7f132-5e6c-4e98-9bf5-c10c084bf0da" timestamp="2026-11-05T14:54:07.633Z" tests="3" failures="0" errors="0" time="0.003">
+    <testcase name="Expected HTTP status" time="0.003" classname="RateLimits13LoginLimiterLoginLimitForwardedIpCannotBypass"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.003" classname="RateLimits13LoginLimiterLoginLimitForwardedIpCannotBypass"/>
+    <testcase name="Scenario data and invariants" time="0.003" classname="RateLimits13LoginLimiterLoginLimitForwardedIpCannotBypass"/>
+  </testsuite>
+  <testsuite name="Rate Limits / 13 Login Limiter / Login Limit - Valid Credentials Also Blocked" id="33007b80-3b55-4b96-be84-70e94c489ebe" timestamp="2026-11-05T14:54:07.633Z" tests="3" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="RateLimits13LoginLimiterLoginLimitValidCredentialsAlsoBlocked"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="RateLimits13LoginLimiterLoginLimitValidCredentialsAlsoBlocked"/>
+    <testcase name="Scenario data and invariants" time="0.002" classname="RateLimits13LoginLimiterLoginLimitValidCredentialsAlsoBlocked"/>
+  </testsuite>
+</testsuites>

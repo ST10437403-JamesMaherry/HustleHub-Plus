@@ -8,7 +8,9 @@
     "dev": "node --watch index.js",
     "test": "node --test test/*.test.js",
     "test:coverage": "node --experimental-test-coverage --test test/*.test.js",
-    "test:api": "newman run ../postman/postman_collection.json -e ../postman/postman_environment.json --ssl-extra-ca-certs ./certs/localhost-cert.pem -r cli,junit --reporter-junit-export ../evidence/part2/newman/newman-report.xml"
+    "test:api": "newman run ../postman/postman_collection.json -e ../postman/postman_environment.json --ssl-extra-ca-certs ./certs/localhost-cert.pem -r cli,junit --reporter-junit-export ../evidence/part2/newman/newman-report.xml",
+    "test:security": "newman run ../postman/part3_security_collection.json -e ../postman/part3_security_environment.json --folder \"Security Matrix\" --ssl-extra-ca-certs ./certs/localhost-cert.pem -r cli,junit --reporter-junit-export ../evidence/part3/security-tests/security-matrix.xml",
+    "test:security:limits": "newman run ../postman/part3_security_collection.json -e ../postman/part3_security_environment.json --folder \"Rate Limits\" --ssl-extra-ca-certs ./certs/localhost-cert.pem -r cli,junit --reporter-junit-export ../evidence/part3/security-tests/security-limits.xml"
   },
   "keywords": [
     "node",
