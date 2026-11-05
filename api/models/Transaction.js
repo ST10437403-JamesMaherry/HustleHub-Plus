@@ -42,6 +42,9 @@ const transactionSchema = new mongoose.Schema({
   }
 });
 
+// Support freelancer-scoped confirmed income and tax-year date queries.
+transactionSchema.index({ freelancer: 1, status: 1, createdAt: 1 });
+
 module.exports = mongoose.model(
   'Transaction',
   transactionSchema
