@@ -17,5 +17,5 @@ All screenshots come from one local run on 5 November 2026: API started with the
 
 - Shipped fields are limited to `event`, `outcome`, `level`, `message`, `requestId`, `method`, `statusCode`, `phase`, `errorType`, `service` and `timestamp`.
 - Only Winston events are shipped. Other process output, such as Node or Mongoose warnings, stays on the local console.
-- The Grafana Cloud token is write-only (`logs:write`), is kept only in the local `api/.env` and is never committed. Screenshots are cropped to the dashboard and Explore views and show no credentials.
+- The Grafana Cloud token is write-only (`logs:write`), expires after 30 days, is kept only in the local `api/.env` and is never committed. Screenshots are cropped to the dashboard and Explore views and show no credentials.
 - Free-tier retention is 14 days, so the cloud copy of these test logs expires automatically.
