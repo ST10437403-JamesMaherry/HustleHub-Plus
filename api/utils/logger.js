@@ -1,6 +1,7 @@
 'use strict';
 
 const winston = require('winston');
+const { createLokiTransport } = require('./lokiTransport');
 
 const EVENTS = new Set([
   'auth.login',
@@ -38,7 +39,10 @@ const winstonLogger = winston.createLogger({
     winston.format.json()
   ),
   defaultMeta: { service: 'hustlehub-api' },
-  transports: [new winston.transports.Console({ stderrLevels: ['error'] })],
+  transports: [
+    new winston.transports.Console({ stderrLevels: ['error'] }),
+    createLokiTransport()
+  ].filter(Boolean),
   exitOnError: false
 });
 
