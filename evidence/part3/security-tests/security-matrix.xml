@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="HustleHub+ Part 3 - Security Matrix" tests="103" time="2.770">
+  <testsuite name="Security Matrix / 01 Setup / Setup - Configuration Guard" id="703c8fdc-d997-4d2f-b5df-8e1daac72e28" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.036">
+    <testcase name="Expected HTTP status" time="0.036" classname="SecurityMatrix01SetupSetupConfigurationGuard"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.036" classname="SecurityMatrix01SetupSetupConfigurationGuard"/>
+    <testcase name="Scenario data and invariants" time="0.036" classname="SecurityMatrix01SetupSetupConfigurationGuard"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 01 Setup / Setup - Admin Login" id="bf51f9ba-272c-477b-9394-dfd1bb25ec36" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.231">
+    <testcase name="Expected HTTP status" time="0.231" classname="SecurityMatrix01SetupSetupAdminLogin"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.231" classname="SecurityMatrix01SetupSetupAdminLogin"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.231" classname="SecurityMatrix01SetupSetupAdminLogin"/>
+    <testcase name="Scenario data and invariants" time="0.231" classname="SecurityMatrix01SetupSetupAdminLogin"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 01 Setup / Setup - Register Client A" id="837d330a-da5a-4b6a-96fb-b1ed6b9323e6" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.219">
+    <testcase name="Expected HTTP status" time="0.219" classname="SecurityMatrix01SetupSetupRegisterClientA"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.219" classname="SecurityMatrix01SetupSetupRegisterClientA"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.219" classname="SecurityMatrix01SetupSetupRegisterClientA"/>
+    <testcase name="Scenario data and invariants" time="0.219" classname="SecurityMatrix01SetupSetupRegisterClientA"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 01 Setup / Setup - Register Freelancer A" id="1406f3eb-b62f-47c4-85a9-902d1f37fcc4" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.200">
+    <testcase name="Expected HTTP status" time="0.200" classname="SecurityMatrix01SetupSetupRegisterFreelancerA"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.200" classname="SecurityMatrix01SetupSetupRegisterFreelancerA"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.200" classname="SecurityMatrix01SetupSetupRegisterFreelancerA"/>
+    <testcase name="Scenario data and invariants" time="0.200" classname="SecurityMatrix01SetupSetupRegisterFreelancerA"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 01 Setup / Setup - Register Client B" id="8f5673c7-f840-4f25-9b93-564b35401c78" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.206">
+    <testcase name="Expected HTTP status" time="0.206" classname="SecurityMatrix01SetupSetupRegisterClientB"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.206" classname="SecurityMatrix01SetupSetupRegisterClientB"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.206" classname="SecurityMatrix01SetupSetupRegisterClientB"/>
+    <testcase name="Scenario data and invariants" time="0.206" classname="SecurityMatrix01SetupSetupRegisterClientB"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 01 Setup / Setup - Register Freelancer B" id="f75c8be4-6789-4eb0-983b-8e352e453e3d" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.212">
+    <testcase name="Expected HTTP status" time="0.212" classname="SecurityMatrix01SetupSetupRegisterFreelancerB"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.212" classname="SecurityMatrix01SetupSetupRegisterFreelancerB"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.212" classname="SecurityMatrix01SetupSetupRegisterFreelancerB"/>
+    <testcase name="Scenario data and invariants" time="0.212" classname="SecurityMatrix01SetupSetupRegisterFreelancerB"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 01 Setup / Setup - Login Client A" id="b762b397-e254-463e-9685-417bc4b48ed5" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.203">
+    <testcase name="Expected HTTP status" time="0.203" classname="SecurityMatrix01SetupSetupLoginClientA"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.203" classname="SecurityMatrix01SetupSetupLoginClientA"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.203" classname="SecurityMatrix01SetupSetupLoginClientA"/>
+    <testcase name="Scenario data and invariants" time="0.203" classname="SecurityMatrix01SetupSetupLoginClientA"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 01 Setup / Setup - Login Freelancer A" id="27484ad6-efce-4fcd-a19c-3bc3acdcf3b2" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.207">
+    <testcase name="Expected HTTP status" time="0.207" classname="SecurityMatrix01SetupSetupLoginFreelancerA"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.207" classname="SecurityMatrix01SetupSetupLoginFreelancerA"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.207" classname="SecurityMatrix01SetupSetupLoginFreelancerA"/>
+    <testcase name="Scenario data and invariants" time="0.207" classname="SecurityMatrix01SetupSetupLoginFreelancerA"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 01 Setup / Setup - Login Client B and Verify jwtSecret" id="f60e5bcc-a985-45dc-a9e4-8af856c15fed" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.208">
+    <testcase name="Expected HTTP status" time="0.208" classname="SecurityMatrix01SetupSetupLoginClientBAndVerifyJwtSecret"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.208" classname="SecurityMatrix01SetupSetupLoginClientBAndVerifyJwtSecret"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.208" classname="SecurityMatrix01SetupSetupLoginClientBAndVerifyJwtSecret"/>
+    <testcase name="Scenario data and invariants" time="0.208" classname="SecurityMatrix01SetupSetupLoginClientBAndVerifyJwtSecret"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 01 Setup / Setup - Login Freelancer B" id="033be8e4-2fc7-458d-aede-a9d956864067" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.210">
+    <testcase name="Expected HTTP status" time="0.210" classname="SecurityMatrix01SetupSetupLoginFreelancerB"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.210" classname="SecurityMatrix01SetupSetupLoginFreelancerB"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.210" classname="SecurityMatrix01SetupSetupLoginFreelancerB"/>
+    <testcase name="Scenario data and invariants" time="0.210" classname="SecurityMatrix01SetupSetupLoginFreelancerB"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 01 Setup / Setup - Freelancer A Creates Gig G1" id="a866c2c0-7ad6-4ce7-8d13-25938d1d4749" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.012">
+    <testcase name="Expected HTTP status" time="0.012" classname="SecurityMatrix01SetupSetupFreelancerACreatesGigG1"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.012" classname="SecurityMatrix01SetupSetupFreelancerACreatesGigG1"/>
+    <testcase name="Scenario data and invariants" time="0.012" classname="SecurityMatrix01SetupSetupFreelancerACreatesGigG1"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 01 Setup / Setup - Freelancer A Creates Gig G2" id="275f73c0-270c-4bc9-827e-e1dfe8ca0357" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.007">
+    <testcase name="Expected HTTP status" time="0.007" classname="SecurityMatrix01SetupSetupFreelancerACreatesGigG2"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.007" classname="SecurityMatrix01SetupSetupFreelancerACreatesGigG2"/>
+    <testcase name="Scenario data and invariants" time="0.007" classname="SecurityMatrix01SetupSetupFreelancerACreatesGigG2"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 02 Authentication and Forged Tokens / Auth - Missing Authorization Header" id="9e1bcee3-c5a1-4bb4-9f4e-b6676aebdec3" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthMissingAuthorizationHeader"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthMissingAuthorizationHeader"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 02 Authentication and Forged Tokens / Auth - Basic Scheme Rejected" id="1bb06e5c-1167-45c5-938f-3f86899dddbb" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthBasicSchemeRejected"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthBasicSchemeRejected"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 02 Authentication and Forged Tokens / Auth - Bearer Without Token" id="6508c1a4-6b7a-4c12-b480-c121a81c5cbe" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.001">
+    <testcase name="Expected HTTP status" time="0.001" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthBearerWithoutToken"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.001" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthBearerWithoutToken"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 02 Authentication and Forged Tokens / Auth - Bearer With Extra Segment" id="8b51f7c0-e28a-4769-8563-a9d8370bce0c" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthBearerWithExtraSegment"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthBearerWithExtraSegment"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 02 Authentication and Forged Tokens / Auth - Malformed JWT" id="4880cd9a-1f57-4195-b6fc-9746ed314f00" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthMalformedJwt"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthMalformedJwt"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 02 Authentication and Forged Tokens / Auth - Control Minted Token Accepted" id="73069a2d-14bd-4fa9-8fa1-e95e5a861663" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthControlMintedTokenAccepted"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthControlMintedTokenAccepted"/>
+    <testcase name="Scenario data and invariants" time="0.004" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthControlMintedTokenAccepted"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 02 Authentication and Forged Tokens / Auth - Expired Token With Valid Signature" id="057da43e-7c76-4d7a-873c-c559a3cb3aec" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthExpiredTokenWithValidSignature"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthExpiredTokenWithValidSignature"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 02 Authentication and Forged Tokens / Auth - Tampered Role Claim Keeps Old Signature" id="d4b57632-b1b1-4825-977f-7edcaf9cd764" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthTamperedRoleClaimKeepsOldSignature"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthTamperedRoleClaimKeepsOldSignature"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 02 Authentication and Forged Tokens / Auth - Wrong Signing Secret" id="65c6cde4-d838-4099-8a6f-b944616fac0e" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthWrongSigningSecret"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthWrongSigningSecret"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 02 Authentication and Forged Tokens / Auth - Unsigned alg none Token" id="91749e33-1d1e-45fe-a793-ecadaca339eb" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthUnsignedAlgNoneToken"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthUnsignedAlgNoneToken"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 02 Authentication and Forged Tokens / Auth - Signed Token Without Session Version" id="335c6c73-9baf-4b31-95ed-75a73be0b050" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthSignedTokenWithoutSessionVersion"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthSignedTokenWithoutSessionVersion"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 02 Authentication and Forged Tokens / Auth - Signed Token With Future Session Version" id="79095e9d-b818-4204-9a4b-1348298189b7" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthSignedTokenWithFutureSessionVersion"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthSignedTokenWithFutureSessionVersion"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 02 Authentication and Forged Tokens / Auth - Signed Admin Role Claim For Client" id="3ee97321-cab0-400c-9ec2-8c1c3ce58092" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthSignedAdminRoleClaimForClient"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthSignedAdminRoleClaimForClient"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 02 Authentication and Forged Tokens / Auth - Signed Token For Unknown User" id="5a481fce-77b3-446e-85d3-797d159cdb36" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthSignedTokenForUnknownUser"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix02AuthenticationAndForgedTokensAuthSignedTokenForUnknownUser"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 03 Session Revocation / Session - Client A Second Login" id="4a8b8c19-5519-4644-afb9-458d72b89938" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.198">
+    <testcase name="Expected HTTP status" time="0.198" classname="SecurityMatrix03SessionRevocationSessionClientASecondLogin"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.198" classname="SecurityMatrix03SessionRevocationSessionClientASecondLogin"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.198" classname="SecurityMatrix03SessionRevocationSessionClientASecondLogin"/>
+    <testcase name="Scenario data and invariants" time="0.198" classname="SecurityMatrix03SessionRevocationSessionClientASecondLogin"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 03 Session Revocation / Session - First Token Valid Before Logout" id="f55b9a11-3dce-44bd-9de9-b9ce79693a9c" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.005">
+    <testcase name="Expected HTTP status" time="0.005" classname="SecurityMatrix03SessionRevocationSessionFirstTokenValidBeforeLogout"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.005" classname="SecurityMatrix03SessionRevocationSessionFirstTokenValidBeforeLogout"/>
+    <testcase name="Scenario data and invariants" time="0.005" classname="SecurityMatrix03SessionRevocationSessionFirstTokenValidBeforeLogout"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 03 Session Revocation / Session - Second Token Valid Before Logout" id="eb82a256-3f0a-483e-94b0-f95b4f17f523" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix03SessionRevocationSessionSecondTokenValidBeforeLogout"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix03SessionRevocationSessionSecondTokenValidBeforeLogout"/>
+    <testcase name="Scenario data and invariants" time="0.004" classname="SecurityMatrix03SessionRevocationSessionSecondTokenValidBeforeLogout"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 03 Session Revocation / Session - Logout Without JWT" id="1c07fc25-eecd-4e4f-bce8-9b81e267b117" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix03SessionRevocationSessionLogoutWithoutJwt"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix03SessionRevocationSessionLogoutWithoutJwt"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 03 Session Revocation / Session - Logout With First Token" id="cbb3afd4-bfa0-4d8e-9ac2-6df7f8fcc1d7" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.008">
+    <testcase name="Expected HTTP status" time="0.008" classname="SecurityMatrix03SessionRevocationSessionLogoutWithFirstToken"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.008" classname="SecurityMatrix03SessionRevocationSessionLogoutWithFirstToken"/>
+    <testcase name="Scenario data and invariants" time="0.008" classname="SecurityMatrix03SessionRevocationSessionLogoutWithFirstToken"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 03 Session Revocation / Session - Revoked First Token Rejected" id="0e183f9b-ed3c-4d86-bbbe-de86724b65fd" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix03SessionRevocationSessionRevokedFirstTokenRejected"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix03SessionRevocationSessionRevokedFirstTokenRejected"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 03 Session Revocation / Session - Second Token Revoked By Same Logout" id="529d9f8c-82c0-4066-b4a3-336bca55ce7b" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix03SessionRevocationSessionSecondTokenRevokedBySameLogout"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix03SessionRevocationSessionSecondTokenRevokedBySameLogout"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 03 Session Revocation / Session - Revoked Token Cannot Book" id="350c3fdc-4c8b-400f-87e4-b80726ccd23d" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix03SessionRevocationSessionRevokedTokenCannotBook"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix03SessionRevocationSessionRevokedTokenCannotBook"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 03 Session Revocation / Session - Revoked Token Cannot Log Out Again" id="679a5044-19f8-47bf-acf9-095177f73bd7" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.005">
+    <testcase name="Expected HTTP status" time="0.005" classname="SecurityMatrix03SessionRevocationSessionRevokedTokenCannotLogOutAgain"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.005" classname="SecurityMatrix03SessionRevocationSessionRevokedTokenCannotLogOutAgain"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 03 Session Revocation / Session - Fresh Login After Logout" id="abd0ce7a-34d8-49f0-9976-bb1079c9fe83" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.207">
+    <testcase name="Expected HTTP status" time="0.207" classname="SecurityMatrix03SessionRevocationSessionFreshLoginAfterLogout"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.207" classname="SecurityMatrix03SessionRevocationSessionFreshLoginAfterLogout"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.207" classname="SecurityMatrix03SessionRevocationSessionFreshLoginAfterLogout"/>
+    <testcase name="Scenario data and invariants" time="0.207" classname="SecurityMatrix03SessionRevocationSessionFreshLoginAfterLogout"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 03 Session Revocation / Session - Fresh Token Accepted" id="e47bc2aa-b312-46fa-a272-2367a3cfdfe7" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix03SessionRevocationSessionFreshTokenAccepted"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix03SessionRevocationSessionFreshTokenAccepted"/>
+    <testcase name="Scenario data and invariants" time="0.004" classname="SecurityMatrix03SessionRevocationSessionFreshTokenAccepted"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 03 Session Revocation / Session - Revoked Booking Attempt Created Nothing" id="08b3662c-cd06-4a80-b5b1-db526262bdf7" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.007">
+    <testcase name="Expected HTTP status" time="0.007" classname="SecurityMatrix03SessionRevocationSessionRevokedBookingAttemptCreatedNothing"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.007" classname="SecurityMatrix03SessionRevocationSessionRevokedBookingAttemptCreatedNothing"/>
+    <testcase name="Scenario data and invariants" time="0.007" classname="SecurityMatrix03SessionRevocationSessionRevokedBookingAttemptCreatedNothing"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 04 Role Isolation / Role - Self-assigned Admin Registration Rejected" id="4f0d5ffb-f45b-4d06-8f07-585245e08bd2" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix04RoleIsolationRoleSelfAssignedAdminRegistrationRejected"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix04RoleIsolationRoleSelfAssignedAdminRegistrationRejected"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.002" classname="SecurityMatrix04RoleIsolationRoleSelfAssignedAdminRegistrationRejected"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 04 Role Isolation / Role - Client Cannot List Users" id="56071b55-7121-4cf2-879b-8352413b5b41" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix04RoleIsolationRoleClientCannotListUsers"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix04RoleIsolationRoleClientCannotListUsers"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 04 Role Isolation / Role - Client Cannot List All Bookings" id="5eaf0512-3ad5-4520-b73a-1f96e708d8dc" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix04RoleIsolationRoleClientCannotListAllBookings"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix04RoleIsolationRoleClientCannotListAllBookings"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 04 Role Isolation / Role - Client Cannot Remove Gigs As Admin" id="b336cbd6-e709-418d-ae8f-085cdb23e21a" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix04RoleIsolationRoleClientCannotRemoveGigsAsAdmin"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix04RoleIsolationRoleClientCannotRemoveGigsAsAdmin"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 04 Role Isolation / Role - Freelancer Cannot List Users" id="75618aad-c90d-4aa6-a904-7e2b0c9e7ee1" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix04RoleIsolationRoleFreelancerCannotListUsers"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix04RoleIsolationRoleFreelancerCannotListUsers"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 04 Role Isolation / Role - Freelancer Cannot Book" id="7de3507e-2cc7-48fd-9606-6b092fa9172b" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix04RoleIsolationRoleFreelancerCannotBook"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix04RoleIsolationRoleFreelancerCannotBook"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 04 Role Isolation / Role - Admin Cannot Book" id="f772d4b8-1373-46d9-89bf-342ce26f3569" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.005">
+    <testcase name="Expected HTTP status" time="0.005" classname="SecurityMatrix04RoleIsolationRoleAdminCannotBook"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.005" classname="SecurityMatrix04RoleIsolationRoleAdminCannotBook"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 04 Role Isolation / Role - Client Cannot Create Gigs" id="03ab557c-6880-4bda-aaec-709c913d7296" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Expected HTTP status" time="0.003" classname="SecurityMatrix04RoleIsolationRoleClientCannotCreateGigs"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.003" classname="SecurityMatrix04RoleIsolationRoleClientCannotCreateGigs"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 04 Role Isolation / Role - Admin Cannot Create Gigs" id="10e23858-37d6-490f-9836-a618e19b8243" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix04RoleIsolationRoleAdminCannotCreateGigs"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix04RoleIsolationRoleAdminCannotCreateGigs"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 04 Role Isolation / Role - Client Cannot Read Income" id="8e8a4b0f-372e-4b18-8cfd-66d1b52be14d" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix04RoleIsolationRoleClientCannotReadIncome"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix04RoleIsolationRoleClientCannotReadIncome"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 04 Role Isolation / Role - Client Cannot Read Freelancer Bookings" id="07a70c01-17f7-4f0e-991c-27aa9595b2b9" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix04RoleIsolationRoleClientCannotReadFreelancerBookings"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix04RoleIsolationRoleClientCannotReadFreelancerBookings"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 04 Role Isolation / Role - Freelancer Cannot Read Client Bookings" id="1e9edb01-1f05-4fac-9e2c-81d93899b3cf" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix04RoleIsolationRoleFreelancerCannotReadClientBookings"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix04RoleIsolationRoleFreelancerCannotReadClientBookings"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 04 Role Isolation / Role - Gig Survives Rejected Removal" id="ac9460fd-4f49-4c90-8d7d-be1c0a2f1732" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix04RoleIsolationRoleGigSurvivesRejectedRemoval"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix04RoleIsolationRoleGigSurvivesRejectedRemoval"/>
+    <testcase name="Scenario data and invariants" time="0.004" classname="SecurityMatrix04RoleIsolationRoleGigSurvivesRejectedRemoval"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 04 Role Isolation / Role - Admin Lists Users With Safe Fields" id="8c98e667-fe7c-4b50-a558-be97e7f81699" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.006">
+    <testcase name="Expected HTTP status" time="0.006" classname="SecurityMatrix04RoleIsolationRoleAdminListsUsersWithSafeFields"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.006" classname="SecurityMatrix04RoleIsolationRoleAdminListsUsersWithSafeFields"/>
+    <testcase name="Scenario data and invariants" time="0.006" classname="SecurityMatrix04RoleIsolationRoleAdminListsUsersWithSafeFields"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 05 Cross-account Isolation / Isolation - Client A Books G1" id="1a7290e1-832e-4c8d-b2bc-e4539d080636" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.015">
+    <testcase name="Expected HTTP status" time="0.015" classname="SecurityMatrix05CrossAccountIsolationIsolationClientABooksG1"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.015" classname="SecurityMatrix05CrossAccountIsolationIsolationClientABooksG1"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.015" classname="SecurityMatrix05CrossAccountIsolationIsolationClientABooksG1"/>
+    <testcase name="Scenario data and invariants" time="0.015" classname="SecurityMatrix05CrossAccountIsolationIsolationClientABooksG1"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 05 Cross-account Isolation / Isolation - Client A Reads Own Booking" id="380151e6-903c-4d2d-8357-9f4cf78cf3a3" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.008">
+    <testcase name="Expected HTTP status" time="0.008" classname="SecurityMatrix05CrossAccountIsolationIsolationClientAReadsOwnBooking"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.008" classname="SecurityMatrix05CrossAccountIsolationIsolationClientAReadsOwnBooking"/>
+    <testcase name="Scenario data and invariants" time="0.008" classname="SecurityMatrix05CrossAccountIsolationIsolationClientAReadsOwnBooking"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 05 Cross-account Isolation / Isolation - Client B Cannot Read Client A Booking" id="1f884704-2552-42aa-8e1c-9f030a12ebdf" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.008">
+    <testcase name="Expected HTTP status" time="0.008" classname="SecurityMatrix05CrossAccountIsolationIsolationClientBCannotReadClientABooking"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.008" classname="SecurityMatrix05CrossAccountIsolationIsolationClientBCannotReadClientABooking"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 05 Cross-account Isolation / Isolation - Client B History Excludes Client A" id="7c49419d-7b7a-425e-b569-0f5158f20580" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.007">
+    <testcase name="Expected HTTP status" time="0.007" classname="SecurityMatrix05CrossAccountIsolationIsolationClientBHistoryExcludesClientA"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.007" classname="SecurityMatrix05CrossAccountIsolationIsolationClientBHistoryExcludesClientA"/>
+    <testcase name="Scenario data and invariants" time="0.007" classname="SecurityMatrix05CrossAccountIsolationIsolationClientBHistoryExcludesClientA"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 05 Cross-account Isolation / Isolation - Freelancer A Sees Own Sale" id="fcf9c26e-bf71-46e8-83d0-239471d7c947" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.006">
+    <testcase name="Expected HTTP status" time="0.006" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerASeesOwnSale"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.006" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerASeesOwnSale"/>
+    <testcase name="Scenario data and invariants" time="0.006" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerASeesOwnSale"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 05 Cross-account Isolation / Isolation - Freelancer B Sees No Foreign Sales" id="6765cafb-8b78-427b-8d79-3e0e80758824" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.005">
+    <testcase name="Expected HTTP status" time="0.005" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerBSeesNoForeignSales"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.005" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerBSeesNoForeignSales"/>
+    <testcase name="Scenario data and invariants" time="0.005" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerBSeesNoForeignSales"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 05 Cross-account Isolation / Isolation - Freelancer B Cannot Update Freelancer A Gig" id="a94b3375-68e6-44f5-8936-f1839db766f8" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.007">
+    <testcase name="Expected HTTP status" time="0.007" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerBCannotUpdateFreelancerAGig"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.007" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerBCannotUpdateFreelancerAGig"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 05 Cross-account Isolation / Isolation - Freelancer B Cannot Delete Freelancer A Gig" id="2df47fdb-1f2f-4bb2-b29e-7f82bcdbccbe" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.006">
+    <testcase name="Expected HTTP status" time="0.006" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerBCannotDeleteFreelancerAGig"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.006" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerBCannotDeleteFreelancerAGig"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 05 Cross-account Isolation / Isolation - G1 Unchanged After Foreign Writes" id="3201e143-4644-4f23-8749-37020ac484d3" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.005">
+    <testcase name="Expected HTTP status" time="0.005" classname="SecurityMatrix05CrossAccountIsolationIsolationG1UnchangedAfterForeignWrites"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.005" classname="SecurityMatrix05CrossAccountIsolationIsolationG1UnchangedAfterForeignWrites"/>
+    <testcase name="Scenario data and invariants" time="0.005" classname="SecurityMatrix05CrossAccountIsolationIsolationG1UnchangedAfterForeignWrites"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 05 Cross-account Isolation / Isolation - Freelancer B Gig List Excludes A" id="9d8030bb-951c-4063-a4a8-20b55733451d" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.005">
+    <testcase name="Expected HTTP status" time="0.005" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerBGigListExcludesA"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.005" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerBGigListExcludesA"/>
+    <testcase name="Scenario data and invariants" time="0.005" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerBGigListExcludesA"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 05 Cross-account Isolation / Isolation - Freelancer B Income Excludes A" id="78146641-6654-4474-a13d-1832f61e8424" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.033">
+    <testcase name="Expected HTTP status" time="0.033" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerBIncomeExcludesA"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.033" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerBIncomeExcludesA"/>
+    <testcase name="Scenario data and invariants" time="0.033" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerBIncomeExcludesA"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 05 Cross-account Isolation / Isolation - Freelancer A Income Includes Sale" id="2d4926c5-e2b0-43e3-86c1-3fd49c2a11d0" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.006">
+    <testcase name="Expected HTTP status" time="0.006" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerAIncomeIncludesSale"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.006" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerAIncomeIncludesSale"/>
+    <testcase name="Scenario data and invariants" time="0.006" classname="SecurityMatrix05CrossAccountIsolationIsolationFreelancerAIncomeIncludesSale"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 06 Idempotency Misuse / Idempotency - Same Key Same Gig Replays" id="c1127c0f-df37-49ac-b606-95fc156440a5" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.007">
+    <testcase name="Expected HTTP status" time="0.007" classname="SecurityMatrix06IdempotencyMisuseIdempotencySameKeySameGigReplays"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.007" classname="SecurityMatrix06IdempotencyMisuseIdempotencySameKeySameGigReplays"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.007" classname="SecurityMatrix06IdempotencyMisuseIdempotencySameKeySameGigReplays"/>
+    <testcase name="Scenario data and invariants" time="0.007" classname="SecurityMatrix06IdempotencyMisuseIdempotencySameKeySameGigReplays"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 06 Idempotency Misuse / Idempotency - Uppercase Key Normalised To Replay" id="c43e526e-cf2a-4a89-b4ed-628d36852f86" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.007">
+    <testcase name="Expected HTTP status" time="0.007" classname="SecurityMatrix06IdempotencyMisuseIdempotencyUppercaseKeyNormalisedToReplay"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.007" classname="SecurityMatrix06IdempotencyMisuseIdempotencyUppercaseKeyNormalisedToReplay"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.007" classname="SecurityMatrix06IdempotencyMisuseIdempotencyUppercaseKeyNormalisedToReplay"/>
+    <testcase name="Scenario data and invariants" time="0.007" classname="SecurityMatrix06IdempotencyMisuseIdempotencyUppercaseKeyNormalisedToReplay"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 06 Idempotency Misuse / Idempotency - Same Key Different Gig Conflicts" id="f82ef698-83ce-482f-b79f-6beaec80cc47" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.008">
+    <testcase name="Expected HTTP status" time="0.008" classname="SecurityMatrix06IdempotencyMisuseIdempotencySameKeyDifferentGigConflicts"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.008" classname="SecurityMatrix06IdempotencyMisuseIdempotencySameKeyDifferentGigConflicts"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.008" classname="SecurityMatrix06IdempotencyMisuseIdempotencySameKeyDifferentGigConflicts"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 06 Idempotency Misuse / Idempotency - Key Scoped Per Client" id="03f946f4-8887-4dd0-a12c-dd79f6f35397" timestamp="2026-11-05T14:52:38.530Z" tests="4" failures="0" errors="0" time="0.014">
+    <testcase name="Expected HTTP status" time="0.014" classname="SecurityMatrix06IdempotencyMisuseIdempotencyKeyScopedPerClient"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.014" classname="SecurityMatrix06IdempotencyMisuseIdempotencyKeyScopedPerClient"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.014" classname="SecurityMatrix06IdempotencyMisuseIdempotencyKeyScopedPerClient"/>
+    <testcase name="Scenario data and invariants" time="0.014" classname="SecurityMatrix06IdempotencyMisuseIdempotencyKeyScopedPerClient"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 06 Idempotency Misuse / Idempotency - Missing Key Rejected" id="c5017195-9902-47e5-9604-096bd861b95f" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix06IdempotencyMisuseIdempotencyMissingKeyRejected"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix06IdempotencyMisuseIdempotencyMissingKeyRejected"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.004" classname="SecurityMatrix06IdempotencyMisuseIdempotencyMissingKeyRejected"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 06 Idempotency Misuse / Idempotency - Non-v4 UUID Key Rejected" id="045168df-8e0d-43e8-9109-45319c68c253" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix06IdempotencyMisuseIdempotencyNonV4UuidKeyRejected"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix06IdempotencyMisuseIdempotencyNonV4UuidKeyRejected"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.004" classname="SecurityMatrix06IdempotencyMisuseIdempotencyNonV4UuidKeyRejected"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 06 Idempotency Misuse / Idempotency - Key In Body Rejected" id="700f3454-c3f8-4b37-9a85-42a75f807439" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix06IdempotencyMisuseIdempotencyKeyInBodyRejected"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix06IdempotencyMisuseIdempotencyKeyInBodyRejected"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.004" classname="SecurityMatrix06IdempotencyMisuseIdempotencyKeyInBodyRejected"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 06 Idempotency Misuse / Idempotency - Client A Has Exactly One Booking" id="1ad726de-511e-4dbb-912d-05bb75cbcf81" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.006">
+    <testcase name="Expected HTTP status" time="0.006" classname="SecurityMatrix06IdempotencyMisuseIdempotencyClientAHasExactlyOneBooking"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.006" classname="SecurityMatrix06IdempotencyMisuseIdempotencyClientAHasExactlyOneBooking"/>
+    <testcase name="Scenario data and invariants" time="0.006" classname="SecurityMatrix06IdempotencyMisuseIdempotencyClientAHasExactlyOneBooking"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 06 Idempotency Misuse / Idempotency - Client B Has Exactly One Booking" id="9084157c-7a56-44e2-b7fa-78f75b5e60eb" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.005">
+    <testcase name="Expected HTTP status" time="0.005" classname="SecurityMatrix06IdempotencyMisuseIdempotencyClientBHasExactlyOneBooking"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.005" classname="SecurityMatrix06IdempotencyMisuseIdempotencyClientBHasExactlyOneBooking"/>
+    <testcase name="Scenario data and invariants" time="0.005" classname="SecurityMatrix06IdempotencyMisuseIdempotencyClientBHasExactlyOneBooking"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 06 Idempotency Misuse / Idempotency - Freelancer A Income Counts Two Transactions" id="eafd0d23-2f4d-4ba0-8f9e-cae36d785801" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.006">
+    <testcase name="Expected HTTP status" time="0.006" classname="SecurityMatrix06IdempotencyMisuseIdempotencyFreelancerAIncomeCountsTwoTransactions"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.006" classname="SecurityMatrix06IdempotencyMisuseIdempotencyFreelancerAIncomeCountsTwoTransactions"/>
+    <testcase name="Scenario data and invariants" time="0.006" classname="SecurityMatrix06IdempotencyMisuseIdempotencyFreelancerAIncomeCountsTwoTransactions"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - Malformed JSON On Login" id="a914533a-7530-4a94-8c85-0d7a98162074" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Expected HTTP status" time="0.003" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsMalformedJsonOnLogin"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.003" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsMalformedJsonOnLogin"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - Malformed JSON On Booking" id="8ebb7399-ed0f-40a0-be31-d82489896935" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsMalformedJsonOnBooking"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsMalformedJsonOnBooking"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - Oversized Body" id="e8a46f80-6620-4df8-8da5-25c31f4ec71a" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsOversizedBody"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsOversizedBody"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - NoSQL Operator In Login Email" id="ee5c4f95-27fe-43ca-9436-2d9046d69b90" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsNoSqlOperatorInLoginEmail"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsNoSqlOperatorInLoginEmail"/>
+    <testcase name="Matrix stays within the rate-limit allowance" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsNoSqlOperatorInLoginEmail"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - NoSQL Operator In Gig Title" id="2dd41bec-29e7-4cf8-9d0f-ffa1ed6763a2" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsNoSqlOperatorInGigTitle"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsNoSqlOperatorInGigTitle"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - NoSQL Operator In Gig Price" id="8b9d45d8-8f6f-4d34-b066-0a02a6fe0a5f" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Expected HTTP status" time="0.003" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsNoSqlOperatorInGigPrice"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.003" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsNoSqlOperatorInGigPrice"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - Update Operator Smuggled In Gig Body" id="4e1d7eff-a91d-4570-8960-43eb514f362e" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsUpdateOperatorSmuggledInGigBody"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsUpdateOperatorSmuggledInGigBody"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - Prototype Key In Gig Body" id="6fb86b4a-f5f4-464b-bd52-9d4ea0066970" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsPrototypeKeyInGigBody"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsPrototypeKeyInGigBody"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - G1 Unchanged After Injection Attempts" id="c309f7bf-2c91-42d0-adaf-f029d1c9c7d9" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsG1UnchangedAfterInjectionAttempts"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsG1UnchangedAfterInjectionAttempts"/>
+    <testcase name="Scenario data and invariants" time="0.004" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsG1UnchangedAfterInjectionAttempts"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - Invalid Gig ID Path" id="dad15857-fad8-46c6-b713-dfac3f396562" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsInvalidGigIdPath"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsInvalidGigIdPath"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - Operator Object In Gig ID Path" id="6b2d2843-6856-47a0-a845-0ec1bb89cf8c" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsOperatorObjectInGigIdPath"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsOperatorObjectInGigIdPath"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - Invalid Booking ID Path" id="5a946e8e-06d2-4f18-a17d-18abcd9d8a02" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.005">
+    <testcase name="Expected HTTP status" time="0.005" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsInvalidBookingIdPath"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.005" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsInvalidBookingIdPath"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - Invalid Admin Gig ID Path" id="b41324d9-a3a0-466b-9191-54f8911c1756" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsInvalidAdminGigIdPath"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsInvalidAdminGigIdPath"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - Unknown Route" id="80dfa7b1-59db-46d0-a3a9-41246058c1fd" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsUnknownRoute"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsUnknownRoute"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 07 Malformed Input and Safe Errors / Errors - Unsupported Method" id="03823d83-e21b-4937-8983-7656585f8d43" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsUnsupportedMethod"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix07MalformedInputAndSafeErrorsErrorsUnsupportedMethod"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 08 Security Protections / Protections - Security Headers On Health" id="ff41b7b3-c76b-4b37-95bf-4ce6c7cb740a" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsSecurityHeadersOnHealth"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsSecurityHeadersOnHealth"/>
+    <testcase name="Scenario data and invariants" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsSecurityHeadersOnHealth"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 08 Security Protections / Protections - Security Headers On Error Response" id="1f5d91d4-35ca-4565-a7c0-a560a68698a1" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsSecurityHeadersOnErrorResponse"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsSecurityHeadersOnErrorResponse"/>
+    <testcase name="Scenario data and invariants" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsSecurityHeadersOnErrorResponse"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 08 Security Protections / Protections - Caller Request ID Not Trusted" id="dfdb8f1a-4e2f-4c3e-9c59-281257538167" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.001">
+    <testcase name="Expected HTTP status" time="0.001" classname="SecurityMatrix08SecurityProtectionsProtectionsCallerRequestIdNotTrusted"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.001" classname="SecurityMatrix08SecurityProtectionsProtectionsCallerRequestIdNotTrusted"/>
+    <testcase name="Scenario data and invariants" time="0.001" classname="SecurityMatrix08SecurityProtectionsProtectionsCallerRequestIdNotTrusted"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 08 Security Protections / Protections - CORS Trusted Origin" id="6a4090a6-b544-43c8-baed-527456a8f16b" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.001">
+    <testcase name="Expected HTTP status" time="0.001" classname="SecurityMatrix08SecurityProtectionsProtectionsCorsTrustedOrigin"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.001" classname="SecurityMatrix08SecurityProtectionsProtectionsCorsTrustedOrigin"/>
+    <testcase name="Scenario data and invariants" time="0.001" classname="SecurityMatrix08SecurityProtectionsProtectionsCorsTrustedOrigin"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 08 Security Protections / Protections - CORS Untrusted Origin" id="06e79251-5d86-43ce-a9db-944ce46b9771" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsCorsUntrustedOrigin"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsCorsUntrustedOrigin"/>
+    <testcase name="Scenario data and invariants" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsCorsUntrustedOrigin"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 08 Security Protections / Protections - CORS Booking Preflight" id="4671f8fc-ae38-4e71-9f6f-d713b2df8f62" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsCorsBookingPreflight"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsCorsBookingPreflight"/>
+    <testcase name="Scenario data and invariants" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsCorsBookingPreflight"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 08 Security Protections / Protections - CORS Untrusted Preflight" id="778eda01-ea3f-4af8-b609-58a8cb223164" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP status" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsCorsUntrustedPreflight"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsCorsUntrustedPreflight"/>
+    <testcase name="Scenario data and invariants" time="0.002" classname="SecurityMatrix08SecurityProtectionsProtectionsCorsUntrustedPreflight"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 08 Security Protections / Protections - Gig Markup Sanitised On Create" id="e8770334-9e1a-41bf-80ac-f3056974d2ee" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.007">
+    <testcase name="Expected HTTP status" time="0.007" classname="SecurityMatrix08SecurityProtectionsProtectionsGigMarkupSanitisedOnCreate"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.007" classname="SecurityMatrix08SecurityProtectionsProtectionsGigMarkupSanitisedOnCreate"/>
+    <testcase name="Scenario data and invariants" time="0.007" classname="SecurityMatrix08SecurityProtectionsProtectionsGigMarkupSanitisedOnCreate"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 08 Security Protections / Protections - Sanitised Gig Stored Without Markup" id="48c2d1b8-4b2d-4435-8d1c-990b6abfae3d" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix08SecurityProtectionsProtectionsSanitisedGigStoredWithoutMarkup"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix08SecurityProtectionsProtectionsSanitisedGigStoredWithoutMarkup"/>
+    <testcase name="Scenario data and invariants" time="0.004" classname="SecurityMatrix08SecurityProtectionsProtectionsSanitisedGigStoredWithoutMarkup"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 08 Security Protections / Protections - Markup-only Title Rejected After Sanitising" id="7e0192eb-641e-49b9-9b98-07828c6a686b" timestamp="2026-11-05T14:52:38.530Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP status" time="0.004" classname="SecurityMatrix08SecurityProtectionsProtectionsMarkupOnlyTitleRejectedAfterSanitising"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.004" classname="SecurityMatrix08SecurityProtectionsProtectionsMarkupOnlyTitleRejectedAfterSanitising"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 08 Security Protections / Protections - Sanitisation Gig Removed By Owner" id="09bfb3e7-caea-415a-aa62-7a72c09c61cf" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.009">
+    <testcase name="Expected HTTP status" time="0.009" classname="SecurityMatrix08SecurityProtectionsProtectionsSanitisationGigRemovedByOwner"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.009" classname="SecurityMatrix08SecurityProtectionsProtectionsSanitisationGigRemovedByOwner"/>
+    <testcase name="Scenario data and invariants" time="0.009" classname="SecurityMatrix08SecurityProtectionsProtectionsSanitisationGigRemovedByOwner"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 09 Cleanup / Cleanup - Admin Removes G1" id="36c8a0e6-cb7d-4d53-96aa-87f567ff2d4a" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.007">
+    <testcase name="Expected HTTP status" time="0.007" classname="SecurityMatrix09CleanupCleanupAdminRemovesG1"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.007" classname="SecurityMatrix09CleanupCleanupAdminRemovesG1"/>
+    <testcase name="Scenario data and invariants" time="0.007" classname="SecurityMatrix09CleanupCleanupAdminRemovesG1"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 09 Cleanup / Cleanup - Admin Removes G2" id="1f86e775-1dc6-4a6f-b82e-b15c7c55dfff" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.007">
+    <testcase name="Expected HTTP status" time="0.007" classname="SecurityMatrix09CleanupCleanupAdminRemovesG2"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.007" classname="SecurityMatrix09CleanupCleanupAdminRemovesG2"/>
+    <testcase name="Scenario data and invariants" time="0.007" classname="SecurityMatrix09CleanupCleanupAdminRemovesG2"/>
+  </testsuite>
+  <testsuite name="Security Matrix / 09 Cleanup / Cleanup - Booking History Survives Gig Removal" id="937212c3-0b66-446f-84b2-c9a402b2a0b9" timestamp="2026-11-05T14:52:38.530Z" tests="3" failures="0" errors="0" time="0.005">
+    <testcase name="Expected HTTP status" time="0.005" classname="SecurityMatrix09CleanupCleanupBookingHistorySurvivesGigRemoval"/>
+    <testcase name="Safe response without leaked secrets or internals" time="0.005" classname="SecurityMatrix09CleanupCleanupBookingHistorySurvivesGigRemoval"/>
+    <testcase name="Scenario data and invariants" time="0.005" classname="SecurityMatrix09CleanupCleanupBookingHistorySurvivesGigRemoval"/>
+  </testsuite>
+</testsuites>

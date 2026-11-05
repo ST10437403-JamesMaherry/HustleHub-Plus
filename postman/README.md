@@ -9,6 +9,8 @@ The same collection runs in Postman and through the existing Newman npm script.
 - `postman_collection.json` — **HustleHub+ Part 2 - Automated API Review**.
 - `postman_environment.json` — **HustleHub+ Part 2 - Local**, containing `baseUrl`, `clientOrigin`, `adminEmail` and `adminPassword`.
 
+The separate Part 3 security matrix (`part3_security_collection.json` and `part3_security_environment.json`, run with `npm run test:security` and `npm run test:security:limits`) is documented in [`docs/testing/security-postman-suite.md`](../docs/testing/security-postman-suite.md).
+
 Use the assessment administrator account for the configured test database. Demonstration credentials supplied for marking are for assessment only and will be removed and rotated afterwards. The collection itself contains no administrator password or generated JWTs. If `adminPassword` is blank in the exported environment, supply it locally in Postman or at run time through Newman.
 
 ## Prerequisites
