@@ -1,4 +1,3 @@
-
 import { useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { useAuth } from '../../context/useAuth';
@@ -11,12 +10,21 @@ function outcomeMayBeCommitted(error) {
   return !Number.isInteger(status) || status < 400 || status === 408 || status >= 500;
 }
 
-// Rendered inside GigCard for client accounts only. The API derives price,
-// client and freelancer server-side, so only the gig ID is sent.
+// Generate an unpredictable UUID v4 without storing request identifiers server-side.
+function createRequestKey() {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
+// The booking body contains only the gig ID; the stable key is an HTTP header.
 export default function BookGigAction({ gig }) {
   const { request } = useAuth();
   const [state, setState] = useState({ step: 'idle', error: '', booking: null });
   const pending = useRef(false);
+  const requestKey = useRef(null);
 
   async function confirmBooking() {
     if (pending.current) return;
@@ -24,7 +32,14 @@ export default function BookGigAction({ gig }) {
     setState({ step: 'submitting', error: '', booking: null });
 
     try {
-      const data = await request('/api/bookings', { method: 'POST', body: { gigId: gig.id } });
+      // A manual retry of this attempt must reuse the same key.
+      if (!requestKey.current) requestKey.current = createRequestKey();
+
+      const data = await request('/api/bookings', {
+        method: 'POST',
+        body: { gigId: gig.id },
+        idempotencyKey: requestKey.current
+      });
       const booking = toSafeBooking(data?.booking);
 
       // A booking might be committed even if its response is unreadable.
@@ -105,7 +120,10 @@ export default function BookGigAction({ gig }) {
         <button
           type="button"
           className="button-secondary"
-          onClick={() => setState({ step: 'idle', error: '', booking: null })}
+          onClick={() => {
+            requestKey.current = null;
+            setState({ step: 'idle', error: '', booking: null });
+          }}
           disabled={submitting}
         >
           Cancel
