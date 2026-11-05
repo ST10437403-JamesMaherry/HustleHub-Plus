@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ApiError, apiRequest, clearToken, getToken, saveToken } from '../services/api';
 import { AuthContext } from './auth-context';
@@ -23,16 +22,49 @@ export function AuthProvider({ children }) {
   const tokenRef = useRef(null);
   const versionRef = useRef(0);
 
-  const logout = useCallback(() => {
-    versionRef.current += 1;
+  const clearLocalSession = useCallback((message = '') => {
+    const revision = ++versionRef.current;
     tokenRef.current = null;
     const cleared = clearToken();
     setSession({
       status: 'anonymous',
       user: null,
-      error: cleared ? '' : 'Close this tab to discard its saved session.'
+      error: cleared ? message : 'Close this tab to discard its saved session.'
     });
+    return { revision, cleared };
   }, []);
+
+  const logout = useCallback(async () => {
+    const token = tokenRef.current || getToken();
+
+    // Begin server revocation with the captured token before discarding local state.
+    const revocation = token
+      ? apiRequest('/api/auth/logout', {
+          method: 'POST',
+          token,
+          signal: AbortSignal.timeout(5000)
+        })
+      : null;
+
+    // Remove privileged browser state immediately, even during an API outage.
+    const { revision, cleared } = clearLocalSession();
+
+    if (!revocation) return;
+
+    try {
+      await revocation;
+    } catch (error) {
+      // An already-invalid token does not need additional revocation.
+      if (cleared && error?.status !== 401 && revision === versionRef.current) {
+        setSession((current) => current.status === 'anonymous'
+          ? {
+              ...current,
+              error: 'Signed out locally. Server sign-out could not be confirmed; other sessions may remain active.'
+            }
+          : current);
+      }
+    }
+  }, [clearLocalSession]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -98,7 +130,7 @@ export function AuthProvider({ children }) {
     try {
       const data = await apiRequest(path, { ...options, token });
 
-      // The session version also detects logout and rapid re-login with the same JWT.
+      // Local request generations prevent stale responses from replacing a newer session.
       if (version !== versionRef.current || tokenRef.current !== token) {
         throw new DOMException('The session changed.', 'AbortError');
       }
@@ -107,11 +139,11 @@ export function AuthProvider({ children }) {
     } catch (error) {
       // A stale request must not sign out a newer session.
       if (error.status === 401 && version === versionRef.current && tokenRef.current === token) {
-        logout();
+        clearLocalSession('Your session ended. Please sign in again.');
       }
       throw error;
     }
-  }, [logout, session.status]);
+  }, [clearLocalSession, session.status]);
 
   const retrySession = useCallback(() => {
     setSession({ status: 'restoring', user: null, error: '' });

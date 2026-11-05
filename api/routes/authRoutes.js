@@ -3,7 +3,8 @@ const express = require('express');
 const {
   registerUser,
   loginUser,
-  getCurrentUser
+  getCurrentUser,
+  logoutUser
 } = require('../controllers/authController');
 
 const validateRegistration = require(
@@ -51,6 +52,13 @@ router.get(
   '/me',
   protect,
   getCurrentUser
+);
+
+// Signing out invalidates all previously issued tokens for the account.
+router.post(
+  '/logout',
+  protect,
+  logoutUser
 );
 
 module.exports = router;

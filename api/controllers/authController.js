@@ -1,5 +1,3 @@
-const mongoose = require('mongoose');
-
 const User = require('../models/User');
 
 // Password operations remain isolated so authentication controllers do not
@@ -123,29 +121,41 @@ const loginUser = async (req, res, next) => {
 };
 
 /**
- * Returns the safe account details for the user identified by a verified JWT.
+ * Returns the safe account selected by the authentication middleware.
  */
-const getCurrentUser = async (req, res, next) => {
+const getCurrentUser = (req, res) => {
+  return res.status(200).json({
+    user: toSafeUser(req.user)
+  });
+};
+
+/**
+ * Atomically invalidates all tokens previously issued to the account.
+ */
+const logoutUser = async (req, res, next) => {
   try {
-    // Reject a signed token containing an identifier that cannot represent a
-    // MongoDB user record.
-    if (!mongoose.isValidObjectId(req.auth.id)) {
-      return res.status(401).json({
-        error: 'Authenticated user not found'
-      });
+    const version = req.auth.sessionVersion;
+    const expectedVersions = [{ sessionVersion: version }];
+
+    // Earlier user records may not yet contain the version field.
+    if (version === 0) {
+      expectedVersions.push({ sessionVersion: { $exists: false } });
     }
 
-    const user = await User.findById(req.auth.id);
+    const result = await User.updateOne(
+      { _id: req.auth.id, $or: expectedVersions },
+      { $inc: { sessionVersion: 1 } }
+    );
 
-    // A valid JWT must still reference an account that currently exists.
-    if (!user) {
+    // A concurrent logout or account change must not report successful revocation.
+    if (result.modifiedCount !== 1) {
       return res.status(401).json({
-        error: 'Authenticated user not found'
+        error: 'Invalid or expired authentication token'
       });
     }
 
     return res.status(200).json({
-      user: toSafeUser(user)
+      message: 'Signed out successfully'
     });
   } catch (error) {
     return next(error);
@@ -155,5 +165,6 @@ const getCurrentUser = async (req, res, next) => {
 module.exports = {
   registerUser,
   loginUser,
-  getCurrentUser
+  getCurrentUser,
+  logoutUser
 };

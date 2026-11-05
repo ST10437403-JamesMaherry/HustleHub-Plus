@@ -7,6 +7,7 @@ const validateBooking = require('../middleware/validateBooking');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 const { notFoundHandler, errorHandler } = require('../middleware/errorHandler');
 const { createToken } = require('../utils/token');
+const User = require('../models/User');
 const { createHttpContext } = require('./helpers/http');
 
 const VALID_GIG_ID = '507f1f77bcf86cd799439011';
@@ -18,7 +19,13 @@ function run(middleware, body = {}, overrides = {}) {
   return context;
 }
 
-function withJwtSettings(settings, callback) {
+async function runProtected(body = {}, overrides = {}) {
+  const context = createHttpContext(body, overrides);
+  await protect(context.req, context.res, context.next);
+  return context;
+}
+
+async function withJwtSettings(settings, callback) {
   const previousSecret = process.env.JWT_SECRET;
   const previousExpiry = process.env.JWT_EXPIRES_IN;
 
@@ -26,7 +33,7 @@ function withJwtSettings(settings, callback) {
   process.env.JWT_EXPIRES_IN = settings.expiresIn || '1h';
 
   try {
-    return callback();
+    return await callback();
   } finally {
     if (previousSecret === undefined) delete process.env.JWT_SECRET;
     else process.env.JWT_SECRET = previousSecret;
@@ -77,42 +84,53 @@ test('role authorisation blocks missing, incorrect or elevated roles', () => {
   assert.equal(accepted.nextCalls.length, 1);
 });
 
-test('JWT guard rejects missing and incorrectly formatted Authorization headers', () => {
+test('JWT guard rejects missing and incorrectly formatted Authorization headers', async () => {
   for (const authorization of [undefined, 'Token abc', 'Bearer', 'Bearer first second', 'Basic abc']) {
     const headers = authorization ? { authorization } : {};
-    const { res, nextCalls } = run(protect, {}, { headers });
+    const { res, nextCalls } = await runProtected({}, { headers });
     assert.equal(res.statusCode, 401);
     assert.equal(nextCalls.length, 0);
   }
 });
 
-test('JWT guard accepts a correctly signed token and exposes only verified claims', () => {
-  withJwtSettings({}, () => {
-    const token = createToken({ id: VALID_USER_ID, role: 'freelancer' });
-    const { req, res, nextCalls } = run(protect, {}, {
+test('JWT guard checks the account and uses only current database claims', async (t) => {
+  t.mock.method(User, 'findById', async (id) => ({
+    id,
+    role: 'freelancer',
+    sessionVersion: 0
+  }));
+
+  await withJwtSettings({}, async () => {
+    const token = createToken({ id: VALID_USER_ID, role: 'freelancer', sessionVersion: 0 });
+    const { req, res, nextCalls } = await runProtected({}, {
       headers: { authorization: `Bearer ${token}` }
     });
 
     assert.equal(res.body, undefined);
     assert.equal(nextCalls.length, 1);
-    assert.deepEqual(req.auth, { id: VALID_USER_ID, role: 'freelancer' });
+    assert.deepEqual(req.auth, {
+      id: VALID_USER_ID,
+      role: 'freelancer',
+      sessionVersion: 0
+    });
+    assert.equal(req.user.role, 'freelancer');
   });
 });
 
-test('JWT guard rejects corrupted and expired tokens', () => {
-  withJwtSettings({}, () => {
-    const valid = createToken({ id: VALID_USER_ID, role: 'client' });
+test('JWT guard rejects corrupted and expired tokens', async () => {
+  await withJwtSettings({}, async () => {
+    const valid = createToken({ id: VALID_USER_ID, role: 'client', sessionVersion: 0 });
     const parts = valid.split('.');
     const signature = parts[2];
     const corrupted = `${parts[0]}.${parts[1]}.${signature[0] === 'a' ? 'b' : 'a'}${signature.slice(1)}`;
-    const bad = run(protect, {}, { headers: { authorization: `Bearer ${corrupted}` } });
+    const bad = await runProtected({}, { headers: { authorization: `Bearer ${corrupted}` } });
     assert.equal(bad.res.statusCode, 401);
     assert.equal(bad.nextCalls.length, 0);
   });
 
-  withJwtSettings({ expiresIn: '-1s' }, () => {
-    const expired = createToken({ id: VALID_USER_ID, role: 'client' });
-    const bad = run(protect, {}, { headers: { authorization: `Bearer ${expired}` } });
+  await withJwtSettings({ expiresIn: '-1s' }, async () => {
+    const expired = createToken({ id: VALID_USER_ID, role: 'client', sessionVersion: 0 });
+    const bad = await runProtected({}, { headers: { authorization: `Bearer ${expired}` } });
     assert.equal(bad.res.statusCode, 401);
     assert.equal(bad.nextCalls.length, 0);
   });
