@@ -18,7 +18,7 @@ const toBookingResponse = (booking) => {
   };
 };
 
-// Return only the simulated transaction information required by the client.
+// Return only simulated transaction information required by the client.
 const toTransactionResponse = (transaction) => {
   return {
     id: transaction.id,
@@ -31,62 +31,127 @@ const toTransactionResponse = (transaction) => {
   };
 };
 
+// Retrieve a committed booking and its transaction by client-scoped request key.
+const findExistingRequest = async (clientId, requestKey) => {
+  const booking = await Booking.findOne({ client: clientId, requestKey });
+
+  if (!booking) {
+    return null;
+  }
+
+  const transaction = await Transaction.findOne({ booking: booking._id });
+
+  // Never claim a successful replay if financial records are inconsistent.
+  if (!transaction) {
+    throw new Error('Committed booking is missing its transaction');
+  }
+
+  return { booking, transaction };
+};
+
+// Reuse the original result, or reject a request key used for another gig.
+const sendExistingResponse = (res, existing, gigId) => {
+  if (String(existing.booking.gig).toLowerCase() !== gigId) {
+    return res.status(409).json({
+      error: 'Idempotency-Key has already been used for a different booking'
+    });
+  }
+
+  return res.status(200).json({
+    message: 'Booking already confirmed for this request',
+    replayed: true,
+    booking: toBookingResponse(existing.booking),
+    transaction: toTransactionResponse(existing.transaction)
+  });
+};
+
+// A second transaction may lose the unique-index race during concurrent requests.
+const mayBeConcurrentReplay = (error) => {
+  return error?.code === 11000 ||
+    error?.code === 112 ||
+    error?.hasErrorLabel?.('TransientTransactionError') === true;
+};
+
 /**
- * Creates a client booking and its associated simulated transaction.
+ * Atomically creates one booking and transaction per client request key.
  */
 const createBooking = async (req, res, next) => {
   let session;
 
   try {
+    const clientId = req.auth.id;
+    const gigId = req.body.gigId;
+    const requestKey = req.bookingRequestKey;
+
+    // Replays must work even if the original gig has since been removed.
+    const existing = await findExistingRequest(clientId, requestKey);
+
+    if (existing) {
+      return sendExistingResponse(res, existing, gigId);
+    }
+
     session = await mongoose.startSession();
 
     let gig = null;
     let booking = null;
     let transaction = null;
 
-    // Keep the booking and transaction atomic so partial financial records
-    // are not stored if either database operation fails.
-    await session.withTransaction(async () => {
-      gig = await Gig.findOne({
-        _id: req.body.gigId,
-        active: true
-      }).session(session);
+    try {
+      // The unique index and transaction keep competing requests from double-charging.
+      await session.withTransaction(async () => {
+        gig = null;
+        booking = null;
+        transaction = null;
 
-      if (!gig) {
-        return;
+        gig = await Gig.findOne({
+          _id: gigId,
+          active: true
+        }).session(session);
+
+        if (!gig) {
+          return;
+        }
+
+        // Ownership and price are derived from the JWT and active database gig.
+        [booking] = await Booking.create(
+          [
+            {
+              gig: gig._id,
+              client: clientId,
+              freelancer: gig.freelancer,
+              amount: gig.price,
+              status: 'confirmed',
+              requestKey
+            }
+          ],
+          { session }
+        );
+
+        [transaction] = await Transaction.create(
+          [
+            {
+              booking: booking._id,
+              client: clientId,
+              freelancer: gig.freelancer,
+              amount: gig.price,
+              status: 'confirmed'
+            }
+          ],
+          { session }
+        );
+      });
+    } catch (error) {
+      if (mayBeConcurrentReplay(error)) {
+        // Return the winning transaction without creating another financial record.
+        const committed = await findExistingRequest(clientId, requestKey);
+
+        if (committed) {
+          return sendExistingResponse(res, committed, gigId);
+        }
       }
 
-      // Ownership and pricing are always derived server-side.
-      [booking] = await Booking.create(
-        [
-          {
-            gig: gig._id,
-            client: req.auth.id,
-            freelancer: gig.freelancer,
-            amount: gig.price,
-            status: 'confirmed'
-          }
-        ],
-        {
-          session
-        }
-      );
-
-      [transaction] = await Transaction.create(
-        [
-          {
-            booking: booking._id,
-            client: req.auth.id,
-            freelancer: gig.freelancer,
-            amount: gig.price,
-            status: 'confirmed'
-          }
-        ],
-        {
-          session
-        }
-      );
-    });
+      throw error;
+    }
 
     if (!gig) {
       return res.status(404).json({
@@ -95,14 +160,12 @@ const createBooking = async (req, res, next) => {
     }
 
     if (!booking || !transaction) {
-      throw new Error(
-        'Booking transaction was not completed'
-      );
+      throw new Error('Booking transaction was not completed');
     }
 
     return res.status(201).json({
-      message:
-        'Booking confirmed and simulated transaction recorded',
+      message: 'Booking confirmed and simulated transaction recorded',
+      replayed: false,
       booking: toBookingResponse(booking),
       transaction: toTransactionResponse(transaction)
     });
@@ -122,9 +185,7 @@ const getMyBookings = async (req, res, next) => {
   try {
     const bookings = await Booking.find({
       client: req.auth.id
-    }).sort({
-      createdAt: -1
-    });
+    }).sort({ createdAt: -1 });
 
     return res.status(200).json({
       bookings: bookings.map(toBookingResponse)
@@ -142,9 +203,7 @@ const getFreelancerBookings = async (req, res, next) => {
     // Ownership is enforced using the verified freelancer ID from the JWT.
     const bookings = await Booking.find({
       freelancer: req.auth.id
-    }).sort({
-      createdAt: -1
-    });
+    }).sort({ createdAt: -1 });
 
     return res.status(200).json({
       bookings: bookings.map(toBookingResponse)
@@ -165,8 +224,7 @@ const getBookingById = async (req, res, next) => {
       });
     }
 
-    // Include ownership in the database query so another client's booking
-    // is never returned or disclosed by this endpoint.
+    // Include ownership in the query to prevent cross-account disclosure.
     const booking = await Booking.findOne({
       _id: req.params.id,
       client: req.auth.id

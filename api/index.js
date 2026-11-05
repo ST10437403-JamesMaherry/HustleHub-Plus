@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 
 const express = require('express');
@@ -65,7 +64,7 @@ app.use(
       'PUT',
       'DELETE'
     ],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key'],
     // Lets the React client tell users how long a rate limit lasts.
     exposedHeaders: ['Retry-After']
   })
