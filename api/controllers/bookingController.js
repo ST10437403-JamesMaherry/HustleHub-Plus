@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const Gig = require('../models/Gig');
 const Booking = require('../models/Booking');
 const Transaction = require('../models/Transaction');
+const eventLogger = require('../utils/logger');
 
 // Return only booking fields required by API consumers.
 const toBookingResponse = (booking) => {
@@ -162,6 +163,13 @@ const createBooking = async (req, res, next) => {
     if (!booking || !transaction) {
       throw new Error('Booking transaction was not completed');
     }
+
+    // Record a transaction event only after both database writes commit.
+    eventLogger.logEvent('transaction.commit', 'success', {
+      requestId: req.requestId,
+      method: req.method,
+      statusCode: 201
+    });
 
     return res.status(201).json({
       message: 'Booking confirmed and simulated transaction recorded',
