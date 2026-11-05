@@ -1,0 +1,39 @@
+# Combine with compose.yaml for disposable integration tests only.
+services:
+  mongo:
+    image: mongo:8.0
+    restart: "no"
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.adminCommand({ping:1}).ok ? quit(0) : quit(1)' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 25
+      start_period: 15s
+
+  mongo-init:
+    image: mongo:8.0
+    restart: "no"
+    entrypoint: ["/bin/bash", "/workspace/mongo-init.sh"]
+    volumes:
+      - ./docker/mongo-init.sh:/workspace/mongo-init.sh:ro
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  api:
+    restart: "no"
+    depends_on:
+      mongo-init:
+        condition: service_completed_successfully
+    environment:
+      MONGO_URI: mongodb://mongo:27017/hustlehub_ci?replicaSet=rs0
+      JWT_SECRET: ${CI_JWT_SECRET:-}
+      BCRYPT_SALT_ROUNDS: "10"
+      GRAFANA_LOKI_URL: ""
+      GRAFANA_LOKI_USER: ""
+      GRAFANA_LOKI_TOKEN: ""
+      COMPOSE_CI_FIXTURE: "true"
+
+  client:
+    restart: "no"
