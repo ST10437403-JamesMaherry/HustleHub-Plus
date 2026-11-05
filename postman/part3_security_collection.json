@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "3f6c2a8e-9b4d-4c71-a5e2-7d18f0b6c943",
     "name": "HustleHub+ Part 3 - Security Matrix",
-    "description": "Part 3 security negative-test matrix. Run the 'Security Matrix' folder against a freshly started API process. Supply adminPassword and jwtSecret at run time only.",
+    "description": "Part 3 security negative-test matrix. Run the 'Security Matrix' and 'Rate Limits' folders as separate cycles, each against a freshly started API process. Supply adminPassword and jwtSecret at run time only. See docs/testing/security-postman-suite.md.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -1976,6 +1976,1203 @@
           ]
         },
         {
+          "name": "06 Idempotency Misuse",
+          "description": "Replayed, re-cased, altered and cross-client reuse of Client A's Idempotency-Key, plus missing, non-v4 and body-supplied keys.",
+          "item": [
+            {
+              "name": "Idempotency - Same Key Same Gig Replays",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Uppercase Key Normalised To Replay",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Same Key Different Gig Conflicts",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Key Scoped Per Client",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Missing Key Rejected",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Non-v4 UUID Key Rejected",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Key In Body Rejected",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Client A Has Exactly One Booking",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/mine",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "mine"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Client B Has Exactly One Booking",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/mine",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "mine"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Idempotency - Freelancer A Income Counts Two Transactions",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/income/me",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "income",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "07 Malformed Input and Safe Errors",
+          "description": "Malformed and oversized bodies, NoSQL operator objects, smuggled update operators, prototype keys, invalid identifiers and unknown routes all return fixed messages.",
+          "item": [
+            {
+              "name": "Errors - Malformed JSON On Login",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"email\":\"broken@hustlehub.test\",\"password\":",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Malformed JSON On Booking",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"gigId\":",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Oversized Body",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - NoSQL Operator In Login Email",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - NoSQL Operator In Gig Title",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - NoSQL Operator In Gig Price",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Update Operator Smuggled In Gig Body",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Prototype Key In Gig Body",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"__proto__\":{\"active\":false},\"price\":1}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - G1 Unchanged After Injection Attempts",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Invalid Gig ID Path",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/not-an-object-id",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "not-an-object-id"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Operator Object In Gig ID Path",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/%7B%22%24ne%22%3Anull%7D",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "%7B%22%24ne%22%3Anull%7D"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Invalid Booking ID Path",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings/not-an-object-id",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "not-an-object-id"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Invalid Admin Gig ID Path",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/admin/gigs/not-an-object-id",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "gigs",
+                    "not-an-object-id"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Unknown Route",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/does-not-exist",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "does-not-exist"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Errors - Unsupported Method",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g1Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g1Id}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "08 Security Protections",
+          "description": "Helmet and CSP headers on success and error responses, server-owned request IDs, CORS for trusted and untrusted origins, and markup sanitisation of gig text.",
+          "item": [
+            {
+              "name": "Protections - Security Headers On Health",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/health",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - Security Headers On Error Response",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/not-a-route",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "not-a-route"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - Caller Request ID Not Trusted",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Request-ID",
+                    "value": "attacker-supplied-request-id"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/health",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - CORS Trusted Origin",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/health",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - CORS Untrusted Origin",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "https://untrusted.example"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/health",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - CORS Booking Preflight",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "OPTIONS",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Access-Control-Request-Method",
+                    "value": "POST"
+                  },
+                  {
+                    "key": "Access-Control-Request-Headers",
+                    "value": "Content-Type, Authorization, Idempotency-Key"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - CORS Untrusted Preflight",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "OPTIONS",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "https://untrusted.example"
+                  },
+                  {
+                    "key": "Access-Control-Request-Method",
+                    "value": "POST"
+                  },
+                  {
+                    "key": "Access-Control-Request-Headers",
+                    "value": "Content-Type, Authorization, Idempotency-Key"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - Gig Markup Sanitised On Create",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - Sanitised Gig Stored Without Markup",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g3Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g3Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - Markup-only Title Rejected After Sanitising",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g3Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g3Id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Protections - Sanitisation Gig Removed By Owner",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/gigs/{{sec.g3Id}}",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "gigs",
+                    "{{sec.g3Id}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
           "name": "09 Cleanup",
           "description": "The administrator removes the fixture gigs; booking history survives the removal.",
           "item": [
@@ -2057,6 +3254,575 @@
                     "api",
                     "bookings",
                     "{{sec.aBookingId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rate Limits",
+      "description": "Run alone on a fresh API process. Exhausts the booking, registration and login allowances, so restart the API before any other cycle.",
+      "item": [
+        {
+          "name": "10 Limits Setup",
+          "description": "Registers and signs in one unique client on a fresh API process.",
+          "item": [
+            {
+              "name": "Limits Setup - Start Rate-limit Cycle",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{sec.baseUrl}}/health",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Limits Setup - Register Client",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Limits Setup - Login Client",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "11 Booking Limiter",
+          "description": "Rejected booking probes still spend the per-IP allowance; the limiter blocks at 10 and a forged X-Forwarded-For does not reset it.",
+          "item": [
+            {
+              "name": "Booking Limit - Short Key Spends Allowance",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Booking Limit - NoSQL Gig ID Spends Allowance",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Booking Limit - Price And Owner Override Spends Allowance",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Booking Limit - Loop Until 429",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Booking Limit - Forwarded IP Cannot Bypass",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "X-Forwarded-For",
+                    "value": "198.51.100.42"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{sec.authz}}"
+                  },
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "{{sec.key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/bookings",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "12 Registration Limiter",
+          "description": "Invalid registrations count towards the hourly allowance, so the limiter is reached without creating accounts.",
+          "item": [
+            {
+              "name": "Register Limit - Loop Until 429",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Register Limit - Valid Signup Via Forwarded IP Blocked",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "X-Forwarded-For",
+                    "value": "198.51.100.43"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "13 Login Limiter",
+          "description": "Five failed logins exhaust the allowance; a forged X-Forwarded-For and even the correct password are then refused.",
+          "item": [
+            {
+              "name": "Login Limit - Loop Until 429",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login Limit - Forwarded IP Cannot Bypass",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "X-Forwarded-For",
+                    "value": "198.51.100.44"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login Limit - Valid Credentials Also Blocked",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Origin",
+                    "value": "{{sec.origin}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{sec.body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{sec.baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{sec.baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
                   ]
                 }
               },
@@ -2167,9 +3933,58 @@
           "  \"Isolation - Freelancer B Gig List Excludes A\": {\"status\":200,\"check\":\"gigs\",\"account\":\"freelancerB\",\"count\":0,\"auth\":\"freelancerB\",\"after\":\"04\"},",
           "  \"Isolation - Freelancer B Income Excludes A\": {\"status\":200,\"check\":\"income\",\"count\":0,\"auth\":\"freelancerB\",\"after\":\"04\"},",
           "  \"Isolation - Freelancer A Income Includes Sale\": {\"status\":200,\"check\":\"income\",\"count\":1,\"auth\":\"freelancerA\",\"after\":\"04\",\"done\":\"05\"},",
-          "  \"Cleanup - Admin Removes G1\": {\"status\":200,\"check\":\"message\",\"message\":\"Gig removed successfully\",\"auth\":\"admin\",\"after\":\"05\"},",
-          "  \"Cleanup - Admin Removes G2\": {\"status\":200,\"check\":\"message\",\"message\":\"Gig removed successfully\",\"auth\":\"admin\",\"after\":\"05\"},",
-          "  \"Cleanup - Booking History Survives Gig Removal\": {\"status\":200,\"check\":\"booking\",\"get\":\"a\",\"gig\":\"g1\",\"client\":\"clientA\",\"auth\":\"clientA\",\"after\":\"05\",\"done\":\"09\"}",
+          "  \"Idempotency - Same Key Same Gig Replays\": {\"status\":200,\"check\":\"booking\",\"replayOf\":\"a\",\"gig\":\"g1\",\"client\":\"clientA\",\"auth\":\"clientA\",\"key\":\"request\",\"body\":{\"gigId\":\"{{sec.g1Id}}\"},\"after\":\"05\"},",
+          "  \"Idempotency - Uppercase Key Normalised To Replay\": {\"status\":200,\"check\":\"booking\",\"replayOf\":\"a\",\"gig\":\"g1\",\"client\":\"clientA\",\"auth\":\"clientA\",\"key\":\"upper\",\"body\":{\"gigId\":\"{{sec.g1Id}}\"},\"after\":\"05\"},",
+          "  \"Idempotency - Same Key Different Gig Conflicts\": {\"status\":409,\"error\":\"Idempotency-Key has already been used for a different booking\",\"auth\":\"clientA\",\"key\":\"request\",\"body\":{\"gigId\":\"{{sec.g2Id}}\"},\"after\":\"05\"},",
+          "  \"Idempotency - Key Scoped Per Client\": {\"status\":201,\"check\":\"booking\",\"created\":\"b\",\"distinctFrom\":\"a\",\"gig\":\"g1\",\"client\":\"clientB\",\"auth\":\"clientB\",\"key\":\"request\",\"body\":{\"gigId\":\"{{sec.g1Id}}\"},\"after\":\"05\"},",
+          "  \"Idempotency - Missing Key Rejected\": {\"status\":400,\"error\":\"A valid UUID v4 Idempotency-Key header is required\",\"auth\":\"clientA\",\"body\":{\"gigId\":\"{{sec.g2Id}}\"},\"after\":\"05\"},",
+          "  \"Idempotency - Non-v4 UUID Key Rejected\": {\"status\":400,\"error\":\"A valid UUID v4 Idempotency-Key header is required\",\"auth\":\"clientA\",\"key\":\"v1\",\"body\":{\"gigId\":\"{{sec.g2Id}}\"},\"after\":\"05\"},",
+          "  \"Idempotency - Key In Body Rejected\": {\"status\":400,\"error\":\"Booking request contains unsupported fields\",\"auth\":\"clientA\",\"body\":{\"gigId\":\"{{sec.g2Id}}\",\"idempotencyKey\":\"{{sec.requestKey}}\"},\"after\":\"05\"},",
+          "  \"Idempotency - Client A Has Exactly One Booking\": {\"status\":200,\"check\":\"bookings\",\"ownerField\":\"client\",\"account\":\"clientA\",\"count\":1,\"includes\":[\"a\"],\"auth\":\"clientA\",\"after\":\"05\"},",
+          "  \"Idempotency - Client B Has Exactly One Booking\": {\"status\":200,\"check\":\"bookings\",\"ownerField\":\"client\",\"account\":\"clientB\",\"count\":1,\"includes\":[\"b\"],\"auth\":\"clientB\",\"after\":\"05\"},",
+          "  \"Idempotency - Freelancer A Income Counts Two Transactions\": {\"status\":200,\"check\":\"income\",\"count\":2,\"auth\":\"freelancerA\",\"after\":\"05\",\"done\":\"06\"},",
+          "  \"Errors - Malformed JSON On Login\": {\"status\":400,\"error\":\"Request body is not valid JSON\",\"after\":\"06\"},",
+          "  \"Errors - Malformed JSON On Booking\": {\"status\":400,\"error\":\"Request body is not valid JSON\",\"auth\":\"clientA\",\"key\":\"fresh\",\"after\":\"06\"},",
+          "  \"Errors - Oversized Body\": {\"status\":413,\"error\":\"Request body too large\",\"oversized\":true,\"after\":\"06\"},",
+          "  \"Errors - NoSQL Operator In Login Email\": {\"status\":400,\"error\":\"Email and password must be valid text values\",\"body\":{\"email\":{\"$gt\":\"\"},\"password\":\"{{sec.password}}\"},\"after\":\"06\"},",
+          "  \"Errors - NoSQL Operator In Gig Title\": {\"status\":400,\"error\":\"Title must be a valid text value\",\"auth\":\"freelancerA\",\"body\":{\"title\":{\"$ne\":null}},\"after\":\"06\"},",
+          "  \"Errors - NoSQL Operator In Gig Price\": {\"status\":400,\"error\":\"Price must be a positive number\",\"auth\":\"freelancerA\",\"body\":{\"price\":{\"$gt\":0}},\"after\":\"06\"},",
+          "  \"Errors - Update Operator Smuggled In Gig Body\": {\"status\":400,\"error\":\"Gig request contains unsupported fields\",\"auth\":\"freelancerA\",\"body\":{\"$set\":{\"freelancer\":\"{{sec.freelancerBId}}\"}},\"after\":\"06\"},",
+          "  \"Errors - Prototype Key In Gig Body\": {\"status\":400,\"error\":\"Gig request contains unsupported fields\",\"auth\":\"freelancerA\",\"after\":\"06\"},",
+          "  \"Errors - G1 Unchanged After Injection Attempts\": {\"status\":200,\"check\":\"gig\",\"id\":\"g1\",\"expected\":{\"title\":\"Security Review Logo Pack\",\"description\":\"Vector logo design with three revision rounds.\",\"category\":\"Design\",\"price\":450.75},\"after\":\"06\"},",
+          "  \"Errors - Invalid Gig ID Path\": {\"status\":400,\"error\":\"Invalid gig ID\",\"after\":\"06\"},",
+          "  \"Errors - Operator Object In Gig ID Path\": {\"status\":400,\"error\":\"Invalid gig ID\",\"after\":\"06\"},",
+          "  \"Errors - Invalid Booking ID Path\": {\"status\":400,\"error\":\"Invalid booking ID\",\"auth\":\"clientA\",\"after\":\"06\"},",
+          "  \"Errors - Invalid Admin Gig ID Path\": {\"status\":400,\"error\":\"Invalid gig ID\",\"auth\":\"admin\",\"after\":\"06\"},",
+          "  \"Errors - Unknown Route\": {\"status\":404,\"error\":\"Route not found\",\"after\":\"06\"},",
+          "  \"Errors - Unsupported Method\": {\"status\":404,\"error\":\"Route not found\",\"auth\":\"freelancerA\",\"body\":{\"price\":1},\"after\":\"06\",\"done\":\"07\"},",
+          "  \"Protections - Security Headers On Health\": {\"status\":200,\"check\":\"headers\",\"after\":\"07\"},",
+          "  \"Protections - Security Headers On Error Response\": {\"status\":404,\"error\":\"Route not found\",\"check\":\"headers\",\"after\":\"07\"},",
+          "  \"Protections - Caller Request ID Not Trusted\": {\"status\":200,\"check\":\"requestId\",\"after\":\"07\"},",
+          "  \"Protections - CORS Trusted Origin\": {\"status\":200,\"check\":\"cors\",\"after\":\"07\"},",
+          "  \"Protections - CORS Untrusted Origin\": {\"status\":200,\"check\":\"untrustedCors\",\"after\":\"07\"},",
+          "  \"Protections - CORS Booking Preflight\": {\"status\":204,\"check\":\"preflight\",\"after\":\"07\"},",
+          "  \"Protections - CORS Untrusted Preflight\": {\"status\":204,\"check\":\"preflight\",\"untrusted\":true,\"after\":\"07\"},",
+          "  \"Protections - Gig Markup Sanitised On Create\": {\"status\":201,\"check\":\"gig\",\"store\":\"g3\",\"expected\":{\"title\":\"Secure Logo Pack\",\"description\":\"Vector logo design with source files.\",\"category\":\"Design\",\"price\":99.99},\"auth\":\"freelancerA\",\"body\":{\"title\":\"<script>alert(1)</script>Secure Logo Pack\",\"description\":\"<img src=x onerror=alert(1)><b>Vector</b> logo design with source files.\",\"category\":\"<i>Design</i>\",\"price\":99.99},\"after\":\"07\"},",
+          "  \"Protections - Sanitised Gig Stored Without Markup\": {\"status\":200,\"check\":\"gig\",\"id\":\"g3\",\"expected\":{\"title\":\"Secure Logo Pack\",\"description\":\"Vector logo design with source files.\",\"category\":\"Design\"},\"after\":\"07\"},",
+          "  \"Protections - Markup-only Title Rejected After Sanitising\": {\"status\":400,\"error\":\"Title must be between 3 and 100 characters\",\"auth\":\"freelancerA\",\"body\":{\"title\":\"<b></b><script>x</script>\"},\"after\":\"07\"},",
+          "  \"Protections - Sanitisation Gig Removed By Owner\": {\"status\":200,\"check\":\"message\",\"message\":\"Gig deleted successfully\",\"auth\":\"freelancerA\",\"after\":\"07\",\"done\":\"08\"},",
+          "  \"Cleanup - Admin Removes G1\": {\"status\":200,\"check\":\"message\",\"message\":\"Gig removed successfully\",\"auth\":\"admin\",\"after\":\"08\"},",
+          "  \"Cleanup - Admin Removes G2\": {\"status\":200,\"check\":\"message\",\"message\":\"Gig removed successfully\",\"auth\":\"admin\",\"after\":\"08\"},",
+          "  \"Cleanup - Booking History Survives Gig Removal\": {\"status\":200,\"check\":\"booking\",\"get\":\"a\",\"gig\":\"g1\",\"client\":\"clientA\",\"auth\":\"clientA\",\"after\":\"08\",\"done\":\"09\"},",
+          "  \"Limits Setup - Start Rate-limit Cycle\": {\"status\":200,\"check\":\"config\",\"bootstrap\":\"limits\"},",
+          "  \"Limits Setup - Register Client\": {\"status\":201,\"check\":\"register\",\"account\":\"clientA\",\"role\":\"client\",\"fresh\":true,\"body\":{\"fullName\":\"Limits Client Alpha\",\"email\":\"{{sec.clientAEmail}}\",\"password\":\"{{sec.password}}\",\"role\":\"client\"}},",
+          "  \"Limits Setup - Login Client\": {\"status\":200,\"check\":\"login\",\"account\":\"clientA\",\"role\":\"client\",\"fresh\":true,\"body\":{\"email\":\"{{sec.clientAEmail}}\",\"password\":\"{{sec.password}}\"},\"done\":\"10\"},",
+          "  \"Booking Limit - Short Key Spends Allowance\": {\"status\":400,\"error\":\"A valid UUID v4 Idempotency-Key header is required\",\"check\":\"remaining\",\"limit\":10,\"remaining\":9,\"auth\":\"clientA\",\"key\":\"short\",\"body\":{\"gigId\":\"000000000000000000000001\"},\"after\":\"10\"},",
+          "  \"Booking Limit - NoSQL Gig ID Spends Allowance\": {\"status\":400,\"error\":\"Gig ID is required\",\"check\":\"remaining\",\"limit\":10,\"remaining\":8,\"auth\":\"clientA\",\"key\":\"fresh\",\"body\":{\"gigId\":{\"$ne\":null}},\"after\":\"10\"},",
+          "  \"Booking Limit - Price And Owner Override Spends Allowance\": {\"status\":400,\"error\":\"Booking request contains unsupported fields\",\"check\":\"remaining\",\"limit\":10,\"remaining\":7,\"auth\":\"clientA\",\"key\":\"fresh\",\"body\":{\"gigId\":\"000000000000000000000001\",\"amount\":0.01,\"client\":\"{{sec.clientAId}}\",\"freelancer\":\"{{sec.clientAId}}\"},\"after\":\"10\"},",
+          "  \"Booking Limit - Loop Until 429\": {\"check\":\"limit\",\"limiter\":\"booking\",\"limit\":10,\"window\":900,\"before\":400,\"beforeError\":\"Invalid gig ID\",\"limitError\":\"Too many booking attempts. Please try again later.\",\"status\":[400,429],\"auth\":\"clientA\",\"key\":\"fresh\",\"body\":{\"gigId\":\"not-an-object-id\"},\"after\":\"10\"},",
+          "  \"Booking Limit - Forwarded IP Cannot Bypass\": {\"check\":\"limit\",\"limiter\":\"booking\",\"limit\":10,\"window\":900,\"before\":400,\"beforeError\":\"Invalid gig ID\",\"limitError\":\"Too many booking attempts. Please try again later.\",\"status\":429,\"auth\":\"clientA\",\"key\":\"fresh\",\"body\":{\"gigId\":\"not-an-object-id\"},\"after\":\"10\",\"done\":\"11\"},",
+          "  \"Register Limit - Loop Until 429\": {\"check\":\"limit\",\"limiter\":\"register\",\"limit\":10,\"window\":3600,\"before\":400,\"beforeError\":\"All registration fields are required\",\"limitError\":\"Too many registration attempts. Please try again later.\",\"status\":[400,429],\"body\":{},\"after\":\"11\"},",
+          "  \"Register Limit - Valid Signup Via Forwarded IP Blocked\": {\"check\":\"limit\",\"limiter\":\"register\",\"limit\":10,\"window\":3600,\"before\":400,\"beforeError\":\"All registration fields are required\",\"limitError\":\"Too many registration attempts. Please try again later.\",\"status\":429,\"body\":{\"fullName\":\"Limits Client Beta\",\"email\":\"{{sec.clientBEmail}}\",\"password\":\"{{sec.password}}\",\"role\":\"client\"},\"after\":\"11\",\"done\":\"12\"},",
+          "  \"Login Limit - Loop Until 429\": {\"check\":\"limit\",\"limiter\":\"login\",\"limit\":5,\"window\":900,\"before\":401,\"beforeError\":\"Invalid credentials\",\"limitError\":\"Too many authentication attempts. Please try again later.\",\"status\":[401,429],\"body\":{\"email\":\"{{sec.clientAEmail}}\",\"password\":\"{{sec.password}}-wrong\"},\"after\":\"12\"},",
+          "  \"Login Limit - Forwarded IP Cannot Bypass\": {\"check\":\"limit\",\"limiter\":\"login\",\"limit\":5,\"window\":900,\"before\":401,\"beforeError\":\"Invalid credentials\",\"limitError\":\"Too many authentication attempts. Please try again later.\",\"status\":429,\"body\":{\"email\":\"{{sec.clientAEmail}}\",\"password\":\"{{sec.password}}-wrong\"},\"after\":\"12\"},",
+          "  \"Login Limit - Valid Credentials Also Blocked\": {\"check\":\"limit\",\"limiter\":\"login\",\"limit\":5,\"window\":900,\"before\":401,\"beforeError\":\"Invalid credentials\",\"limitError\":\"Too many authentication attempts. Please try again later.\",\"status\":429,\"body\":{\"email\":\"{{sec.clientAEmail}}\",\"password\":\"{{sec.password}}\"},\"after\":\"12\",\"done\":\"13\"}",
           "};",
           "",
           "const scenario = scenarios[pm.info.requestName];",
@@ -2543,6 +4358,12 @@
           "            save(s.created + 'BookingId', booking.id);",
           "            save(s.created + 'TransactionId', body.transaction.id);",
           "            save(s.created + 'CreatedAt', booking.createdAt);",
+          "          } else if (s.replayOf) {",
+          "            pm.expect(body.replayed).to.eql(true);",
+          "            pm.expect(body.message).to.eql('Booking already confirmed for this request');",
+          "            pm.expect(booking.id, 'Replay must return the original booking').to.eql(get(s.replayOf + 'BookingId'));",
+          "            pm.expect(body.transaction.id, 'Replay must return the original transaction').to.eql(get(s.replayOf + 'TransactionId'));",
+          "            pm.expect(booking.createdAt).to.eql(get(s.replayOf + 'CreatedAt'));",
           "          } else {",
           "            pm.expect(booking.id).to.eql(get(s.get + 'BookingId'));",
           "          }",
@@ -2581,6 +4402,94 @@
           "        case 'message':",
           "          pm.expect(body).to.eql({message: s.message});",
           "          break;",
+          "",
+          "        case 'headers': {",
+          "          const csp = header('Content-Security-Policy');",
+          "",
+          "          [",
+          "            \"default-src 'self'\",",
+          "            \"script-src 'self'\",",
+          "            \"style-src 'self'\",",
+          "            \"img-src 'self' data:\",",
+          "            \"connect-src 'self' \" + pm.variables.get('sec.origin'),",
+          "            \"object-src 'none'\",",
+          "            \"base-uri 'self'\",",
+          "            \"frame-ancestors 'none'\"",
+          "          ].forEach((directive) => pm.expect(csp).to.include(directive));",
+          "",
+          "          pm.expect(csp).to.not.match(/unsafe-inline|unsafe-eval|\\*/);",
+          "",
+          "          const hsts = header('Strict-Transport-Security') || '';",
+          "          pm.expect(Number((hsts.match(/max-age=(\\d+)/) || [])[1]), 'HSTS max-age').to.be.at.least(15552000);",
+          "          pm.expect(header('X-Frame-Options')).to.eql('SAMEORIGIN');",
+          "          pm.expect(header('Referrer-Policy')).to.eql('no-referrer');",
+          "          pm.expect(header('Cross-Origin-Resource-Policy')).to.eql('same-site');",
+          "          pm.expect(header('Cross-Origin-Opener-Policy')).to.eql('same-origin');",
+          "          pm.expect(header('X-Permitted-Cross-Domain-Policies')).to.eql('none');",
+          "          break;",
+          "        }",
+          "",
+          "        case 'requestId':",
+          "          pm.expect(header('X-Request-ID')).to.match(UUID_V4);",
+          "          pm.expect(header('X-Request-ID')).to.not.eql('attacker-supplied-request-id');",
+          "          break;",
+          "",
+          "        case 'cors':",
+          "          pm.expect(header('Access-Control-Allow-Origin')).to.eql(pm.variables.get('sec.origin'));",
+          "          pm.expect(header('Access-Control-Expose-Headers')).to.include('Retry-After');",
+          "          pm.expect(header('Access-Control-Expose-Headers')).to.include('X-Request-ID');",
+          "          break;",
+          "",
+          "        case 'untrustedCors': {",
+          "          const origin = header('Access-Control-Allow-Origin');",
+          "          pm.expect(origin).to.not.eql('https://untrusted.example');",
+          "          pm.expect(origin).to.not.eql('*');",
+          "          break;",
+          "        }",
+          "",
+          "        case 'preflight': {",
+          "          if (s.untrusted) {",
+          "            pm.expect(header('Access-Control-Allow-Origin')).to.not.eql('https://untrusted.example');",
+          "            pm.expect(header('Access-Control-Allow-Origin')).to.not.eql('*');",
+          "          } else {",
+          "            pm.expect(header('Access-Control-Allow-Origin')).to.eql(pm.variables.get('sec.origin'));",
+          "          }",
+          "",
+          "          pm.expect(header('Access-Control-Allow-Methods')).to.include('POST');",
+          "",
+          "          const headers = header('Access-Control-Allow-Headers').toLowerCase();",
+          "          ['content-type', 'authorization', 'idempotency-key'].forEach((name) => pm.expect(headers).to.include(name));",
+          "          break;",
+          "        }",
+          "",
+          "        case 'remaining':",
+          "          pm.expect(header('RateLimit-Limit')).to.eql(String(s.limit));",
+          "          pm.expect(header('RateLimit-Remaining'), 'Start a fresh API process before the rate-limit cycle')",
+          "            .to.eql(String(s.remaining));",
+          "          break;",
+          "",
+          "        case 'limit': {",
+          "          const attempts = Number(get(s.limiter + 'Attempts') || 0) + 1;",
+          "",
+          "          save(s.limiter + 'Attempts', attempts);",
+          "          pm.expect(header('RateLimit-Limit')).to.eql(String(s.limit));",
+          "          pm.expect(header('RateLimit-Policy')).to.include('w=' + s.window);",
+          "",
+          "          if (pm.response.code !== 429) {",
+          "            pm.expect(pm.response.code).to.eql(s.before);",
+          "            pm.expect(body.error).to.eql(s.beforeError);",
+          "            pm.expect(attempts, 'Rate limiter did not block within its configured allowance').to.be.at.most(s.limit);",
+          "            repeat = true;",
+          "          } else {",
+          "            pm.expect(body.error).to.eql(s.limitError);",
+          "            pm.expect(header('RateLimit-Remaining')).to.eql('0');",
+          "            pm.expect(header('RateLimit-Reset')).to.match(/^\\d+$/);",
+          "            pm.expect(Number(header('Retry-After'))).to.be.above(0);",
+          "            pm.expect(header('Access-Control-Expose-Headers')).to.include('Retry-After');",
+          "          }",
+          "",
+          "          break;",
+          "        }",
           "      }",
           "    });",
           "  }",
