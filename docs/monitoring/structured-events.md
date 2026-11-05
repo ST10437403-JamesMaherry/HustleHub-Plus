@@ -53,6 +53,8 @@ With the API running, successful and failed sign-ins and bookings produce corres
 
 ## P3-08 monitoring handoff
 
+Setup, queries, dashboard and privacy checks are documented in `grafana-cloud.md`.
+
 Ewald can configure a collector to ingest container stdout/stderr into Grafana Cloud without modifying the authentication or booking controllers. Useful filters are `event`, `outcome`, `level` and `requestId`.
 
 The collector must use external secret configuration, preserve the raw JSON event structure, and avoid broad capture of unrelated process output that might contain sensitive debugging messages. Any evidence screenshots must omit secrets, tokens and personally identifiable fields. Cloud storage retention should be minimised and set according to the assessment environment.
