@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
 
 const Transaction = require('../models/Transaction');
+const {
+  getIncomeReportPeriod,
+  buildLifetimeIncomePipeline,
+  buildMonthlyIncomePipeline,
+  buildIncomeReport
+} = require('../services/incomeAnalytics');
 
-/**
- * Returns income derived from confirmed transactions belonging to the
- * authenticated freelancer.
- */
+// Return confirmed financial activity for the freelancer identified by the JWT.
 const getMyIncome = async (req, res, next) => {
   try {
     if (!mongoose.isValidObjectId(req.auth.id)) {
@@ -14,43 +17,20 @@ const getMyIncome = async (req, res, next) => {
       });
     }
 
-    const freelancerId = new mongoose.Types.ObjectId(
-      req.auth.id
-    );
+    const freelancerId = new mongoose.Types.ObjectId(req.auth.id);
+    const period = getIncomeReportPeriod();
 
-    // Transactions remain the single source of truth for freelancer income.
-    const results = await Transaction.aggregate([
-      {
-        $match: {
-          freelancer: freelancerId,
-          status: 'confirmed'
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          totalIncome: {
-            $sum: '$amount'
-          },
-          transactionCount: {
-            $sum: 1
-          }
-        }
-      }
+    // Separate lifetime and tax-year queries preserve the existing API totals.
+    const [lifetimeRows, monthlyRows] = await Promise.all([
+      Transaction.aggregate(buildLifetimeIncomePipeline(freelancerId)),
+      Transaction.aggregate(buildMonthlyIncomePipeline(freelancerId, period))
     ]);
 
-    const summary = results[0];
-
-    const totalIncome = summary
-      ? Number(summary.totalIncome.toFixed(2))
-      : 0;
-
-    return res.status(200).json({
-      totalIncome,
-      transactionCount: summary
-        ? summary.transactionCount
-        : 0
-    });
+    return res.status(200).json(buildIncomeReport({
+      lifetimeRows,
+      monthlyRows,
+      period
+    }));
   } catch (error) {
     return next(error);
   }
