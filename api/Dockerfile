@@ -24,8 +24,11 @@ COPY --chown=node:node models ./models
 COPY --chown=node:node routes ./routes
 COPY --chown=node:node services ./services
 COPY --chown=node:node utils ./utils
+COPY --chown=node:node docker/healthcheck.js ./docker/healthcheck.js
 
 # The unprivileged node user runs the application and health probe.
 USER node
 EXPOSE 4000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+  CMD ["node", "docker/healthcheck.js"]
 CMD ["node", "index.js"]
