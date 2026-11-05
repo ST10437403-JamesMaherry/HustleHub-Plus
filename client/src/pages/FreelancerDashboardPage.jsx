@@ -160,6 +160,10 @@ export default function FreelancerDashboardPage() {
   const report = income.data;
   const taxEstimate = report?.taxEstimate;
   const unavailableValue = income.loading ? 'Loading...' : '—';
+  const observedMonths = report?.monthlyIncome.filter(
+    (month) => month.month <= report.taxYear.asOfDate.slice(0, 7)
+  ) ?? [];
+  const peakMonthIncome = Math.max(0, ...observedMonths.map((month) => month.totalIncome));
 
   return (
     <section className="page freelancer-dashboard">
@@ -238,6 +242,61 @@ export default function FreelancerDashboardPage() {
           </p>
         </section>
       )}
+
+      <section className="fd-monthly" aria-labelledby="fd-monthly-title">
+        <div className="fd-section-heading">
+          <div>
+            <p className="eyebrow">Income activity</p>
+            <h2 id="fd-monthly-title">Monthly confirmed income</h2>
+          </div>
+          {report && <p className="fd-caption">Tax year {report.taxYear.label}</p>}
+        </div>
+
+        {income.loading ? (
+          <div className="fd-empty" role="status">Loading monthly income...</div>
+        ) : income.error ? (
+          <div className="fd-empty">Monthly income is unavailable.</div>
+        ) : (
+          <>
+            {report.yearToDateTransactionCount === 0 && (
+              <p className="fd-monthly-context">
+                No confirmed income in this tax year yet.
+              </p>
+            )}
+            <p className="fd-monthly-context" id="fd-monthly-context">
+              Each bar is relative to the highest-income month. Future months
+              are marked as upcoming rather than reported as earnings.
+            </p>
+            <ol
+              className="fd-monthly-bars"
+              aria-label={`Monthly confirmed income for ${report.taxYear.label}`}
+              aria-describedby="fd-monthly-context"
+            >
+              {report.monthlyIncome.map((month) => {
+                const upcoming = month.month > report.taxYear.asOfDate.slice(0, 7);
+                const barWidth = upcoming || peakMonthIncome === 0 || month.totalIncome === 0
+                  ? 0
+                  : Math.max(2, (month.totalIncome / peakMonthIncome) * 100);
+
+                return (
+                  <li
+                    className={`fd-month-row${upcoming ? ' fd-month-upcoming' : ''}`}
+                    key={month.month}
+                  >
+                    <span className="fd-month-label">{month.label}</span>
+                    <span className="fd-month-track" aria-hidden="true">
+                      <span className="fd-month-fill" style={{ width: `${barWidth}%` }} />
+                    </span>
+                    <span className="fd-month-amount">
+                      {upcoming ? 'Upcoming' : currencyFormatter.format(month.totalIncome)}
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
+          </>
+        )}
+      </section>
 
       <section className="fd-bookings" aria-labelledby="fd-bookings-title">
         <div className="fd-section-heading">
