@@ -35,10 +35,26 @@ const bookingSchema = new mongoose.Schema(
       required: true,
       enum: BOOKING_STATUSES,
       default: 'confirmed'
+    },
+    requestKey: {
+      type: String,
+      immutable: true,
+      minlength: 36,
+      maxlength: 36
     }
   },
   {
     timestamps: true
+  }
+);
+
+// The partial unique index preserves bookings created before request keys existed.
+bookingSchema.index(
+  { client: 1, requestKey: 1 },
+  {
+    name: 'unique_client_booking_request',
+    unique: true,
+    partialFilterExpression: { requestKey: { $type: 'string' } }
   }
 );
 

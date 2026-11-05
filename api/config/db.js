@@ -1,17 +1,20 @@
 const mongoose = require('mongoose');
+const Booking = require('../models/Booking');
 
-// Establish the database connection before the API begins accepting requests.
+// Establish the database connection and replay-protection index before serving requests.
 const connectDB = async () => {
   const mongoUri = process.env.MONGO_URI;
 
-  // Fail during startup rather than running without the required database.
   if (!mongoUri) {
     throw new Error('MONGO_URI is not configured');
   }
 
   await mongoose.connect(mongoUri);
 
-  console.log('MongoDB connected');
+  // A missing unique index would allow competing requests to create duplicates.
+  await Booking.createIndexes();
+
+  console.log('MongoDB connected and booking indexes ready');
 };
 
 module.exports = connectDB;
