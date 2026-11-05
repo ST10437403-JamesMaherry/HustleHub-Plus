@@ -158,6 +158,10 @@ test('booking input requires an exact UUID v4 request key', () => {
 });
 
 test('new booking commits one booking and one matching simulated transaction', async (t) => {
+  const logged = [];
+  t.mock.method(eventLogger, 'logEvent', (event, outcome) => {
+    logged.push({ event, outcome });
+  });
   const store = createStore(t);
   const result = await book(GIG_A, KEY_A);
 
@@ -170,9 +174,14 @@ test('new booking commits one booking and one matching simulated transaction', a
   assert.equal(store.bookings[0].amount, 450.25);
   assert.equal(store.transactions[0].booking, store.bookings[0]._id);
   assert.equal(result.res.body.booking.amount, store.transactions[0].amount);
+  assert.deepEqual(logged, [{ event: 'transaction.commit', outcome: 'success' }]);
 });
 
 test('same key and gig returns the original record even after gig removal', async (t) => {
+  const logged = [];
+  t.mock.method(eventLogger, 'logEvent', (event, outcome) => {
+    logged.push({ event, outcome });
+  });
   const store = createStore(t);
   const first = await book(GIG_A, KEY_A);
   store.settings.gigActive = false;
@@ -186,6 +195,7 @@ test('same key and gig returns the original record even after gig removal', asyn
   assert.equal(store.bookings.length, 1);
   assert.equal(store.transactions.length, 1);
   assert.equal(store.sessionEnds, 1);
+  assert.deepEqual(logged, [{ event: 'transaction.commit', outcome: 'success' }]);
 });
 
 test('reusing a key for a different gig returns 409 without writing', async (t) => {
