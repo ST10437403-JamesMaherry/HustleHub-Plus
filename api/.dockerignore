@@ -1,0 +1,32 @@
+# Allow only the runtime source required to construct the API image.
+**
+!package.json
+!package-lock.json
+!index.js
+!config/
+!config/**
+!controllers/
+!controllers/**
+!middleware/
+!middleware/**
+!models/
+!models/**
+!routes/
+!routes/**
+!services/
+!services/**
+!utils/
+!utils/**
+!docker/
+!docker/healthcheck.js
+
+# Exclude secrets and local artifacts even beneath allowed directories.
+**/.env
+**/.env.*
+**/certs/**
+**/*.pem
+**/*.key
+**/*.crt
+**/node_modules/**
+**/test/**
+**/coverage/**
