@@ -1,5 +1,7 @@
 const API_URL = (import.meta.env.VITE_API_URL || '').trim();
 const TOKEN_KEY = 'hustlehub.token';
+const REQUEST_KEY_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export class ApiError extends Error {
   constructor(message, status = 0, retryAfter = null) {
@@ -74,12 +76,21 @@ function buildUrl(path) {
 }
 
 // Public requests omit a token. AuthContext adds it for protected requests.
-export async function apiRequest(path, { method = 'GET', body, token, signal } = {}) {
+export async function apiRequest(path, { method = 'GET', body, token, signal, idempotencyKey } = {}) {
   const url = buildUrl(path);
   const headers = { Accept: 'application/json' };
 
   if (body !== undefined) headers['Content-Type'] = 'application/json';
   if (token) headers.Authorization = `Bearer ${token}`;
+
+  if (idempotencyKey !== undefined) {
+    // The replay guard is reserved for authenticated booking creation.
+    if (method !== 'POST' || path !== '/api/bookings' ||
+        typeof idempotencyKey !== 'string' || !REQUEST_KEY_PATTERN.test(idempotencyKey)) {
+      throw new ApiError('Invalid booking request identifier.');
+    }
+    headers['Idempotency-Key'] = idempotencyKey;
+  }
 
   const timeout = AbortSignal.timeout(15000);
   const requestSignal = signal ? AbortSignal.any([signal, timeout]) : timeout;

@@ -11,6 +11,7 @@ const User = require('../models/User');
 const { createHttpContext } = require('./helpers/http');
 
 const VALID_GIG_ID = '507f1f77bcf86cd799439011';
+const VALID_REQUEST_KEY = '123e4567-e89b-42d3-a456-426614174000';
 const VALID_USER_ID = '507f191e810c19729de860ea';
 
 function run(middleware, body = {}, overrides = {}) {
@@ -44,10 +45,13 @@ async function withJwtSettings(settings, callback) {
 }
 
 test('booking validation accepts only a properly formatted gig ID', () => {
-  const { req, nextCalls } = run(validateBooking, { gigId: ` ${VALID_GIG_ID} ` });
+  const { req, nextCalls } = run(validateBooking, { gigId: ` ${VALID_GIG_ID} ` }, {
+    headers: { 'idempotency-key': VALID_REQUEST_KEY }
+  });
 
   assert.equal(nextCalls.length, 1);
   assert.deepEqual(req.body, { gigId: VALID_GIG_ID });
+  assert.equal(req.bookingRequestKey, VALID_REQUEST_KEY);
 });
 
 test('booking validation rejects client-supplied prices and ownership overrides', () => {
