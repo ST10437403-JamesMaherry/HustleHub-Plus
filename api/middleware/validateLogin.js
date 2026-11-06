@@ -1,5 +1,5 @@
 // Login validation uses the same credential boundaries as registration.
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const EMAIL_PATTERN = /^[^\s@]+@(?:[^\s@.]+\.)+[^\s@.]{2,}$/;
 const CONTROL_CHARACTER_PATTERN = /[\u0000-\u001F\u007F]/;
 
 const EMAIL_MAX_LENGTH = 254;

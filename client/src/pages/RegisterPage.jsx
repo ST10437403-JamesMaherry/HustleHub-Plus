@@ -58,7 +58,7 @@ export default function RegisterPage() {
         : normaliseRegistration(values).email;
 
       // Registration does not issue a token; the user signs in explicitly.
-      navigate('/login', { replace: true, state: { registeredEmail: email } });
+      void navigate('/login', { replace: true, state: { registeredEmail: email } });
     } catch (error) {
       const outcome = describeAuthError(error, 'register');
       if (!outcome) return;

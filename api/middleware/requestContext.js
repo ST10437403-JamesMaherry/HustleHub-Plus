@@ -7,7 +7,10 @@ const eventLogger = require('../utils/logger');
 function monitoredEvent(method, path) {
   if (method !== 'POST') return null;
 
-  const cleanPath = path.replace(/\/+$/, '') || '/';
+  // Trim trailing slashes with a loop; an end-anchored regex backtracks on long slash runs.
+  let end = path.length;
+  while (end > 1 && path[end - 1] === '/') end -= 1;
+  const cleanPath = path.slice(0, end);
   if (cleanPath === '/api/auth/login') return 'auth.login';
   if (cleanPath === '/api/auth/logout') return 'auth.logout';
   if (cleanPath === '/api/bookings') return 'booking.create';

@@ -43,7 +43,7 @@ const registerUser = async (req, res, next) => {
 
     // Avoid an unnecessary bcrypt operation when the account already exists.
     const existingUser = await User.findOne({
-      email
+      email: String(email)
     });
 
     if (existingUser) {
@@ -86,8 +86,9 @@ const loginUser = async (req, res, next) => {
     } = req.body;
 
     // passwordHash is excluded by default and selected only for authentication.
+    // String() keeps the lookup a literal match even if a non-string ever reaches it.
     const user = await User.findOne({
-      email
+      email: String(email)
     }).select('+passwordHash');
 
     // Keep authentication failures generic to reduce account enumeration.
