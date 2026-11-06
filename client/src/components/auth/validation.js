@@ -10,7 +10,7 @@ const FULL_NAME_MIN_LENGTH = 2;
 const PASSWORD_MIN_BYTES = 8;
 const PASSWORD_MAX_BYTES = 72;
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const EMAIL_PATTERN = /^[^\s@]+@(?:[^\s@.]+\.)+[^\s@.]{2,}$/;
 const FULL_NAME_PATTERN = /^[\p{L}\p{M}][\p{L}\p{M}\p{Zs}.'’-]*$/u;
 
 const encoder = new TextEncoder();

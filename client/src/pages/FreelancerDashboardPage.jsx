@@ -143,8 +143,9 @@ export default function FreelancerDashboardPage() {
       }
     }
 
-    loadIncome();
-    loadBookings();
+    // Both loaders handle their own errors.
+    void loadIncome();
+    void loadBookings();
 
     // Cancel obsolete requests when the page refreshes or unmounts.
     return () => controller.abort();

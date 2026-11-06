@@ -49,7 +49,7 @@ export function AuthProvider({ children }) {
     // Remove privileged browser state immediately, even during an API outage.
     const { revision, cleared } = clearLocalSession();
 
-    if (!revocation) return;
+    if (revocation === null) return;
 
     try {
       await revocation;

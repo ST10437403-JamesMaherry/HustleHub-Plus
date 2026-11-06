@@ -32,3 +32,6 @@ build/
 # Temporary files
 tmp/
 temp/
+
+# SonarScanner working directory
+.scannerwork/

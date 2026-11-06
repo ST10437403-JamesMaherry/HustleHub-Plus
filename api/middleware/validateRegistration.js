@@ -1,6 +1,6 @@
 const allowedRoles = ['client', 'freelancer'];
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const EMAIL_PATTERN = /^[^\s@]+@(?:[^\s@.]+\.)+[^\s@.]{2,}$/;
 const CONTROL_CHARACTER_PATTERN = /[\u0000-\u001F\u007F]/;
 
 // Permit international names, spaces, apostrophes, full stops, and hyphens.

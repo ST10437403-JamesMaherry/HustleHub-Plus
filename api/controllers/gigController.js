@@ -90,9 +90,14 @@ const getMyGigs = async (req, res, next) => {
  */
 const createGig = async (req, res, next) => {
   try {
-    // Ownership is always derived from the verified JWT.
+    // Copy only marketplace fields; ownership is always derived from the verified JWT.
+    const { title, description, category, price, active } = req.body;
     const gig = await Gig.create({
-      ...req.body,
+      title,
+      description,
+      category,
+      price,
+      active,
       freelancer: req.auth.id
     });
 
