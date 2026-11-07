@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+	<testcase name="booking model defines a unique per-client request index for new records only" time="0.001815" classname="test"/>
+	<testcase name="database startup creates booking indexes before reporting readiness" time="0.000864" classname="test"/>
+	<testcase name="booking input requires an exact UUID v4 request key" time="0.000492" classname="test"/>
+	<testcase name="new booking commits one booking and one matching simulated transaction" time="0.005768" classname="test"/>
+	<testcase name="same key and gig returns the original record even after gig removal" time="0.001220" classname="test"/>
+	<testcase name="reusing a key for a different gig returns 409 without writing" time="0.002428" classname="test"/>
+	<testcase name="same gig can be purchased again with a different key" time="0.001468" classname="test"/>
+	<testcase name="the same request key is independently scoped to each client" time="0.000830" classname="test"/>
+	<testcase name="concurrent matching submissions create a single financial record pair" time="0.001036" classname="test"/>
+	<testcase name="concurrent conflicting submissions accept only one requested gig" time="0.001007" classname="test"/>
+	<testcase name="transaction insertion failures roll back the pending booking" time="0.001532" classname="test"/>
+	<testcase name="a replay missing its transaction fails closed" time="0.000688" classname="test"/>
+	<testcase name="unavailable gigs return 404 without creating financial records" time="0.000490" classname="test"/>
+	<testcase name="health probe accepts the existing API health response" time="0.015809" classname="test"/>
+	<testcase name="health probe rejects a non-success HTTP response" time="0.003136" classname="test"/>
+	<testcase name="health probe rejects a missing OK status" time="0.002681" classname="test"/>
+	<testcase name="health probe rejects malformed JSON" time="0.003023" classname="test"/>
+	<testcase name="health probe rejects oversized responses" time="0.002620" classname="test"/>
+	<testcase name="health probe rejects invalid port and timeout settings" time="0.000342" classname="test"/>
+	<testcase name="health probe fails when no API listens on the port" time="0.001771" classname="test"/>
+	<testcase name="health probe fails when the API does not respond" time="0.078592" classname="test"/>
+	<testcase name="HTTPS mode rejects an unreadable custom certificate" time="0.000467" classname="test"/>
+	<testcase name="independently verifies the tax due for R400,000 of assumed taxable income" time="0.000830" classname="test"/>
+	<testcase name="independently verifies the tax due for R700,000" time="0.000109" classname="test"/>
+	<testcase name="does not produce estimated tax below the age-adjusted tax thresholds" time="0.000138" classname="test"/>
+	<testcase name="keeps lifetime income separate from year-to-date confirmed revenue" time="0.014727" classname="test"/>
+	<testcase name="rejects invalid or unsafe MongoDB aggregate values before producing a report" time="0.002280" classname="test"/>
+	<testcase name="rejects tax-year aggregation overflow instead of displaying incorrect money" time="0.000573" classname="test"/>
+	<testcase name="limits the monthly query to confirmed records before the next local midnight" time="0.000580" classname="test"/>
+	<testcase name="does not present projected platform income as final personal tax liability" time="0.000432" classname="test"/>
+	<testcase name="uses South African midnight for the beginning and YTD cutoff" time="0.014260" classname="test"/>
+	<testcase name="uses inclusive local March 1 and February 28 date boundaries" time="0.000963" classname="test"/>
+	<testcase name="both pipelines restrict data to the authenticated freelancer and confirmed status" time="0.001414" classname="test"/>
+	<testcase name="sums rounded transaction cents in MongoDB instead of adding binary floats" time="0.001688" classname="test"/>
+	<testcase name="preserves lifetime fields and returns zero activity for an empty account" time="0.000925" classname="test"/>
+	<testcase name="separates lifetime totals from YTD and fills missing chart months" time="0.000419" classname="test"/>
+	<testcase name="adds exact cents across months without floating-point accumulation" time="0.000479" classname="test"/>
+	<testcase name="rejects malformed or duplicate income aggregates" time="0.000891" classname="test"/>
+	<testcase name="protects API response contract and includes an explicit tax disclaimer" time="0.000547" classname="test"/>
+	<testcase name="structured events emit only allowlisted fields" time="0.001908" classname="test"/>
+	<testcase name="malformed and caller-provided identifiers are discarded" time="0.000168" classname="test"/>
+	<testcase name="severity distinguishes business activity, conflicts and unexpected failures" time="0.000184" classname="test"/>
+	<testcase name="unknown event types and outcomes cannot create unstructured log records" time="0.000142" classname="test"/>
+	<testcase name="logging transport exceptions do not interrupt request operations" time="0.000167" classname="test"/>
+	<testcase name="login attempts and booking outcomes are classified by completed response" time="0.000633" classname="test"/>
+	<testcase name="request IDs are server-generated and exposed to the browser safely" time="0.000260" classname="test"/>
+	<testcase name="health checks and other endpoints do not generate audit noise" time="0.000099" classname="test"/>
+	<testcase name="unexpected API errors preserve a safe response and redact exception details" time="0.000384" classname="test"/>
+	<testcase name="unconfigured Grafana logging keeps stdout-only mode silently" time="0.001691" classname="test"/>
+	<testcase name="incomplete or unsafe Grafana settings disable shipping without exposing the token" time="0.000622" classname="test"/>
+	<testcase name="valid Grafana settings use low-cardinality labels and bounded delivery" time="0.007227" classname="test"/>
+	<testcase name="unreachable Grafana endpoint does not interrupt structured events" time="0.024799" classname="test"/>
+	<testcase name="registration normalises the allowed fields and discards unexpected properties" time="0.002310" classname="test"/>
+	<testcase name="registration blocks administrator self-registration and invalid roles" time="0.000295" classname="test"/>
+	<testcase name="registration rejects object-valued credentials and array request bodies" time="0.001225" classname="test"/>
+	<testcase name="registration enforces the bcrypt password limit in UTF-8 bytes" time="0.000683" classname="test"/>
+	<testcase name="login normalises email without altering the submitted password" time="0.000195" classname="test"/>
+	<testcase name="login rejects malformed NoSQL-operator inputs before authentication" time="0.000125" classname="test"/>
+	<testcase name="gig creation retains validated price and fields" time="0.000264" classname="test"/>
+	<testcase name="gig validation blocks pricing abuse and mass-assignment fields" time="0.000185" classname="test"/>
+	<testcase name="gig updates accept an explicit inactive state but reject unsupported fields" time="0.000230" classname="test"/>
+	<testcase name="sanitisation removes markup and control characters from selected text" time="0.000865" classname="test"/>
+	<testcase name="sanitisation leaves non-text fields untouched for later validation" time="0.000159" classname="test"/>
+	<testcase name="booking validation accepts only a properly formatted gig ID" time="0.001493" classname="test"/>
+	<testcase name="booking validation rejects client-supplied prices and ownership overrides" time="0.000194" classname="test"/>
+	<testcase name="booking validation rejects non-string, malformed and operator-based IDs" time="0.000100" classname="test"/>
+	<testcase name="role authorisation blocks missing, incorrect or elevated roles" time="0.000114" classname="test"/>
+	<testcase name="JWT guard rejects missing and incorrectly formatted Authorization headers" time="0.000236" classname="test"/>
+	<testcase name="JWT guard checks the account and uses only current database claims" time="0.002876" classname="test"/>
+	<testcase name="JWT guard rejects corrupted and expired tokens" time="0.000890" classname="test"/>
+	<testcase name="unknown routes return a controlled 404" time="0.000096" classname="test"/>
+	<testcase name="API errors never disclose underlying exception details to clients" time="0.001861" classname="test"/>
+	<testcase name="malformed JSON returns a controlled client error" time="0.000422" classname="test"/>
+	<testcase name="new tokens include session version but never user credentials" time="0.003118" classname="test"/>
+	<testcase name="tokens use version zero for existing users without stored session state" time="0.001211" classname="test"/>
+	<testcase name="legacy signed JWTs lacking the session version are rejected" time="0.001436" classname="test"/>
+	<testcase name="deleted accounts and changed roles reject otherwise valid JWTs" time="0.000761" classname="test"/>
+	<testcase name="invalid session-version values are rejected before database access" time="0.000995" classname="test"/>
+	<testcase name="atomic logout invalidates old tokens across sessions and permits new login" time="0.001411" classname="test"/>
+	<testcase name="logout safely handles accounts that predate the session-version field" time="0.000228" classname="test"/>
+	<testcase name="a stale concurrent logout cannot report successful invalidation" time="0.000128" classname="test"/>
+	<testcase name="database failures are passed to the central error handler" time="0.000680" classname="test"/>
+	<testcase name="authenticated profile returns safe account fields without session state" time="0.000260" classname="test"/>
+	<testcase name="gig creation stores only marketplace fields and the authenticated owner" time="0.001766" classname="test"/>
+	<testcase name="login and registration look up email as a plain string" time="0.000418" classname="test"/>
+	<testcase name="monitored paths ignore trailing slashes without slow backtracking" time="0.000200" classname="test"/>
+	<testcase name="email pattern accepts normal addresses and rejects empty domain labels" time="0.001033" classname="test"/>
+	<testcase name="exposes the correct 2027 South African tax-year boundaries" time="0.001856" classname="test"/>
+	<testcase name="applies the 2027 under-65 primary rebate and tax-free threshold" time="0.000310" classname="test"/>
+	<testcase name="matches the SARS progressive bracket boundaries" time="0.000199" classname="test"/>
+	<testcase name="correctly crosses an exact bracket boundary by one cent" time="0.000161" classname="test"/>
+	<testcase name="applies cumulative 65-plus and 75-plus rebates" time="0.000109" classname="test"/>
+	<testcase name="rejects invalid money, years and age assumptions" time="0.000517" classname="test"/>
+	<testcase name="annualises an observed year-to-date amount using inclusive calendar days" time="0.000628" classname="test"/>
+	<testcase name="uses the first and last day of the tax year correctly" time="0.000312" classname="test"/>
+	<testcase name="treats Date instances as Johannesburg calendar dates" time="0.012860" classname="test"/>
+	<testcase name="does not silently use the wrong tax year or invalid calendar dates" time="0.000451" classname="test"/>
+	<testcase name="rejects fractional-cent amounts and keeps rounding deterministic" time="0.000200" classname="test"/>
+	<!-- tests 98 -->
+	<!-- suites 0 -->
+	<!-- pass 98 -->
+	<!-- fail 0 -->
+	<!-- cancelled 0 -->
+	<!-- skipped 0 -->
+	<!-- todo 0 -->
+	<!-- duration_ms 1764.131785 -->
+</testsuites>
