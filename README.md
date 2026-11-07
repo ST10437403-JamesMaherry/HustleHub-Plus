@@ -423,20 +423,20 @@ Local `.env` files, private keys, certificates and dependency directories are ex
 
 ### Postman collection
 
-The [Postman folder](postman/) contains the **HustleHub+ Part 2 - Automated API Review** collection and **HustleHub+ Part 2 - Local** environment. See [postman/README.md](postman/README.md) for detailed runner instructions and troubleshooting.
+The [Postman folder](postman/) contains the **HustleHub+ Functional API Review (Part 2 + Part 3 Financial)** collection and **HustleHub+ Functional - Local** environment. See [postman/README.md](postman/README.md) for detailed runner instructions and troubleshooting.
 
 | Folder | Request definitions | Coverage |
 |---|---:|---|
 | 01 Health and Security Headers | 4 | HTTPS health, Helmet/CSP headers, CORS origins and preflight. |
 | 02 Authentication | 21 | Administrator login, unique account creation, registration/login failures, JWTs and protected profiles. |
 | 03 Gigs | 36 | Freelancer CRUD, ownership, roles, sanitisation, visibility and price boundaries. |
-| 04 Bookings | 18 | Booking/transaction consistency, history, ownership, roles and rejected fields or unavailable gigs. |
-| 05 Income | 4 | Confirmed income, freelancer isolation and authentication/role failures. |
+| 04 Bookings | 19 | Booking/transaction consistency, idempotent replay with the same `Idempotency-Key`, history, ownership, roles and rejected fields or unavailable gigs. |
+| 05 Income | 11 | Year-to-date income, March–February monthly breakdown, tax-year boundaries, illustrative tax recalculated independently, replay not double-counted, empty-income report, freelancer isolation and authentication/role failures. |
 | 06 Administration | 18 | Safe user/booking views, restricted gig removal, preserved financial history and cleanup. |
 | 07 Security and Controlled Errors | 7 | Malformed JSON, body limits, unknown routes, NoSQL operator inputs and arrays. |
 | 08 Rate Limiting | 4 | Login and booking exhaustion, `429` response headers and forwarded-IP bypass rejection. |
 
-There are **112 request definitions**. Two bounded limiter loops can repeat requests, so executed request and assertion totals can be higher.
+There are **120 request definitions** (112 from Part 2 plus 8 Part 3 financial checks). Two bounded limiter loops can repeat requests, so executed request and assertion totals can be higher.
 
 Each complete cycle creates unique test clients and freelancers. Scripts capture tokens and resource IDs automatically. Later folders reuse that state and check prerequisites. The existing administrator is authenticated separately. The suite verifies safe responses and controlled failure cases as well as the successful marketplace workflow.
 
@@ -444,7 +444,7 @@ Each complete cycle creates unique test clients and freelancers. Scripts capture
 
 1. Start a fresh API process using `npm --prefix api start` from the repository root.
 2. Import `postman/postman_collection.json` and `postman/postman_environment.json`.
-3. Select **HustleHub+ Part 2 - Local** and set the assessment administrator values if needed.
+3. Select **HustleHub+ Functional - Local** and set `adminPassword` as a local current value (the committed file keeps it blank).
 4. Trust the local certificate through Postman's CA certificate settings.
 5. Use the desktop/local Collection Runner with one iteration and no data file.
 6. Enable **Keep variable values** and **Stop run if an error occurs**.
@@ -460,30 +460,23 @@ Start a fresh API process in one terminal:
 npm --prefix api start
 ```
 
-In a second terminal at the repository root, run the existing npm script and explicitly select the evidence report path:
+In a second terminal at the repository root, supply the administrator password at run time. Replace `<admin-password>` with the assessment password:
 
 ```bash
-npm --prefix api run test:api --silent -- \
-  --reporter-junit-export ../evidence/part2/newman/newman-report.xml
+npm --prefix api run test:api --silent -- --env-var 'adminPassword=<admin-password>'
 ```
 
-If the exported environment has a blank administrator password, supply it at run time. Replace `<admin-password>` with the assessment password:
-
-```bash
-npm --prefix api run test:api --silent -- \
-  --env-var 'adminPassword=<admin-password>' \
-  --reporter-junit-export ../evidence/part2/newman/newman-report.xml
-```
+The JUnit report is written to `evidence/part3/newman/functional-report.xml`.
 
 The script uses the repository collection/environment, trusts `api/certs/localhost-cert.pem`, and runs the CLI and JUnit reporters. The report path is relative to the npm script's `api` working directory. `--silent` suppresses npm's script-command echo.
 
-**Committed Newman evidence:** [JUnit report](evidence/part2/newman/newman-report.xml), [terminal summary](evidence/part2/newman/newman-summary.png) and [Postman Runner summary](evidence/part2/newman/postman-runner-summary.png).
+**Committed Newman evidence:** Part 3 [JUnit report](evidence/part3/newman/functional-report.xml) and [summary](evidence/part3/newman/functional-summary.png). Part 2 [JUnit report](evidence/part2/newman/newman-report.xml), [terminal summary](evidence/part2/newman/newman-summary.png) and [Postman Runner summary](evidence/part2/newman/postman-runner-summary.png).
 
-A successful cycle must complete all eight folders with zero failed assertions and no script errors. The committed reports and screenshots record the submitted results.
+A successful cycle must complete all eight folders with zero failed assertions and no script errors. The Part 3 cycle records 335 passing assertions. The committed reports and screenshots record the submitted results.
 
 ### Repeatability and limiter capacity
 
-Before folder 08, the normal cycle uses eight registration attempts, nine authenticated client booking attempts and three failed login attempts. Folder 08 deliberately exhausts the remaining login and booking capacity. Its booking probes use an invalid gig ID and create no additional financial records.
+Before folder 08, the normal cycle uses eight registration attempts, ten authenticated client booking attempts (including the idempotent replay) and three failed login attempts. Folder 08 deliberately exhausts the remaining login and booking capacity. Its booking probes use an invalid gig ID and create no additional financial records.
 
 Stop the API with `Ctrl+C`, then restart before another complete cycle:
 
@@ -492,6 +485,18 @@ npm --prefix api start
 ```
 
 This resets the in-memory counters. A full Postman run and a full Newman run each need their own fresh API process. The database persists across restarts, while unique test accounts prevent fixture collisions. Test accounts and the booking/transaction pair remain available for persistence evidence; the suite removes its captured test gigs during its cleanup checks.
+
+### Real-browser tests (Playwright)
+
+The [`e2e/`](e2e/) suite drives Chromium through the React application against the running HTTPS API and database. It covers registration, gig publishing, booking with confirmation, the income and tax dashboard (checked against an independent SARS calculation), session revocation on sign-out, and failure paths (wrong password, a client opening freelancer pages). It uses isolated, generated accounts and trusts only the local API certificate. With a freshly started API:
+
+```bash
+npm --prefix e2e ci
+npm --prefix e2e run install:browser
+npm --prefix e2e test
+```
+
+See [docs/testing/e2e-playwright.md](docs/testing/e2e-playwright.md). Evidence: [JUnit](evidence/part3/e2e/playwright-junit.xml) and [screenshots](evidence/part3/e2e/screenshots/).
 
 ### Frontend tests
 
