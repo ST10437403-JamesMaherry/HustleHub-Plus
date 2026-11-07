@@ -1,0 +1,36 @@
+<testsuites id="" name="" tests="7" failures="0" skipped="0" errors="0" time="10.158549">
+<testsuite name="access-control.spec.js" timestamp="2026-11-07T22:30:58.010Z" hostname="chromium" tests="3" failures="0" skipped="0" time="2.125" errors="0">
+<testcase name="a wrong password is rejected without creating a session" classname="access-control.spec.js" time="0.988">
+</testcase>
+<testcase name="a client cannot open freelancer pages" classname="access-control.spec.js" time="0.827">
+</testcase>
+<testcase name="visitors are sent to sign in before protected pages" classname="access-control.spec.js" time="0.31">
+</testcase>
+</testsuite>
+<testsuite name="marketplace-journey.spec.js" timestamp="2026-11-07T22:30:58.010Z" hostname="chromium" tests="4" failures="0" skipped="0" time="4.297" errors="0">
+<testcase name="freelancer registers, signs in and publishes a gig" classname="marketplace-journey.spec.js" time="1.104">
+<properties>
+<property name="serial" value="">
+</property>
+</properties>
+</testcase>
+<testcase name="client finds the gig, confirms a booking and sees it in history" classname="marketplace-journey.spec.js" time="1.14">
+<properties>
+<property name="serial" value="">
+</property>
+</properties>
+</testcase>
+<testcase name="freelancer dashboard shows the income and illustrative tax" classname="marketplace-journey.spec.js" time="0.925">
+<properties>
+<property name="serial" value="">
+</property>
+</properties>
+</testcase>
+<testcase name="sign-out revokes the session and protected pages require sign-in again" classname="marketplace-journey.spec.js" time="1.128">
+<properties>
+<property name="serial" value="">
+</property>
+</properties>
+</testcase>
+</testsuite>
+</testsuites>
