@@ -8,7 +8,7 @@
     "dev": "node --watch index.js",
     "test": "node --test test/*.test.js",
     "test:coverage": "node -e \"require('fs').mkdirSync('coverage', { recursive: true })\" && node --experimental-test-coverage --test-coverage-exclude=test/** --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info --test test/*.test.js",
-    "test:api": "newman run ../postman/postman_collection.json -e ../postman/postman_environment.json --ssl-extra-ca-certs ./certs/localhost-cert.pem -r cli,junit --reporter-junit-export ../evidence/part2/newman/newman-report.xml",
+    "test:api": "newman run ../postman/postman_collection.json -e ../postman/postman_environment.json --ssl-extra-ca-certs ./certs/localhost-cert.pem -r cli,junit --reporter-junit-export ../evidence/part3/newman/functional-report.xml",
     "test:security": "newman run ../postman/part3_security_collection.json -e ../postman/part3_security_environment.json --folder \"Security Matrix\" --ssl-extra-ca-certs ./certs/localhost-cert.pem -r cli,junit --reporter-junit-export ../evidence/part3/security-tests/security-matrix.xml",
     "test:security:limits": "newman run ../postman/part3_security_collection.json -e ../postman/part3_security_environment.json --folder \"Rate Limits\" --ssl-extra-ca-certs ./certs/localhost-cert.pem -r cli,junit --reporter-junit-export ../evidence/part3/security-tests/security-limits.xml"
   },

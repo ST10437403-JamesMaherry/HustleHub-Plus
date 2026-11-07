@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="HustleHub+ Functional API Review (Part 2 + Part 3 Financial)" tests="122" time="3.512">
+  <testsuite name="01 Health and Security Headers / Health and HTTPS" id="39ba2122-3186-439b-a1ce-d23e5b2d6159" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.029">
+    <testcase name="Expected HTTP response" time="0.029" classname="01HealthAndSecurityHeadersHealthAndHttps"/>
+    <testcase name="Security headers and safe response" time="0.029" classname="01HealthAndSecurityHeadersHealthAndHttps"/>
+    <testcase name="Scenario data and invariants" time="0.029" classname="01HealthAndSecurityHeadersHealthAndHttps"/>
+  </testsuite>
+  <testsuite name="01 Health and Security Headers / CORS - Trusted Origin Allowed" id="0c0651c8-6087-491d-ab4d-b111bf2a3cb2" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.003">
+    <testcase name="Expected HTTP response" time="0.003" classname="01HealthAndSecurityHeadersCorsTrustedOriginAllowed"/>
+    <testcase name="Security headers and safe response" time="0.003" classname="01HealthAndSecurityHeadersCorsTrustedOriginAllowed"/>
+    <testcase name="Scenario data and invariants" time="0.003" classname="01HealthAndSecurityHeadersCorsTrustedOriginAllowed"/>
+  </testsuite>
+  <testsuite name="01 Health and Security Headers / CORS - Untrusted Origin Not Allowed" id="71fabec6-688d-4040-83f3-6db6b1cdbee5" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="01HealthAndSecurityHeadersCorsUntrustedOriginNotAllowed"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="01HealthAndSecurityHeadersCorsUntrustedOriginNotAllowed"/>
+    <testcase name="Scenario data and invariants" time="0.002" classname="01HealthAndSecurityHeadersCorsUntrustedOriginNotAllowed"/>
+  </testsuite>
+  <testsuite name="01 Health and Security Headers / CORS - Trusted Preflight" id="b7c728e2-d7e1-4a2e-92c7-755159427329" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.003">
+    <testcase name="Expected HTTP response" time="0.003" classname="01HealthAndSecurityHeadersCorsTrustedPreflight"/>
+    <testcase name="Security headers and safe response" time="0.003" classname="01HealthAndSecurityHeadersCorsTrustedPreflight"/>
+    <testcase name="Scenario data and invariants" time="0.003" classname="01HealthAndSecurityHeadersCorsTrustedPreflight"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Login Admin - Capture JWT" id="7192bba3-5431-41b6-993b-e87663360a1e" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.242">
+    <testcase name="Expected HTTP response" time="0.242" classname="02AuthenticationLoginAdminCaptureJwt"/>
+    <testcase name="Security headers and safe response" time="0.242" classname="02AuthenticationLoginAdminCaptureJwt"/>
+    <testcase name="Scenario data and invariants" time="0.242" classname="02AuthenticationLoginAdminCaptureJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register client - Success" id="a489c447-98f2-44ab-b725-7bf84dae35dd" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.223">
+    <testcase name="Expected HTTP response" time="0.223" classname="02AuthenticationRegisterClientSuccess"/>
+    <testcase name="Security headers and safe response" time="0.223" classname="02AuthenticationRegisterClientSuccess"/>
+    <testcase name="Scenario data and invariants" time="0.223" classname="02AuthenticationRegisterClientSuccess"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register freelancer - Success" id="2e82506c-cff0-4d98-8888-e1a803142440" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.217">
+    <testcase name="Expected HTTP response" time="0.217" classname="02AuthenticationRegisterFreelancerSuccess"/>
+    <testcase name="Security headers and safe response" time="0.217" classname="02AuthenticationRegisterFreelancerSuccess"/>
+    <testcase name="Scenario data and invariants" time="0.217" classname="02AuthenticationRegisterFreelancerSuccess"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register clientB - Success" id="78b29bc3-2f93-4a41-a53d-56776d3cec2a" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.236">
+    <testcase name="Expected HTTP response" time="0.236" classname="02AuthenticationRegisterClientBSuccess"/>
+    <testcase name="Security headers and safe response" time="0.236" classname="02AuthenticationRegisterClientBSuccess"/>
+    <testcase name="Scenario data and invariants" time="0.236" classname="02AuthenticationRegisterClientBSuccess"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register freelancerB - Success" id="733ab9ea-f6df-4192-8aef-552282467746" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.203">
+    <testcase name="Expected HTTP response" time="0.203" classname="02AuthenticationRegisterFreelancerBSuccess"/>
+    <testcase name="Security headers and safe response" time="0.203" classname="02AuthenticationRegisterFreelancerBSuccess"/>
+    <testcase name="Scenario data and invariants" time="0.203" classname="02AuthenticationRegisterFreelancerBSuccess"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Login client - Capture JWT" id="88276042-500a-410d-a6fc-bb978fd58498" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.189">
+    <testcase name="Expected HTTP response" time="0.189" classname="02AuthenticationLoginClientCaptureJwt"/>
+    <testcase name="Security headers and safe response" time="0.189" classname="02AuthenticationLoginClientCaptureJwt"/>
+    <testcase name="Scenario data and invariants" time="0.189" classname="02AuthenticationLoginClientCaptureJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Login freelancer - Capture JWT" id="d176eadf-e9b1-43bf-96c6-57410621f5da" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.195">
+    <testcase name="Expected HTTP response" time="0.195" classname="02AuthenticationLoginFreelancerCaptureJwt"/>
+    <testcase name="Security headers and safe response" time="0.195" classname="02AuthenticationLoginFreelancerCaptureJwt"/>
+    <testcase name="Scenario data and invariants" time="0.195" classname="02AuthenticationLoginFreelancerCaptureJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Login clientB - Capture JWT" id="211ea9f2-3dcb-4c2a-8c34-1c58065f156a" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.200">
+    <testcase name="Expected HTTP response" time="0.200" classname="02AuthenticationLoginClientBCaptureJwt"/>
+    <testcase name="Security headers and safe response" time="0.200" classname="02AuthenticationLoginClientBCaptureJwt"/>
+    <testcase name="Scenario data and invariants" time="0.200" classname="02AuthenticationLoginClientBCaptureJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Login freelancerB - Capture JWT" id="77955585-2f7e-40a2-b060-5183a770d4f9" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.199">
+    <testcase name="Expected HTTP response" time="0.199" classname="02AuthenticationLoginFreelancerBCaptureJwt"/>
+    <testcase name="Security headers and safe response" time="0.199" classname="02AuthenticationLoginFreelancerBCaptureJwt"/>
+    <testcase name="Scenario data and invariants" time="0.199" classname="02AuthenticationLoginFreelancerBCaptureJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register - Missing Field" id="0d6325e2-0788-40e1-8766-6d1d90fb769d" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="02AuthenticationRegisterMissingField"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="02AuthenticationRegisterMissingField"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register - Reject Admin Role" id="2ca16ec8-1084-4013-ad45-cf592c331a5b" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Expected HTTP response" time="0.003" classname="02AuthenticationRegisterRejectAdminRole"/>
+    <testcase name="Security headers and safe response" time="0.003" classname="02AuthenticationRegisterRejectAdminRole"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register - Reject Malicious Name" id="5047d243-0cd8-4f02-b548-e882ad2787b5" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="02AuthenticationRegisterRejectMaliciousName"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="02AuthenticationRegisterRejectMaliciousName"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Register - Duplicate Email" id="45e08426-1243-4518-8f8a-3cb8537ac75c" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.011">
+    <testcase name="Expected HTTP response" time="0.011" classname="02AuthenticationRegisterDuplicateEmail"/>
+    <testcase name="Security headers and safe response" time="0.011" classname="02AuthenticationRegisterDuplicateEmail"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Login - Invalid Password" id="f4896b75-3cc5-4b51-8a0d-4f5a5bc30b20" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.191">
+    <testcase name="Expected HTTP response" time="0.191" classname="02AuthenticationLoginInvalidPassword"/>
+    <testcase name="Security headers and safe response" time="0.191" classname="02AuthenticationLoginInvalidPassword"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Current User - client" id="d6616247-4523-4d20-8421-b3fea252b17f" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.021">
+    <testcase name="Expected HTTP response" time="0.021" classname="02AuthenticationCurrentUserClient"/>
+    <testcase name="Security headers and safe response" time="0.021" classname="02AuthenticationCurrentUserClient"/>
+    <testcase name="Scenario data and invariants" time="0.021" classname="02AuthenticationCurrentUserClient"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Current User - freelancer" id="241dc8bc-4507-451f-8e13-558975aa7fb7" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.018">
+    <testcase name="Expected HTTP response" time="0.018" classname="02AuthenticationCurrentUserFreelancer"/>
+    <testcase name="Security headers and safe response" time="0.018" classname="02AuthenticationCurrentUserFreelancer"/>
+    <testcase name="Scenario data and invariants" time="0.018" classname="02AuthenticationCurrentUserFreelancer"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Current User - admin" id="70aece7c-f0ad-421f-b527-7af7cb97e1fa" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.012">
+    <testcase name="Expected HTTP response" time="0.012" classname="02AuthenticationCurrentUserAdmin"/>
+    <testcase name="Security headers and safe response" time="0.012" classname="02AuthenticationCurrentUserAdmin"/>
+    <testcase name="Scenario data and invariants" time="0.012" classname="02AuthenticationCurrentUserAdmin"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Current User - Missing JWT" id="21dd0123-dfdd-425d-bbcc-761d203c026a" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="02AuthenticationCurrentUserMissingJwt"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="02AuthenticationCurrentUserMissingJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Current User - Invalid JWT" id="e5f7f0d7-6f0f-4153-8128-ceea83d474c1" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Expected HTTP response" time="0.003" classname="02AuthenticationCurrentUserInvalidJwt"/>
+    <testcase name="Security headers and safe response" time="0.003" classname="02AuthenticationCurrentUserInvalidJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Current User - Tampered JWT" id="0b301469-5735-4488-8166-7e3d276df29b" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="02AuthenticationCurrentUserTamperedJwt"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="02AuthenticationCurrentUserTamperedJwt"/>
+  </testsuite>
+  <testsuite name="02 Authentication / Current User - Wrong Auth Scheme" id="f9279c90-8863-41a8-b28f-0fe9e451dca4" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="02AuthenticationCurrentUserWrongAuthScheme"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="02AuthenticationCurrentUserWrongAuthScheme"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Browse Gigs - Public" id="48d6d482-3b20-4474-8778-5712c406be98" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.017">
+    <testcase name="Expected HTTP response" time="0.017" classname="03GigsBrowseGigsPublic"/>
+    <testcase name="Security headers and safe response" time="0.017" classname="03GigsBrowseGigsPublic"/>
+    <testcase name="Scenario data and invariants" time="0.017" classname="03GigsBrowseGigsPublic"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Freelancer Success" id="161b157c-a208-40ed-8c8c-c69a59ccee7e" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.025">
+    <testcase name="Expected HTTP response" time="0.025" classname="03GigsCreateGigFreelancerSuccess"/>
+    <testcase name="Security headers and safe response" time="0.025" classname="03GigsCreateGigFreelancerSuccess"/>
+    <testcase name="Scenario data and invariants" time="0.025" classname="03GigsCreateGigFreelancerSuccess"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Inactive Minimum Price" id="579a5358-0e5b-41ea-aca3-a2933d8e95e0" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.018">
+    <testcase name="Expected HTTP response" time="0.018" classname="03GigsCreateGigInactiveMinimumPrice"/>
+    <testcase name="Security headers and safe response" time="0.018" classname="03GigsCreateGigInactiveMinimumPrice"/>
+    <testcase name="Scenario data and invariants" time="0.018" classname="03GigsCreateGigInactiveMinimumPrice"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Markup Sanitised" id="7c69bfc3-e468-4a58-92c0-216191c06ea5" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.016">
+    <testcase name="Expected HTTP response" time="0.016" classname="03GigsCreateGigMarkupSanitised"/>
+    <testcase name="Security headers and safe response" time="0.016" classname="03GigsCreateGigMarkupSanitised"/>
+    <testcase name="Scenario data and invariants" time="0.016" classname="03GigsCreateGigMarkupSanitised"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Second Freelancer" id="4c7e7fcf-6e4c-4ae0-8230-f644ad62a633" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.019">
+    <testcase name="Expected HTTP response" time="0.019" classname="03GigsCreateGigSecondFreelancer"/>
+    <testcase name="Security headers and safe response" time="0.019" classname="03GigsCreateGigSecondFreelancer"/>
+    <testcase name="Scenario data and invariants" time="0.019" classname="03GigsCreateGigSecondFreelancer"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject Client" id="3dee60d0-b7da-4369-bfe0-ab0176caa436" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.009">
+    <testcase name="Expected HTTP response" time="0.009" classname="03GigsCreateGigRejectClient"/>
+    <testcase name="Security headers and safe response" time="0.009" classname="03GigsCreateGigRejectClient"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Missing JWT" id="52300c03-01fd-4016-9323-c89f7c6038a2" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP response" time="0.004" classname="03GigsCreateGigMissingJwt"/>
+    <testcase name="Security headers and safe response" time="0.004" classname="03GigsCreateGigMissingJwt"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Missing Fields" id="d4b93267-5e89-4b0b-a83a-08d4dce1c140" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.010">
+    <testcase name="Expected HTTP response" time="0.010" classname="03GigsCreateGigMissingFields"/>
+    <testcase name="Security headers and safe response" time="0.010" classname="03GigsCreateGigMissingFields"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject Negative Price" id="8c030b25-7cc9-41ba-9ad8-9feab6654ab9" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.011">
+    <testcase name="Expected HTTP response" time="0.011" classname="03GigsCreateGigRejectNegativePrice"/>
+    <testcase name="Security headers and safe response" time="0.011" classname="03GigsCreateGigRejectNegativePrice"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject Zero Price" id="ba2e5552-6dd6-4a7f-81a6-1807b77ef50e" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.010">
+    <testcase name="Expected HTTP response" time="0.010" classname="03GigsCreateGigRejectZeroPrice"/>
+    <testcase name="Security headers and safe response" time="0.010" classname="03GigsCreateGigRejectZeroPrice"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject Below One Cent" id="45d8e1f2-423d-4821-adb2-12b1c7a7ea50" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.010">
+    <testcase name="Expected HTTP response" time="0.010" classname="03GigsCreateGigRejectBelowOneCent"/>
+    <testcase name="Security headers and safe response" time="0.010" classname="03GigsCreateGigRejectBelowOneCent"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject Fractional Cent" id="724895ec-3aca-44e3-b5b2-221849f8f65e" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.010">
+    <testcase name="Expected HTTP response" time="0.010" classname="03GigsCreateGigRejectFractionalCent"/>
+    <testcase name="Security headers and safe response" time="0.010" classname="03GigsCreateGigRejectFractionalCent"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject String Price" id="546e3adc-72d0-42f8-82a1-f76bca633e5b" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.016">
+    <testcase name="Expected HTTP response" time="0.016" classname="03GigsCreateGigRejectStringPrice"/>
+    <testcase name="Security headers and safe response" time="0.016" classname="03GigsCreateGigRejectStringPrice"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject Null Price" id="1845621c-74c2-4d6a-830e-c05f8cf720b0" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.011">
+    <testcase name="Expected HTTP response" time="0.011" classname="03GigsCreateGigRejectNullPrice"/>
+    <testcase name="Security headers and safe response" time="0.011" classname="03GigsCreateGigRejectNullPrice"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject Unsafe Price" id="4cfebe13-36e5-45c3-8958-1fd9b1b9b866" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.006">
+    <testcase name="Expected HTTP response" time="0.006" classname="03GigsCreateGigRejectUnsafePrice"/>
+    <testcase name="Security headers and safe response" time="0.006" classname="03GigsCreateGigRejectUnsafePrice"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject Owner Override" id="22889ae0-d46a-4505-8d47-a3cd54e27932" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.009">
+    <testcase name="Expected HTTP response" time="0.009" classname="03GigsCreateGigRejectOwnerOverride"/>
+    <testcase name="Security headers and safe response" time="0.009" classname="03GigsCreateGigRejectOwnerOverride"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Create Gig - Reject Invalid Active" id="1ea994dc-df1e-4f49-aa7f-6ffae7fe3f30" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.008">
+    <testcase name="Expected HTTP response" time="0.008" classname="03GigsCreateGigRejectInvalidActive"/>
+    <testcase name="Security headers and safe response" time="0.008" classname="03GigsCreateGigRejectInvalidActive"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Browse Gigs - Client" id="8ce0c279-ccd9-4211-91ed-4cb5375302ee" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.011">
+    <testcase name="Expected HTTP response" time="0.011" classname="03GigsBrowseGigsClient"/>
+    <testcase name="Security headers and safe response" time="0.011" classname="03GigsBrowseGigsClient"/>
+    <testcase name="Scenario data and invariants" time="0.011" classname="03GigsBrowseGigsClient"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Get Gig - Inactive Hidden" id="2660aa92-97ff-4df2-9a66-0a8c3120177e" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.008">
+    <testcase name="Expected HTTP response" time="0.008" classname="03GigsGetGigInactiveHidden"/>
+    <testcase name="Security headers and safe response" time="0.008" classname="03GigsGetGigInactiveHidden"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Get Gig - Invalid ID" id="9a15c7de-5097-401d-b889-8193f8c06bab" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="03GigsGetGigInvalidId"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="03GigsGetGigInvalidId"/>
+  </testsuite>
+  <testsuite name="03 Gigs / My Gigs - Freelancer Alpha" id="c05eed03-6311-4271-8cf9-05ce630c5a19" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.013">
+    <testcase name="Expected HTTP response" time="0.013" classname="03GigsMyGigsFreelancerAlpha"/>
+    <testcase name="Security headers and safe response" time="0.013" classname="03GigsMyGigsFreelancerAlpha"/>
+    <testcase name="Scenario data and invariants" time="0.013" classname="03GigsMyGigsFreelancerAlpha"/>
+  </testsuite>
+  <testsuite name="03 Gigs / My Gigs - Freelancer Beta" id="533ffcc5-8ab9-4581-ad85-060b7228e9cc" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.011">
+    <testcase name="Expected HTTP response" time="0.011" classname="03GigsMyGigsFreelancerBeta"/>
+    <testcase name="Security headers and safe response" time="0.011" classname="03GigsMyGigsFreelancerBeta"/>
+    <testcase name="Scenario data and invariants" time="0.011" classname="03GigsMyGigsFreelancerBeta"/>
+  </testsuite>
+  <testsuite name="03 Gigs / My Gigs - Reject Client" id="416ca6dd-6f09-4e09-bf23-1f300d00ccb7" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.007">
+    <testcase name="Expected HTTP response" time="0.007" classname="03GigsMyGigsRejectClient"/>
+    <testcase name="Security headers and safe response" time="0.007" classname="03GigsMyGigsRejectClient"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Update Gig - Reject Non-owner" id="2d6cd7fd-eafe-41b1-816b-048bc66d36f5" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.015">
+    <testcase name="Expected HTTP response" time="0.015" classname="03GigsUpdateGigRejectNonOwner"/>
+    <testcase name="Security headers and safe response" time="0.015" classname="03GigsUpdateGigRejectNonOwner"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Delete Gig - Reject Non-owner" id="96445892-1480-4b89-a82e-1091400a3bdf" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.016">
+    <testcase name="Expected HTTP response" time="0.016" classname="03GigsDeleteGigRejectNonOwner"/>
+    <testcase name="Security headers and safe response" time="0.016" classname="03GigsDeleteGigRejectNonOwner"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Get Gig - Unchanged After Ownership Rejections" id="26168bef-6f08-4886-94ec-66b3bcbc3bf7" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.008">
+    <testcase name="Expected HTTP response" time="0.008" classname="03GigsGetGigUnchangedAfterOwnershipRejections"/>
+    <testcase name="Security headers and safe response" time="0.008" classname="03GigsGetGigUnchangedAfterOwnershipRejections"/>
+    <testcase name="Scenario data and invariants" time="0.008" classname="03GigsGetGigUnchangedAfterOwnershipRejections"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Update Gig - Owner Success" id="5e299bc6-39cc-4d99-a872-846677ab29ab" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.022">
+    <testcase name="Expected HTTP response" time="0.022" classname="03GigsUpdateGigOwnerSuccess"/>
+    <testcase name="Security headers and safe response" time="0.022" classname="03GigsUpdateGigOwnerSuccess"/>
+    <testcase name="Scenario data and invariants" time="0.022" classname="03GigsUpdateGigOwnerSuccess"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Update Gig - Reject Invalid Title" id="a4dfb526-76a8-4283-b3ce-e2ce5e152a36" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.011">
+    <testcase name="Expected HTTP response" time="0.011" classname="03GigsUpdateGigRejectInvalidTitle"/>
+    <testcase name="Security headers and safe response" time="0.011" classname="03GigsUpdateGigRejectInvalidTitle"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Update Gig - Reject Fractional Cent" id="7e2d3384-9665-451e-b155-871b9cdf453d" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.006">
+    <testcase name="Expected HTTP response" time="0.006" classname="03GigsUpdateGigRejectFractionalCent"/>
+    <testcase name="Security headers and safe response" time="0.006" classname="03GigsUpdateGigRejectFractionalCent"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Update Gig - Reject Below One Cent" id="eabf2669-aaef-49fc-9169-b8aef8decda0" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.006">
+    <testcase name="Expected HTTP response" time="0.006" classname="03GigsUpdateGigRejectBelowOneCent"/>
+    <testcase name="Security headers and safe response" time="0.006" classname="03GigsUpdateGigRejectBelowOneCent"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Update Gig - Reject Client" id="9d1b0604-7698-47a0-bf43-37c1e937eb30" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.007">
+    <testcase name="Expected HTTP response" time="0.007" classname="03GigsUpdateGigRejectClient"/>
+    <testcase name="Security headers and safe response" time="0.007" classname="03GigsUpdateGigRejectClient"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Deactivate Own Gig" id="d59625a9-9f49-4601-9736-a4412180673c" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.015">
+    <testcase name="Expected HTTP response" time="0.015" classname="03GigsDeactivateOwnGig"/>
+    <testcase name="Security headers and safe response" time="0.015" classname="03GigsDeactivateOwnGig"/>
+    <testcase name="Scenario data and invariants" time="0.015" classname="03GigsDeactivateOwnGig"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Get Gig - Deactivated Hidden" id="3e77279d-ba02-4099-a07c-228814e25fa5" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.010">
+    <testcase name="Expected HTTP response" time="0.010" classname="03GigsGetGigDeactivatedHidden"/>
+    <testcase name="Security headers and safe response" time="0.010" classname="03GigsGetGigDeactivatedHidden"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Reactivate Own Gig" id="72492c2f-9daa-4888-87b8-0b3e99ae776c" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.015">
+    <testcase name="Expected HTTP response" time="0.015" classname="03GigsReactivateOwnGig"/>
+    <testcase name="Security headers and safe response" time="0.015" classname="03GigsReactivateOwnGig"/>
+    <testcase name="Scenario data and invariants" time="0.015" classname="03GigsReactivateOwnGig"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Delete Gig - Owner Success" id="54be0cf0-2511-432f-a286-487def268c94" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.014">
+    <testcase name="Expected HTTP response" time="0.014" classname="03GigsDeleteGigOwnerSuccess"/>
+    <testcase name="Security headers and safe response" time="0.014" classname="03GigsDeleteGigOwnerSuccess"/>
+    <testcase name="Scenario data and invariants" time="0.014" classname="03GigsDeleteGigOwnerSuccess"/>
+  </testsuite>
+  <testsuite name="03 Gigs / Get Gig - Deleted Gig Gone" id="a892aad6-e3b3-4714-b99d-6b329f074bf3" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.006">
+    <testcase name="Expected HTTP response" time="0.006" classname="03GigsGetGigDeletedGigGone"/>
+    <testcase name="Security headers and safe response" time="0.006" classname="03GigsGetGigDeletedGigGone"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Create and Capture Transaction" id="aed38dbf-d19d-4526-9f7f-5351d3ce874e" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.063">
+    <testcase name="Expected HTTP response" time="0.063" classname="04BookingsBookingCreateAndCaptureTransaction"/>
+    <testcase name="Security headers and safe response" time="0.063" classname="04BookingsBookingCreateAndCaptureTransaction"/>
+    <testcase name="Scenario data and invariants" time="0.063" classname="04BookingsBookingCreateAndCaptureTransaction"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Replay Same Key Returns Original" id="10dcc966-b025-4709-938e-9495c9a94fe2" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.035">
+    <testcase name="Expected HTTP response" time="0.035" classname="04BookingsBookingReplaySameKeyReturnsOriginal"/>
+    <testcase name="Security headers and safe response" time="0.035" classname="04BookingsBookingReplaySameKeyReturnsOriginal"/>
+    <testcase name="Scenario data and invariants" time="0.035" classname="04BookingsBookingReplaySameKeyReturnsOriginal"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Client History" id="29929927-53a3-4027-81f8-f1d0ba75d7e4" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.016">
+    <testcase name="Expected HTTP response" time="0.016" classname="04BookingsBookingClientHistory"/>
+    <testcase name="Security headers and safe response" time="0.016" classname="04BookingsBookingClientHistory"/>
+    <testcase name="Scenario data and invariants" time="0.016" classname="04BookingsBookingClientHistory"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Get Own" id="4f441d5f-4ceb-4d33-9159-2c636e6937d7" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.028">
+    <testcase name="Expected HTTP response" time="0.028" classname="04BookingsBookingGetOwn"/>
+    <testcase name="Security headers and safe response" time="0.028" classname="04BookingsBookingGetOwn"/>
+    <testcase name="Scenario data and invariants" time="0.028" classname="04BookingsBookingGetOwn"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Freelancer View" id="edd12b43-398f-4d96-910c-5463d3df5fb1" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.022">
+    <testcase name="Expected HTTP response" time="0.022" classname="04BookingsBookingFreelancerView"/>
+    <testcase name="Security headers and safe response" time="0.022" classname="04BookingsBookingFreelancerView"/>
+    <testcase name="Scenario data and invariants" time="0.022" classname="04BookingsBookingFreelancerView"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Other Client History Empty" id="6e1b25b4-2266-4240-882d-876291d045e1" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.014">
+    <testcase name="Expected HTTP response" time="0.014" classname="04BookingsBookingOtherClientHistoryEmpty"/>
+    <testcase name="Security headers and safe response" time="0.014" classname="04BookingsBookingOtherClientHistoryEmpty"/>
+    <testcase name="Scenario data and invariants" time="0.014" classname="04BookingsBookingOtherClientHistoryEmpty"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Other Freelancer View Empty" id="9b0f1fce-fe50-470a-8911-cd95432cc9ab" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.034">
+    <testcase name="Expected HTTP response" time="0.034" classname="04BookingsBookingOtherFreelancerViewEmpty"/>
+    <testcase name="Security headers and safe response" time="0.034" classname="04BookingsBookingOtherFreelancerViewEmpty"/>
+    <testcase name="Scenario data and invariants" time="0.034" classname="04BookingsBookingOtherFreelancerViewEmpty"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Other Client Cannot Read" id="55f0b7ca-033d-4dee-81cb-175e7023ed1f" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.024">
+    <testcase name="Expected HTTP response" time="0.024" classname="04BookingsBookingOtherClientCannotRead"/>
+    <testcase name="Security headers and safe response" time="0.024" classname="04BookingsBookingOtherClientCannotRead"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Invalid Booking ID" id="655ef253-b087-4265-aedb-b5a4296e39bf" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.009">
+    <testcase name="Expected HTTP response" time="0.009" classname="04BookingsBookingInvalidBookingId"/>
+    <testcase name="Security headers and safe response" time="0.009" classname="04BookingsBookingInvalidBookingId"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Missing JWT" id="24ed34af-ca9b-4027-95df-3f098ab66a06" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="04BookingsBookingMissingJwt"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="04BookingsBookingMissingJwt"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Invalid JWT" id="df6bb1c6-39ee-422f-a852-7d58f70c8512" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="04BookingsBookingInvalidJwt"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="04BookingsBookingInvalidJwt"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Reject Freelancer" id="3d862781-fb93-4031-86fb-9c2ba1c6e2fb" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.010">
+    <testcase name="Expected HTTP response" time="0.010" classname="04BookingsBookingRejectFreelancer"/>
+    <testcase name="Security headers and safe response" time="0.010" classname="04BookingsBookingRejectFreelancer"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Missing Gig ID" id="28e08fef-6f78-41e1-b748-1370d60d9398" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.011">
+    <testcase name="Expected HTTP response" time="0.011" classname="04BookingsBookingMissingGigId"/>
+    <testcase name="Security headers and safe response" time="0.011" classname="04BookingsBookingMissingGigId"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Invalid Gig ID" id="fb53acc9-9df6-45b7-81dd-db68bc6d8f47" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.010">
+    <testcase name="Expected HTTP response" time="0.010" classname="04BookingsBookingInvalidGigId"/>
+    <testcase name="Security headers and safe response" time="0.010" classname="04BookingsBookingInvalidGigId"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Nonexistent Gig" id="83b86e6e-e034-412b-87f5-b17042b78ea0" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.025">
+    <testcase name="Expected HTTP response" time="0.025" classname="04BookingsBookingNonexistentGig"/>
+    <testcase name="Security headers and safe response" time="0.025" classname="04BookingsBookingNonexistentGig"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Inactive Gig" id="cfb6cfc9-92a2-4f9f-83dd-32d73d7dd019" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.024">
+    <testcase name="Expected HTTP response" time="0.024" classname="04BookingsBookingInactiveGig"/>
+    <testcase name="Security headers and safe response" time="0.024" classname="04BookingsBookingInactiveGig"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Reject amount Override" id="ca176832-cf88-4c1b-8746-1aadf41b2d1c" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.009">
+    <testcase name="Expected HTTP response" time="0.009" classname="04BookingsBookingRejectAmountOverride"/>
+    <testcase name="Security headers and safe response" time="0.009" classname="04BookingsBookingRejectAmountOverride"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Reject freelancer Override" id="ac1055c0-4b16-4deb-bcb1-b35dbdddb1d8" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.011">
+    <testcase name="Expected HTTP response" time="0.011" classname="04BookingsBookingRejectFreelancerOverride"/>
+    <testcase name="Security headers and safe response" time="0.011" classname="04BookingsBookingRejectFreelancerOverride"/>
+  </testsuite>
+  <testsuite name="04 Bookings / Booking - Reject client Override" id="84091e0e-83af-4cd0-9e65-40bdfb40ca84" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.009">
+    <testcase name="Expected HTTP response" time="0.009" classname="04BookingsBookingRejectClientOverride"/>
+    <testcase name="Security headers and safe response" time="0.009" classname="04BookingsBookingRejectClientOverride"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Freelancer Total" id="935291d5-43c0-49ec-bf91-1564b58a057d" timestamp="2026-11-07T22:30:06.342Z" tests="5" failures="0" errors="0" time="0.061">
+    <testcase name="Expected HTTP response" time="0.061" classname="05IncomeIncomeFreelancerTotal"/>
+    <testcase name="Security headers and safe response" time="0.061" classname="05IncomeIncomeFreelancerTotal"/>
+    <testcase name="Scenario data and invariants" time="0.061" classname="05IncomeIncomeFreelancerTotal"/>
+    <testcase name="Financial - safe report shape" time="0.061" classname="05IncomeIncomeFreelancerTotal"/>
+    <testcase name="Financial - year-to-date equals confirmed bookings" time="0.061" classname="05IncomeIncomeFreelancerTotal"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Other Freelancer Zero" id="bc21bdca-81cc-45be-8aae-f9f142d62f7b" timestamp="2026-11-07T22:30:06.342Z" tests="5" failures="0" errors="0" time="0.019">
+    <testcase name="Expected HTTP response" time="0.019" classname="05IncomeIncomeOtherFreelancerZero"/>
+    <testcase name="Security headers and safe response" time="0.019" classname="05IncomeIncomeOtherFreelancerZero"/>
+    <testcase name="Scenario data and invariants" time="0.019" classname="05IncomeIncomeOtherFreelancerZero"/>
+    <testcase name="Financial - safe report shape" time="0.019" classname="05IncomeIncomeOtherFreelancerZero"/>
+    <testcase name="Financial - year-to-date equals confirmed bookings" time="0.019" classname="05IncomeIncomeOtherFreelancerZero"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Year-to-Date Matches Confirmed Booking" id="697a24a3-bdf7-4680-afe0-d4d25ed94d6c" timestamp="2026-11-07T22:30:06.342Z" tests="5" failures="0" errors="0" time="0.017">
+    <testcase name="Expected HTTP response" time="0.017" classname="05IncomeIncomeYearToDateMatchesConfirmedBooking"/>
+    <testcase name="Security headers and safe response" time="0.017" classname="05IncomeIncomeYearToDateMatchesConfirmedBooking"/>
+    <testcase name="Scenario data and invariants" time="0.017" classname="05IncomeIncomeYearToDateMatchesConfirmedBooking"/>
+    <testcase name="Financial - safe report shape" time="0.017" classname="05IncomeIncomeYearToDateMatchesConfirmedBooking"/>
+    <testcase name="Financial - year-to-date equals confirmed bookings" time="0.017" classname="05IncomeIncomeYearToDateMatchesConfirmedBooking"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Monthly Breakdown Covers Tax Year" id="336c02ce-cf0b-445e-8451-dba0c003cfb6" timestamp="2026-11-07T22:30:06.342Z" tests="7" failures="0" errors="0" time="0.018">
+    <testcase name="Expected HTTP response" time="0.018" classname="05IncomeIncomeMonthlyBreakdownCoversTaxYear"/>
+    <testcase name="Security headers and safe response" time="0.018" classname="05IncomeIncomeMonthlyBreakdownCoversTaxYear"/>
+    <testcase name="Scenario data and invariants" time="0.018" classname="05IncomeIncomeMonthlyBreakdownCoversTaxYear"/>
+    <testcase name="Financial - safe report shape" time="0.018" classname="05IncomeIncomeMonthlyBreakdownCoversTaxYear"/>
+    <testcase name="Financial - twelve March-to-February months" time="0.018" classname="05IncomeIncomeMonthlyBreakdownCoversTaxYear"/>
+    <testcase name="Financial - monthly totals reconcile to year-to-date" time="0.018" classname="05IncomeIncomeMonthlyBreakdownCoversTaxYear"/>
+    <testcase name="Financial - booking counted in its South African month" time="0.018" classname="05IncomeIncomeMonthlyBreakdownCoversTaxYear"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Tax-Year Boundaries" id="aa3b2059-75cd-443a-b8b1-5638dc6a1e4f" timestamp="2026-11-07T22:30:06.342Z" tests="5" failures="0" errors="0" time="0.015">
+    <testcase name="Expected HTTP response" time="0.015" classname="05IncomeIncomeTaxYearBoundaries"/>
+    <testcase name="Security headers and safe response" time="0.015" classname="05IncomeIncomeTaxYearBoundaries"/>
+    <testcase name="Scenario data and invariants" time="0.015" classname="05IncomeIncomeTaxYearBoundaries"/>
+    <testcase name="Financial - safe report shape" time="0.015" classname="05IncomeIncomeTaxYearBoundaries"/>
+    <testcase name="Financial - SARS tax-year window and observation date" time="0.015" classname="05IncomeIncomeTaxYearBoundaries"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Illustrative Tax Recalculated" id="900df1bf-1904-48d5-bb64-b86e3bbdd853" timestamp="2026-11-07T22:30:06.342Z" tests="5" failures="0" errors="0" time="0.018">
+    <testcase name="Expected HTTP response" time="0.018" classname="05IncomeIncomeIllustrativeTaxRecalculated"/>
+    <testcase name="Security headers and safe response" time="0.018" classname="05IncomeIncomeIllustrativeTaxRecalculated"/>
+    <testcase name="Scenario data and invariants" time="0.018" classname="05IncomeIncomeIllustrativeTaxRecalculated"/>
+    <testcase name="Financial - safe report shape" time="0.018" classname="05IncomeIncomeIllustrativeTaxRecalculated"/>
+    <testcase name="Financial - illustrative tax matches independent SARS calculation" time="0.018" classname="05IncomeIncomeIllustrativeTaxRecalculated"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Booking Replay Not Double Counted" id="b42d1cdb-b625-48eb-8111-311346c4e8c2" timestamp="2026-11-07T22:30:06.342Z" tests="6" failures="0" errors="0" time="0.015">
+    <testcase name="Expected HTTP response" time="0.015" classname="05IncomeIncomeBookingReplayNotDoubleCounted"/>
+    <testcase name="Security headers and safe response" time="0.015" classname="05IncomeIncomeBookingReplayNotDoubleCounted"/>
+    <testcase name="Scenario data and invariants" time="0.015" classname="05IncomeIncomeBookingReplayNotDoubleCounted"/>
+    <testcase name="Financial - safe report shape" time="0.015" classname="05IncomeIncomeBookingReplayNotDoubleCounted"/>
+    <testcase name="Financial - year-to-date equals confirmed bookings" time="0.015" classname="05IncomeIncomeBookingReplayNotDoubleCounted"/>
+    <testcase name="Financial - booking replay did not double count income" time="0.015" classname="05IncomeIncomeBookingReplayNotDoubleCounted"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Empty Account Full Zero Report" id="02cdf640-67c3-4c2d-8224-037f85375975" timestamp="2026-11-07T22:30:06.342Z" tests="9" failures="0" errors="0" time="0.011">
+    <testcase name="Expected HTTP response" time="0.011" classname="05IncomeIncomeEmptyAccountFullZeroReport"/>
+    <testcase name="Security headers and safe response" time="0.011" classname="05IncomeIncomeEmptyAccountFullZeroReport"/>
+    <testcase name="Scenario data and invariants" time="0.011" classname="05IncomeIncomeEmptyAccountFullZeroReport"/>
+    <testcase name="Financial - safe report shape" time="0.011" classname="05IncomeIncomeEmptyAccountFullZeroReport"/>
+    <testcase name="Financial - year-to-date equals confirmed bookings" time="0.011" classname="05IncomeIncomeEmptyAccountFullZeroReport"/>
+    <testcase name="Financial - twelve March-to-February months" time="0.011" classname="05IncomeIncomeEmptyAccountFullZeroReport"/>
+    <testcase name="Financial - monthly totals reconcile to year-to-date" time="0.011" classname="05IncomeIncomeEmptyAccountFullZeroReport"/>
+    <testcase name="Financial - SARS tax-year window and observation date" time="0.011" classname="05IncomeIncomeEmptyAccountFullZeroReport"/>
+    <testcase name="Financial - illustrative tax matches independent SARS calculation" time="0.011" classname="05IncomeIncomeEmptyAccountFullZeroReport"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Reject Admin" id="e4e70fa7-5d0c-4e74-bbc2-0a2256e00f75" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.009">
+    <testcase name="Expected HTTP response" time="0.009" classname="05IncomeIncomeRejectAdmin"/>
+    <testcase name="Security headers and safe response" time="0.009" classname="05IncomeIncomeRejectAdmin"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Reject Client" id="00b72f1c-1d23-4cfe-b0a9-307dffc70af5" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.010">
+    <testcase name="Expected HTTP response" time="0.010" classname="05IncomeIncomeRejectClient"/>
+    <testcase name="Security headers and safe response" time="0.010" classname="05IncomeIncomeRejectClient"/>
+  </testsuite>
+  <testsuite name="05 Income / Income - Missing JWT" id="969c61a0-749c-4457-94f6-4064161b88e8" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="05IncomeIncomeMissingJwt"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="05IncomeIncomeMissingJwt"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - View Users" id="f2eaaa04-b7d0-4807-857c-4f7590eea619" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.017">
+    <testcase name="Expected HTTP response" time="0.017" classname="06AdministrationAdminViewUsers"/>
+    <testcase name="Security headers and safe response" time="0.017" classname="06AdministrationAdminViewUsers"/>
+    <testcase name="Scenario data and invariants" time="0.017" classname="06AdministrationAdminViewUsers"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - View Bookings" id="81613d7e-1844-43d4-8d4a-1f6ce8ab558e" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.014">
+    <testcase name="Expected HTTP response" time="0.014" classname="06AdministrationAdminViewBookings"/>
+    <testcase name="Security headers and safe response" time="0.014" classname="06AdministrationAdminViewBookings"/>
+    <testcase name="Scenario data and invariants" time="0.014" classname="06AdministrationAdminViewBookings"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Create Disposable Gig" id="209b3d95-4560-4d6c-bc40-6d2dccf37850" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.022">
+    <testcase name="Expected HTTP response" time="0.022" classname="06AdministrationAdminCreateDisposableGig"/>
+    <testcase name="Security headers and safe response" time="0.022" classname="06AdministrationAdminCreateDisposableGig"/>
+    <testcase name="Scenario data and invariants" time="0.022" classname="06AdministrationAdminCreateDisposableGig"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Reject Client Removal" id="a518b170-16cc-4acd-878c-5bd81c4298c3" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.008">
+    <testcase name="Expected HTTP response" time="0.008" classname="06AdministrationAdminRejectClientRemoval"/>
+    <testcase name="Security headers and safe response" time="0.008" classname="06AdministrationAdminRejectClientRemoval"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Gig Survives Rejected Removal" id="95849c3f-4f11-438f-a6fb-0d108923ef47" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.007">
+    <testcase name="Expected HTTP response" time="0.007" classname="06AdministrationAdminGigSurvivesRejectedRemoval"/>
+    <testcase name="Security headers and safe response" time="0.007" classname="06AdministrationAdminGigSurvivesRejectedRemoval"/>
+    <testcase name="Scenario data and invariants" time="0.007" classname="06AdministrationAdminGigSurvivesRejectedRemoval"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Remove Disposable Gig" id="70ccafce-979a-4a47-9822-d1bf2d5e0b0c" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.018">
+    <testcase name="Expected HTTP response" time="0.018" classname="06AdministrationAdminRemoveDisposableGig"/>
+    <testcase name="Security headers and safe response" time="0.018" classname="06AdministrationAdminRemoveDisposableGig"/>
+    <testcase name="Scenario data and invariants" time="0.018" classname="06AdministrationAdminRemoveDisposableGig"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Removed Gig Gone" id="63d52675-c012-4a39-9782-cd1dbfc95169" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.009">
+    <testcase name="Expected HTTP response" time="0.009" classname="06AdministrationAdminRemovedGigGone"/>
+    <testcase name="Security headers and safe response" time="0.009" classname="06AdministrationAdminRemovedGigGone"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Invalid Gig ID" id="03914384-e33d-414b-87c0-1994a1936d25" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.010">
+    <testcase name="Expected HTTP response" time="0.010" classname="06AdministrationAdminInvalidGigId"/>
+    <testcase name="Security headers and safe response" time="0.010" classname="06AdministrationAdminInvalidGigId"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Missing Gig" id="9b7ec667-8e15-46ad-a83c-f22385a2e84d" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.014">
+    <testcase name="Expected HTTP response" time="0.014" classname="06AdministrationAdminMissingGig"/>
+    <testcase name="Security headers and safe response" time="0.014" classname="06AdministrationAdminMissingGig"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Reject Client Users View" id="9f5f667c-657d-4cd9-bedf-9efdc495b81f" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.009">
+    <testcase name="Expected HTTP response" time="0.009" classname="06AdministrationAdminRejectClientUsersView"/>
+    <testcase name="Security headers and safe response" time="0.009" classname="06AdministrationAdminRejectClientUsersView"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Reject Freelancer Bookings View" id="f32a80f4-2aab-4e32-9928-fb5eaddcabb3" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.010">
+    <testcase name="Expected HTTP response" time="0.010" classname="06AdministrationAdminRejectFreelancerBookingsView"/>
+    <testcase name="Security headers and safe response" time="0.010" classname="06AdministrationAdminRejectFreelancerBookingsView"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Missing JWT" id="d3f698b5-54b1-4384-a7e3-a2f03aa37370" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="06AdministrationAdminMissingJwt"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="06AdministrationAdminMissingJwt"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Invalid JWT" id="82ed6c9f-4d96-4392-9b1d-c3e9da5126bd" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="06AdministrationAdminInvalidJwt"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="06AdministrationAdminInvalidJwt"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Remove Booked Test Gig" id="f0214403-ae48-4b8e-ba0d-053de82704cf" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.020">
+    <testcase name="Expected HTTP response" time="0.020" classname="06AdministrationAdminRemoveBookedTestGig"/>
+    <testcase name="Security headers and safe response" time="0.020" classname="06AdministrationAdminRemoveBookedTestGig"/>
+    <testcase name="Scenario data and invariants" time="0.020" classname="06AdministrationAdminRemoveBookedTestGig"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Booking History Survives Gig Removal" id="101785a3-710e-440c-b0f0-c7c2ac7e3e2b" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.012">
+    <testcase name="Expected HTTP response" time="0.012" classname="06AdministrationAdminBookingHistorySurvivesGigRemoval"/>
+    <testcase name="Security headers and safe response" time="0.012" classname="06AdministrationAdminBookingHistorySurvivesGigRemoval"/>
+    <testcase name="Scenario data and invariants" time="0.012" classname="06AdministrationAdminBookingHistorySurvivesGigRemoval"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Income Survives Gig Removal" id="7aaf59c1-360b-4eb1-8bd2-d66dfb591bf0" timestamp="2026-11-07T22:30:06.342Z" tests="11" failures="0" errors="0" time="0.014">
+    <testcase name="Expected HTTP response" time="0.014" classname="06AdministrationAdminIncomeSurvivesGigRemoval"/>
+    <testcase name="Security headers and safe response" time="0.014" classname="06AdministrationAdminIncomeSurvivesGigRemoval"/>
+    <testcase name="Scenario data and invariants" time="0.014" classname="06AdministrationAdminIncomeSurvivesGigRemoval"/>
+    <testcase name="Financial - safe report shape" time="0.014" classname="06AdministrationAdminIncomeSurvivesGigRemoval"/>
+    <testcase name="Financial - year-to-date equals confirmed bookings" time="0.014" classname="06AdministrationAdminIncomeSurvivesGigRemoval"/>
+    <testcase name="Financial - booking replay did not double count income" time="0.014" classname="06AdministrationAdminIncomeSurvivesGigRemoval"/>
+    <testcase name="Financial - twelve March-to-February months" time="0.014" classname="06AdministrationAdminIncomeSurvivesGigRemoval"/>
+    <testcase name="Financial - monthly totals reconcile to year-to-date" time="0.014" classname="06AdministrationAdminIncomeSurvivesGigRemoval"/>
+    <testcase name="Financial - booking counted in its South African month" time="0.014" classname="06AdministrationAdminIncomeSurvivesGigRemoval"/>
+    <testcase name="Financial - SARS tax-year window and observation date" time="0.014" classname="06AdministrationAdminIncomeSurvivesGigRemoval"/>
+    <testcase name="Financial - illustrative tax matches independent SARS calculation" time="0.014" classname="06AdministrationAdminIncomeSurvivesGigRemoval"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Clean Up Inactive Test Gig" id="db437452-2521-4556-bcde-c3ba94df44cb" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.017">
+    <testcase name="Expected HTTP response" time="0.017" classname="06AdministrationAdminCleanUpInactiveTestGig"/>
+    <testcase name="Security headers and safe response" time="0.017" classname="06AdministrationAdminCleanUpInactiveTestGig"/>
+    <testcase name="Scenario data and invariants" time="0.017" classname="06AdministrationAdminCleanUpInactiveTestGig"/>
+  </testsuite>
+  <testsuite name="06 Administration / Admin - Clean Up Beta Test Gig" id="1cfc4187-ae00-44de-a296-016b386120ad" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.016">
+    <testcase name="Expected HTTP response" time="0.016" classname="06AdministrationAdminCleanUpBetaTestGig"/>
+    <testcase name="Security headers and safe response" time="0.016" classname="06AdministrationAdminCleanUpBetaTestGig"/>
+    <testcase name="Scenario data and invariants" time="0.016" classname="06AdministrationAdminCleanUpBetaTestGig"/>
+  </testsuite>
+  <testsuite name="07 Security and Controlled Errors / Malformed JSON" id="82bee174-fe8a-4a00-a414-1fe294999f85" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Expected HTTP response" time="0.003" classname="07SecurityAndControlledErrorsMalformedJson"/>
+    <testcase name="Security headers and safe response" time="0.003" classname="07SecurityAndControlledErrorsMalformedJson"/>
+  </testsuite>
+  <testsuite name="07 Security and Controlled Errors / Unknown Route" id="2dd798ec-4fbe-4375-ab3c-cb22a838bc47" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="07SecurityAndControlledErrorsUnknownRoute"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="07SecurityAndControlledErrorsUnknownRoute"/>
+  </testsuite>
+  <testsuite name="07 Security and Controlled Errors / Oversized JSON Body" id="dd15d207-eba7-444e-a1a5-b1366cdca624" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Expected HTTP response" time="0.004" classname="07SecurityAndControlledErrorsOversizedJsonBody"/>
+    <testcase name="Security headers and safe response" time="0.004" classname="07SecurityAndControlledErrorsOversizedJsonBody"/>
+  </testsuite>
+  <testsuite name="07 Security and Controlled Errors / NoSQL Operator - Login Email" id="77354280-5554-4c50-b987-e359c133d970" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="07SecurityAndControlledErrorsNoSqlOperatorLoginEmail"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="07SecurityAndControlledErrorsNoSqlOperatorLoginEmail"/>
+  </testsuite>
+  <testsuite name="07 Security and Controlled Errors / NoSQL Operator - Gig Title" id="ea71b68c-9c46-455c-b642-bf5bb124ef9a" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.023">
+    <testcase name="Expected HTTP response" time="0.023" classname="07SecurityAndControlledErrorsNoSqlOperatorGigTitle"/>
+    <testcase name="Security headers and safe response" time="0.023" classname="07SecurityAndControlledErrorsNoSqlOperatorGigTitle"/>
+  </testsuite>
+  <testsuite name="07 Security and Controlled Errors / NoSQL Operator - Booking Gig ID" id="41a6aa9b-afec-49b1-8ee5-31943dea6803" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.012">
+    <testcase name="Expected HTTP response" time="0.012" classname="07SecurityAndControlledErrorsNoSqlOperatorBookingGigId"/>
+    <testcase name="Security headers and safe response" time="0.012" classname="07SecurityAndControlledErrorsNoSqlOperatorBookingGigId"/>
+  </testsuite>
+  <testsuite name="07 Security and Controlled Errors / Array Login Body" id="bb162bbb-6fda-4fd7-ac2a-0f9ae02beadd" timestamp="2026-11-07T22:30:06.342Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Expected HTTP response" time="0.002" classname="07SecurityAndControlledErrorsArrayLoginBody"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="07SecurityAndControlledErrorsArrayLoginBody"/>
+  </testsuite>
+  <testsuite name="08 Rate Limiting / Login Limit - Automatic Loop Until 429" id="cf87f14e-bae7-427a-9cf1-912469bf9065" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.007">
+    <testcase name="Expected HTTP response" time="0.002" classname="08RateLimitingLoginLimitAutomaticLoopUntil429"/>
+    <testcase name="Security headers and safe response" time="0.002" classname="08RateLimitingLoginLimitAutomaticLoopUntil429"/>
+    <testcase name="Scenario data and invariants" time="0.002" classname="08RateLimitingLoginLimitAutomaticLoopUntil429"/>
+  </testsuite>
+  <testsuite name="08 Rate Limiting / Login Limit - Forwarded IP Cannot Bypass" id="0a6c3912-a1d1-495e-83e3-18392a05c061" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.001">
+    <testcase name="Expected HTTP response" time="0.001" classname="08RateLimitingLoginLimitForwardedIpCannotBypass"/>
+    <testcase name="Security headers and safe response" time="0.001" classname="08RateLimitingLoginLimitForwardedIpCannotBypass"/>
+    <testcase name="Scenario data and invariants" time="0.001" classname="08RateLimitingLoginLimitForwardedIpCannotBypass"/>
+  </testsuite>
+  <testsuite name="08 Rate Limiting / Booking Limit - Automatic Loop Until 429" id="04642667-3b0a-4ec7-81e3-8c227b28efda" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.029">
+    <testcase name="Expected HTTP response" time="0.029" classname="08RateLimitingBookingLimitAutomaticLoopUntil429"/>
+    <testcase name="Security headers and safe response" time="0.029" classname="08RateLimitingBookingLimitAutomaticLoopUntil429"/>
+    <testcase name="Scenario data and invariants" time="0.029" classname="08RateLimitingBookingLimitAutomaticLoopUntil429"/>
+  </testsuite>
+  <testsuite name="08 Rate Limiting / Booking Limit - Forwarded IP Cannot Bypass" id="3e309285-cfe5-421d-9104-caa31436027e" timestamp="2026-11-07T22:30:06.342Z" tests="3" failures="0" errors="0" time="0.017">
+    <testcase name="Expected HTTP response" time="0.017" classname="08RateLimitingBookingLimitForwardedIpCannotBypass"/>
+    <testcase name="Security headers and safe response" time="0.017" classname="08RateLimitingBookingLimitForwardedIpCannotBypass"/>
+    <testcase name="Scenario data and invariants" time="0.017" classname="08RateLimitingBookingLimitForwardedIpCannotBypass"/>
+  </testsuite>
+</testsuites>

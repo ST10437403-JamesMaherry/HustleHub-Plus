@@ -1,11 +1,10 @@
 {
   "info": {
     "_postman_id": "49f0486c-2b34-4491-8fa2-247fe150d49c",
-    "name": "HustleHub+ Part 2 - Automated API Review",
-    "description": "Run all folders once in order, or run each folder in order with Keep variable values enabled. Select the local environment. Folder 02 creates unique accounts and captures tokens. Folder 08 exhausts both rate limits and must be last. Restart the API before another full run. The frontend is not required for these API tests.",
+    "name": "HustleHub+ Functional API Review (Part 2 + Part 3 Financial)",
+    "description": "Run all folders once in order, or run each folder in order with Keep variable values enabled. Select the local environment. Folder 02 creates unique accounts and captures tokens. Folder 04 verifies the booking idempotency contract. Folder 05 recalculates year-to-date income, the March-to-February monthly breakdown and the illustrative SARS 2026/27 tax estimate independently of the API. Folder 08 exhausts both rate limits and must be last. Restart the API before another full run. The frontend is not required.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "52521278",
-    "_collection_link": "https://go.postman.co/collection/52521278-49f0486c-2b34-4491-8fa2-247fe150d49c?source=collection_link"
+    "_exporter_id": "52521278"
   },
   "item": [
     {
@@ -2100,7 +2099,51 @@
               },
               {
                 "key": "Idempotency-Key",
-                "value": "{{$guid}}",
+                "value": "{{hh.idemKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{{hh.body}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hh.baseUrl}}/api/bookings",
+              "host": [
+                "{{hh.baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "bookings"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Booking - Replay Same Key Returns Original",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{hh.token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{hh.idemKey}}",
                 "type": "text"
               }
             ],
@@ -2789,7 +2832,7 @@
           "response": []
         }
       ],
-      "description": "One successful booking and matching simulated transaction, scoped history, ownership and rejected overrides.",
+      "description": "One successful booking and matching simulated transaction, an idempotent replay with the same Idempotency-Key that returns the original records, scoped history, ownership and rejected overrides.",
       "event": [
         {
           "listen": "prerequest",
@@ -2867,6 +2910,195 @@
           "response": []
         },
         {
+          "name": "Income - Year-to-Date Matches Confirmed Booking",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{hh.token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{hh.baseUrl}}/api/income/me",
+              "host": [
+                "{{hh.baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "income",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Income - Monthly Breakdown Covers Tax Year",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{hh.token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{hh.baseUrl}}/api/income/me",
+              "host": [
+                "{{hh.baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "income",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Income - Tax-Year Boundaries",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{hh.token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{hh.baseUrl}}/api/income/me",
+              "host": [
+                "{{hh.baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "income",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Income - Illustrative Tax Recalculated",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{hh.token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{hh.baseUrl}}/api/income/me",
+              "host": [
+                "{{hh.baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "income",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Income - Booking Replay Not Double Counted",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{hh.token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{hh.baseUrl}}/api/income/me",
+              "host": [
+                "{{hh.baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "income",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Income - Empty Account Full Zero Report",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{hh.token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{hh.baseUrl}}/api/income/me",
+              "host": [
+                "{{hh.baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "income",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Income - Reject Admin",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{hh.token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{hh.baseUrl}}/api/income/me",
+              "host": [
+                "{{hh.baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "income",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Income - Reject Client",
           "request": {
             "auth": {
@@ -2916,7 +3148,7 @@
           "response": []
         }
       ],
-      "description": "Confirms one transaction at the server-side booking price and no cross-freelancer income leakage.",
+      "description": "Year-to-date income, the twelve-month March-to-February breakdown, SARS 2026/27 tax-year boundaries and the illustrative tax estimate recalculated independently in the test script. Also covers replay non-duplication, a full zero report for an account without income, and freelancer-only access.",
       "event": [
         {
           "listen": "prerequest",
@@ -3697,7 +3929,7 @@
           "response": []
         }
       ],
-      "description": "Malformed and oversized JSON plus NoSQL operator rejection. Booking quota stays below ten attempts before folder 08.",
+      "description": "Malformed and oversized JSON plus NoSQL operator rejection. Exactly ten booking attempts reach the booking limiter before folder 08.",
       "event": [
         {
           "listen": "prerequest",
@@ -4002,10 +4234,18 @@
           "  \"Reactivate Own Gig\": {\"status\":200,\"check\":\"gig\",\"expected\":{\"active\":true,\"price\":800.25},\"auth\":\"freelancer\",\"body\":{\"active\":true}},",
           "  \"Delete Gig - Owner Success\": {\"status\":200,\"check\":\"message\",\"message\":\"Gig deleted successfully\",\"auth\":\"freelancer\"},",
           "  \"Get Gig - Deleted Gig Gone\": {\"status\":404,\"error\":\"Gig not found\",\"done\":\"03\"},",
-          "  \"Booking - Create and Capture Transaction\": {\"status\":201,\"check\":\"booking\",\"create\":true,\"auth\":\"client\",\"body\":{\"gigId\":\"{{hh.gigId}}\"}},",
-          "  \"Booking - Client History\": {\"status\":200,\"check\":\"bookings\",\"ownerField\":\"client\",\"account\":\"client\",\"auth\":\"client\"},",
+          "  \"Booking - Create and Capture Transaction\": {\"status\":201,\"check\":\"booking\",\"create\":true,\"key\":\"new\",\"auth\":\"client\",\"body\":{\"gigId\":\"{{hh.gigId}}\"}},",
+          "  \"Booking - Replay Same Key Returns Original\": {\"status\":200,\"check\":\"replay\",\"key\":\"reuse\",\"auth\":\"client\",\"body\":{\"gigId\":\"{{hh.gigId}}\"}},",
+          "  \"Income - Year-to-Date Matches Confirmed Booking\": {\"status\":200,\"check\":\"income\",\"finance\":\"ytd\",\"auth\":\"freelancer\"},",
+          "  \"Income - Monthly Breakdown Covers Tax Year\": {\"status\":200,\"check\":\"income\",\"finance\":\"monthly\",\"auth\":\"freelancer\"},",
+          "  \"Income - Tax-Year Boundaries\": {\"status\":200,\"check\":\"income\",\"finance\":\"boundary\",\"auth\":\"freelancer\"},",
+          "  \"Income - Illustrative Tax Recalculated\": {\"status\":200,\"check\":\"income\",\"finance\":\"tax\",\"auth\":\"freelancer\"},",
+          "  \"Income - Booking Replay Not Double Counted\": {\"status\":200,\"check\":\"income\",\"finance\":\"replay\",\"auth\":\"freelancer\"},",
+          "  \"Income - Empty Account Full Zero Report\": {\"status\":200,\"check\":\"income\",\"empty\":true,\"finance\":\"empty\",\"auth\":\"freelancerB\"},",
+          "  \"Income - Reject Admin\": {\"status\":403,\"error\":\"Access denied\",\"auth\":\"admin\"},",
+          "  \"Booking - Client History\": {\"status\":200,\"check\":\"bookings\",\"ownerField\":\"client\",\"account\":\"client\",\"count\":1,\"auth\":\"client\"},",
           "  \"Booking - Get Own\": {\"status\":200,\"check\":\"booking\",\"auth\":\"client\"},",
-          "  \"Booking - Freelancer View\": {\"status\":200,\"check\":\"bookings\",\"ownerField\":\"freelancer\",\"account\":\"freelancer\",\"auth\":\"freelancer\"},",
+          "  \"Booking - Freelancer View\": {\"status\":200,\"check\":\"bookings\",\"ownerField\":\"freelancer\",\"account\":\"freelancer\",\"count\":1,\"auth\":\"freelancer\"},",
           "  \"Booking - Other Client History Empty\": {\"status\":200,\"check\":\"bookings\",\"ownerField\":\"client\",\"account\":\"clientB\",\"empty\":true,\"auth\":\"clientB\"},",
           "  \"Booking - Other Freelancer View Empty\": {\"status\":200,\"check\":\"bookings\",\"ownerField\":\"freelancer\",\"account\":\"freelancerB\",\"empty\":true,\"auth\":\"freelancerB\"},",
           "  \"Booking - Other Client Cannot Read\": {\"status\":404,\"error\":\"Booking not found\",\"auth\":\"clientB\"},",
@@ -4020,8 +4260,8 @@
           "  \"Booking - Reject amount Override\": {\"status\":400,\"error\":\"Booking request contains unsupported fields\",\"auth\":\"client\",\"body\":{\"gigId\":\"{{hh.gigId}}\",\"amount\":1}},",
           "  \"Booking - Reject freelancer Override\": {\"status\":400,\"error\":\"Booking request contains unsupported fields\",\"auth\":\"client\",\"body\":{\"gigId\":\"{{hh.gigId}}\",\"freelancer\":\"{{hh.freelancerBId}}\"}},",
           "  \"Booking - Reject client Override\": {\"status\":400,\"done\":\"04\",\"error\":\"Booking request contains unsupported fields\",\"auth\":\"client\",\"body\":{\"gigId\":\"{{hh.gigId}}\",\"client\":\"{{hh.clientBId}}\"}},",
-          "  \"Income - Freelancer Total\": {\"status\":200,\"check\":\"income\",\"auth\":\"freelancer\"},",
-          "  \"Income - Other Freelancer Zero\": {\"status\":200,\"check\":\"income\",\"empty\":true,\"auth\":\"freelancerB\"},",
+          "  \"Income - Freelancer Total\": {\"status\":200,\"check\":\"income\",\"finance\":\"ytd\",\"auth\":\"freelancer\"},",
+          "  \"Income - Other Freelancer Zero\": {\"status\":200,\"check\":\"income\",\"empty\":true,\"finance\":\"ytd\",\"auth\":\"freelancerB\"},",
           "  \"Income - Reject Client\": {\"status\":403,\"error\":\"Access denied\",\"auth\":\"client\"},",
           "  \"Income - Missing JWT\": {\"status\":401,\"error\":\"Authentication required\",\"done\":\"05\"},",
           "  \"Admin - View Users\": {\"status\":200,\"check\":\"users\",\"auth\":\"admin\"},",
@@ -4039,7 +4279,7 @@
           "  \"Admin - Invalid JWT\": {\"status\":401,\"error\":\"Invalid or expired authentication token\",\"auth\":\"invalid\"},",
           "  \"Admin - Remove Booked Test Gig\": {\"status\":200,\"check\":\"message\",\"message\":\"Gig removed successfully\",\"auth\":\"admin\"},",
           "  \"Admin - Booking History Survives Gig Removal\": {\"status\":200,\"check\":\"booking\",\"auth\":\"client\"},",
-          "  \"Admin - Income Survives Gig Removal\": {\"status\":200,\"check\":\"income\",\"auth\":\"freelancer\"},",
+          "  \"Admin - Income Survives Gig Removal\": {\"status\":200,\"check\":\"income\",\"finance\":\"full\",\"auth\":\"freelancer\"},",
           "  \"Admin - Clean Up Inactive Test Gig\": {\"status\":200,\"check\":\"message\",\"message\":\"Gig removed successfully\",\"auth\":\"admin\"},",
           "  \"Admin - Clean Up Beta Test Gig\": {\"status\":200,\"check\":\"message\",\"message\":\"Gig removed successfully\",\"done\":\"06\",\"auth\":\"admin\"},",
           "  \"Malformed JSON\": {\"status\":400,\"error\":\"Request body is not valid JSON\"},",
@@ -4086,6 +4326,18 @@
           "    token = parts.join('.');",
           "  }",
           "  pm.variables.set('hh.token', token);",
+          "}",
+          "pm.variables.set('hh.idemKey', pm.variables.replaceIn('{{$guid}}'));",
+          "if (scenario.key === 'new') {",
+          "  pm.collectionVariables.set('hh.bookingKey', pm.variables.get('hh.idemKey'));",
+          "}",
+          "if (scenario.key === 'reuse') {",
+          "  const savedKey = pm.collectionVariables.get('hh.bookingKey');",
+          "  if (!savedKey) {",
+          "    pm.execution.setNextRequest(null);",
+          "    throw new Error('Missing booking Idempotency-Key. Run the booking creation request first.');",
+          "  }",
+          "  pm.variables.set('hh.idemKey', savedKey);",
           "}",
           "if (scenario.body !== undefined) {",
           "  pm.variables.set('hh.body', pm.variables.replaceIn(JSON.stringify(scenario.body)));",
@@ -4353,12 +4605,35 @@
           "            pm.expect(transaction.amount).to.eql(hhResponseBody.booking.amount);",
           "            pm.expect(transaction.status).to.eql('confirmed');",
           "",
+          "            pm.expect(hhResponseBody.replayed, 'First booking must not be a replay').to.eql(false);",
+          "            pm.expect(hhResponseBody.message)",
+          "              .to.eql('Booking confirmed and simulated transaction recorded');",
+          "            pm.expect(",
+          "              Number(pm.response.headers.get('RateLimit-Remaining')),",
+          "              'Restart the API before a fresh full run: booking quota is already partly used'",
+          "            ).to.be.at.least(9);",
+          "",
           "            save('bookingId', hhResponseBody.booking.id);",
+          "            save('bookingCreatedAt', hhResponseBody.booking.createdAt);",
           "            save('transactionId', transaction.id);",
           "          } else {",
           "            pm.expect(hhResponseBody.booking.id).to.eql(get('bookingId'));",
           "          }",
           "",
+          "          break;",
+          "        }",
+          "",
+          "        case 'replay': {",
+          "          pm.expect(hhResponseBody.replayed).to.eql(true);",
+          "          pm.expect(hhResponseBody.message).to.eql('Booking already confirmed for this request');",
+          "          booking(hhResponseBody.booking);",
+          "          pm.expect(hhResponseBody.booking.id, 'Replay returns the original booking')",
+          "            .to.eql(get('bookingId'));",
+          "          pm.expect(hhResponseBody.booking.createdAt).to.eql(get('bookingCreatedAt'));",
+          "          pm.expect(hhResponseBody.transaction.id, 'Replay returns the original transaction')",
+          "            .to.eql(get('transactionId'));",
+          "          pm.expect(hhResponseBody.transaction.booking).to.eql(get('bookingId'));",
+          "          pm.expect(hhResponseBody.transaction.amount).to.eql(Number(get('price')));",
           "          break;",
           "        }",
           "",
@@ -4368,6 +4643,11 @@
           "          hhResponseBody.bookings.forEach((value) => {",
           "            pm.expect(value[s.ownerField]).to.eql(get(s.account + 'Id'));",
           "          });",
+          "",
+          "          if (s.count !== undefined) {",
+          "            pm.expect(hhResponseBody.bookings, 'Booking count for this fresh account')",
+          "              .to.have.lengthOf(s.count);",
+          "          }",
           "",
           "          if (s.empty) {",
           "            pm.expect(hhResponseBody.bookings).to.have.lengthOf(0);",
@@ -4468,6 +4748,166 @@
           "    });",
           "  }",
           "",
+          "",
+          "  // ---- Part 3 financial assertions (P3-12) ------------------------------",
+          "  // Independent oracle for the SARS 2026/27 individual tables used by the API.",
+          "  // Kept separate from the API code so a regression in either is detected.",
+          "  const SARS = {",
+          "    2027: {",
+          "      label: '2026/27', startDate: '2026-03-01', endDate: '2027-02-28',",
+          "      endExclusive: '2027-03-01', rebate: 17820, threshold: 99000,",
+          "      brackets: [",
+          "        [0, 0, 18], [245100, 44118, 26], [383100, 79998, 31], [530200, 125599, 36],",
+          "        [695800, 185215, 39], [887000, 259783, 41], [1878600, 666339, 45]",
+          "      ]",
+          "    }",
+          "  };",
+          "  const DAY = 86400000;",
+          "  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];",
+          "  const utcDay = (date) => Date.parse(date + 'T00:00:00.000Z');",
+          "  // South Africa is UTC+02:00 all year, so a fixed offset gives the local calendar date.",
+          "  const saDate = (ms) => new Date(ms + 2 * 3600000).toISOString().slice(0, 10);",
+          "  const cents = (rand) => Math.round(Number(rand) * 100);",
+          "",
+          "  function oracleTax(ytdCents, asOfDate, rules) {",
+          "    const elapsedDays = (utcDay(asOfDate) - utcDay(rules.startDate)) / DAY + 1;",
+          "    const taxYearDays = (utcDay(rules.endExclusive) - utcDay(rules.startDate)) / DAY;",
+          "    const projected = Math.floor((ytdCents * taxYearDays + Math.floor(elapsedDays / 2)) / elapsedDays);",
+          "    let bracket = rules.brackets[0];",
+          "    rules.brackets.forEach((b) => { if (b[0] === 0 || projected > b[0] * 100) bracket = b; });",
+          "    const marginal = Math.floor(((projected - bracket[0] * 100) * bracket[2] + 50) / 100);",
+          "    const gross = bracket[1] * 100 + marginal;",
+          "    return {",
+          "      elapsedDays, taxYearDays,",
+          "      projectedCents: projected,",
+          "      taxCents: Math.max(0, gross - rules.rebate * 100)",
+          "    };",
+          "  }",
+          "",
+          "  if (passed && s.finance) {",
+          "    const r = hhResponseBody;",
+          "    const all = ['full', 'empty'].includes(s.finance);",
+          "    const want = (...modes) => all || modes.includes(s.finance);",
+          "    const expectedCents = s.empty ? 0 : cents(get('price'));",
+          "    const expectedCount = s.empty ? 0 : 1;",
+          "    const rules = SARS[r.taxYear && r.taxYear.year];",
+          "",
+          "    test('Financial - safe report shape', function () {",
+          "      pm.expect(Object.keys(r).sort()).to.eql([",
+          "        'monthlyIncome', 'taxEstimate', 'taxYear', 'totalIncome',",
+          "        'transactionCount', 'yearToDateIncome', 'yearToDateTransactionCount'",
+          "      ]);",
+          "      pm.expect(Object.keys(r.taxYear).sort())",
+          "        .to.eql(['asOfDate', 'endDate', 'label', 'startDate', 'year']);",
+          "      pm.expect(Object.keys(r.taxEstimate).sort()).to.eql([",
+          "        'ageBand', 'annualRebate', 'asOfDate', 'disclaimer', 'elapsedDays', 'endDate',",
+          "        'endExclusiveDate', 'illustrativeAnnualTax', 'label', 'projectedAnnualPlatformIncome',",
+          "        'startDate', 'taxFreeThreshold', 'taxYear', 'taxYearDays', 'yearToDatePlatformIncome'",
+          "      ]);",
+          "      r.monthlyIncome.forEach((m) => {",
+          "        pm.expect(Object.keys(m).sort()).to.eql(['label', 'month', 'totalIncome', 'transactionCount']);",
+          "      });",
+          "    });",
+          "",
+          "    if (want('ytd', 'replay')) {",
+          "      test('Financial - year-to-date equals confirmed bookings', function () {",
+          "        pm.expect(cents(r.yearToDateIncome), 'yearToDateIncome (cents)').to.eql(expectedCents);",
+          "        pm.expect(r.yearToDateTransactionCount).to.eql(expectedCount);",
+          "        pm.expect(cents(r.totalIncome), 'lifetime totalIncome (cents)').to.eql(expectedCents);",
+          "        pm.expect(r.transactionCount).to.eql(expectedCount);",
+          "        pm.expect(cents(r.taxEstimate.yearToDatePlatformIncome)).to.eql(expectedCents);",
+          "      });",
+          "    }",
+          "",
+          "    if (want('replay') && !s.empty) {",
+          "      test('Financial - booking replay did not double count income', function () {",
+          "        pm.expect(r.transactionCount, 'Two POSTs with one Idempotency-Key must create one transaction')",
+          "          .to.eql(1);",
+          "        pm.expect(cents(r.totalIncome)).to.eql(cents(get('price')));",
+          "      });",
+          "    }",
+          "",
+          "    if (want('monthly')) {",
+          "      test('Financial - twelve March-to-February months', function () {",
+          "        pm.expect(r.monthlyIncome).to.be.an('array').with.lengthOf(12);",
+          "        const [startYear] = r.taxYear.startDate.split('-').map(Number);",
+          "        r.monthlyIncome.forEach((m, index) => {",
+          "          const year = startYear + Math.floor((2 + index) / 12);",
+          "          const month = ((2 + index) % 12) + 1;",
+          "          pm.expect(m.month).to.eql(year + '-' + String(month).padStart(2, '0'));",
+          "          pm.expect(m.label).to.eql(MONTHS[month - 1] + ' ' + year);",
+          "          pm.expect(m.totalIncome).to.be.a('number').and.at.least(0);",
+          "          pm.expect(Number.isInteger(m.transactionCount)).to.eql(true);",
+          "        });",
+          "      });",
+          "",
+          "      test('Financial - monthly totals reconcile to year-to-date', function () {",
+          "        const sumCents = r.monthlyIncome.reduce((sum, m) => sum + cents(m.totalIncome), 0);",
+          "        const sumCount = r.monthlyIncome.reduce((sum, m) => sum + m.transactionCount, 0);",
+          "        pm.expect(sumCents).to.eql(cents(r.yearToDateIncome));",
+          "        pm.expect(sumCount).to.eql(r.yearToDateTransactionCount);",
+          "        const asOfMonth = r.taxYear.asOfDate.slice(0, 7);",
+          "        r.monthlyIncome.filter((m) => m.month > asOfMonth).forEach((m) => {",
+          "          pm.expect(m.totalIncome, m.month + ' is after the observation date').to.eql(0);",
+          "          pm.expect(m.transactionCount).to.eql(0);",
+          "        });",
+          "      });",
+          "",
+          "      if (!s.empty) {",
+          "        test('Financial - booking counted in its South African month', function () {",
+          "          const bookedMonth = saDate(Date.parse(get('bookingCreatedAt'))).slice(0, 7);",
+          "          r.monthlyIncome.forEach((m) => {",
+          "            const isBooked = m.month === bookedMonth;",
+          "            pm.expect(cents(m.totalIncome), m.month).to.eql(isBooked ? expectedCents : 0);",
+          "            pm.expect(m.transactionCount, m.month).to.eql(isBooked ? 1 : 0);",
+          "          });",
+          "        });",
+          "      }",
+          "    }",
+          "",
+          "    if (want('boundary')) {",
+          "      test('Financial - SARS tax-year window and observation date', function () {",
+          "        pm.expect(rules, 'Supported SARS tax year').to.be.an('object');",
+          "        pm.expect(r.taxYear).to.include({",
+          "          label: rules.label, startDate: rules.startDate, endDate: rules.endDate",
+          "        });",
+          "        pm.expect(r.taxEstimate).to.include({",
+          "          taxYear: r.taxYear.year, label: rules.label, startDate: rules.startDate,",
+          "          endDate: rules.endDate, endExclusiveDate: rules.endExclusive,",
+          "          asOfDate: r.taxYear.asOfDate",
+          "        });",
+          "        // Allow for a run that crosses local midnight.",
+          "        const now = Date.now();",
+          "        pm.expect([saDate(now), saDate(now - 10 * 60000)]).to.include(r.taxYear.asOfDate);",
+          "        pm.expect(r.taxYear.asOfDate >= rules.startDate && r.taxYear.asOfDate <= rules.endDate)",
+          "          .to.eql(true);",
+          "        if (!s.empty) {",
+          "          const bookedDay = saDate(Date.parse(get('bookingCreatedAt')));",
+          "          pm.expect(bookedDay >= rules.startDate && bookedDay <= r.taxYear.asOfDate,",
+          "            'Booking falls inside the reported tax-year window').to.eql(true);",
+          "        }",
+          "      });",
+          "    }",
+          "",
+          "    if (want('tax')) {",
+          "      test('Financial - illustrative tax matches independent SARS calculation', function () {",
+          "        pm.expect(rules, 'Supported SARS tax year').to.be.an('object');",
+          "        const o = oracleTax(cents(r.yearToDateIncome), r.taxYear.asOfDate, rules);",
+          "        const t = r.taxEstimate;",
+          "        pm.expect(t.elapsedDays, 'elapsedDays').to.eql(o.elapsedDays);",
+          "        pm.expect(t.taxYearDays, 'taxYearDays').to.eql(o.taxYearDays);",
+          "        pm.expect(cents(t.projectedAnnualPlatformIncome), 'projected annual income (cents)')",
+          "          .to.eql(o.projectedCents);",
+          "        pm.expect(cents(t.illustrativeAnnualTax), 'illustrative annual tax (cents)')",
+          "          .to.eql(o.taxCents);",
+          "        pm.expect(t.taxFreeThreshold).to.eql(rules.threshold);",
+          "        pm.expect(t.annualRebate).to.eql(rules.rebate);",
+          "        pm.expect(t.ageBand).to.eql('under65');",
+          "        pm.expect(t.disclaimer).to.be.a('string').and.match(/^Illustrative only\\./);",
+          "      });",
+          "    }",
+          "  }",
+          "",
           "  if (!passed) {",
           "    pm.execution.setNextRequest(null);",
           "  } else if (repeat) {",
@@ -4552,6 +4992,14 @@
     },
     {
       "key": "hh.done.01",
+      "value": ""
+    },
+    {
+      "key": "hh.bookingKey",
+      "value": ""
+    },
+    {
+      "key": "hh.bookingCreatedAt",
       "value": ""
     }
   ]

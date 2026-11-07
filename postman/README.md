@@ -1,178 +1,184 @@
-# HustleHub+ Part 2 API Tests
+# HustleHub+ Functional API Tests (Part 2 + Part 3 Financial)
 
-The Postman collection automates the Part 2 API review. It creates unique test accounts, captures JWTs and identifiers, verifies the marketplace workflow, and checks role restrictions, ownership, validation and rate limiting.
+The functional Postman collection reviews the real MongoDB-backed API end to end. It creates unique test accounts, captures JWTs and identifiers, runs the marketplace workflow, and checks role restrictions, ownership, validation and rate limiting. Part 3 extends it with the booking idempotency contract, year-to-date income, the monthly breakdown and the illustrative tax estimate. Calculated values are recalculated in the test script, not just checked for `200 OK`.
 
-The same collection runs in Postman and through the existing Newman npm script.
+The same collection runs in Postman and through the `test:api` npm script (Newman).
 
 ## Files
 
-- `postman_collection.json` — **HustleHub+ Part 2 - Automated API Review**.
-- `postman_environment.json` — **HustleHub+ Part 2 - Local**, containing `baseUrl`, `clientOrigin`, `adminEmail` and `adminPassword`.
+| File | Purpose |
+|---|---|
+| `postman_collection.json` | **HustleHub+ Functional API Review (Part 2 + Part 3 Financial)**, Collection v2.1. |
+| `postman_environment.json` | **HustleHub+ Functional - Local**: `baseUrl`, `clientOrigin`, `adminEmail` and a **blank** `adminPassword`. |
+| `part3_security_collection.json` / `part3_security_environment.json` | Separate Part 3 security matrix (P3-13), documented in [`docs/testing/security-postman-suite.md`](../docs/testing/security-postman-suite.md). |
 
-The separate Part 3 security matrix (`part3_security_collection.json` and `part3_security_environment.json`, run with `npm run test:security` and `npm run test:security:limits`) is documented in [`docs/testing/security-postman-suite.md`](../docs/testing/security-postman-suite.md).
-
-Use the assessment administrator account for the configured test database. Demonstration credentials supplied for marking are for assessment only and will be removed and rotated afterwards. The collection itself contains no administrator password or generated JWTs. If `adminPassword` is blank in the exported environment, supply it locally in Postman or at run time through Newman.
+Neither functional JSON file contains a password, JWT, run identifier or `Idempotency-Key`. Supply `adminPassword` at run time (Newman) or as a local current value (Postman). Test-account passwords, emails and booking keys are generated for each run and cleared from the exported collection.
 
 ## Prerequisites
 
-- Dependencies are installed in `api`, including Newman as a development dependency.
-- The API uses the implemented MongoDB-backed system. For the current assessment setup, `MONGO_URI` selects the Atlas database `hustlehub`.
-- `USE_HTTPS=true`, and the API is available at `https://localhost:4000`.
-- The local certificate exists at `api/certs/localhost-cert.pem` and includes `DNS:localhost` in its subject alternative names, as described in the root `README.md`.
-- `baseUrl` is the API origin only: `https://localhost:4000`, without `/api` or a trailing slash.
+- Dependencies are installed in `api` (Newman is a development dependency): `npm --prefix api ci`.
+- `api/.env` points `MONGO_URI` at the assessment database, with `USE_HTTPS=true`. Booking creation uses MongoDB transactions, so the database must be Atlas or another replica set.
+- The certificate `api/certs/localhost-cert.pem` exists and includes `DNS:localhost` in its subject alternative names (see the root `README.md`).
+- `baseUrl` is the API origin only: `https://localhost:4000`, without `/api` or a trailing slash. The collection refuses any origin that is not local HTTPS.
 - `CLIENT_ORIGIN` in `api/.env` matches the environment's `clientOrigin`, normally `http://localhost:5173`.
-- The existing administrator account matches `adminEmail` and `adminPassword`.
-- The gig price validation correction is applied: prices below one cent and fractional-cent values are rejected.
+- The assessment administrator account exists (see **Administrator Account** in the root `README.md`). The suite authenticates it; it never creates or promotes an administrator.
+- The run happens during the SARS 2026/27 tax year (1 March 2026 – 28 February 2027). The income API reports the tax year that contains the server date, and the test oracle holds the 2026/27 tables.
 
-If dependencies have not been installed, run from the repository root:
+## Required headers
 
-```bash
-npm --prefix api install
-```
+Every request uses the collection's scripts to build its headers; nothing needs to be typed by hand.
 
-Public registration rejects the `admin` role. Administrator provisioning is separate from the suite; the suite authenticates the existing administrator and never creates or promotes an administrator.
+| Header | Used by | Value |
+|---|---|---|
+| `Authorization` | Protected requests | `Bearer {{hh.token}}`, chosen per request from the captured account tokens. |
+| `Content-Type` | Requests with a body | `application/json`. |
+| `Idempotency-Key` | `POST /api/bookings` | UUID v4. The original booking generates one and stores it as `hh.bookingKey`; the replay request reuses it. Other booking probes use `{{$guid}}`. |
+| `Origin` | CORS checks in folder 01 | `{{hh.origin}}` (trusted) or `https://untrusted.example`. |
+| `X-Forwarded-For` | Folder 08 bypass probes | A forged address that must not reset the limiter. |
 
-The React frontend may remain running, but these API tests do not require it. React rendering and interaction tests remain a separate frontend test suite.
+Let Postman calculate `Content-Length` and `Host`. Do not save placeholder header overrides.
 
-## Start a Fresh API Process
+## Test variables
 
-The limiters keep their counters in process memory. Stop an existing API process with `Ctrl+C`, then start it from a terminal inside the repository:
+| Variable | Scope | Meaning |
+|---|---|---|
+| `baseUrl`, `clientOrigin` | Environment | Local HTTPS API origin and trusted browser origin. |
+| `adminEmail`, `adminPassword` | Environment | Assessment administrator. Keep the password blank in the committed file. |
+| `hh.runId`, `hh.password`, `hh.*Email` | Collection (generated) | Unique per run: `client.<runId>@hustlehub.test` and so on. |
+| `hh.*Token`, `hh.*Id` | Collection (captured) | JWTs and account IDs captured by folder 02. |
+| `hh.gigId`, `hh.price`, `hh.bookingId`, `hh.transactionId`, `hh.bookingCreatedAt`, `hh.bookingKey` | Collection (captured) | Resource state reused by folders 04–06. |
+| `hh.done.NN` | Collection (captured) | Folder-completion markers that later folders check. |
+
+Folder 02 clears all `hh.*` values at the start of every run.
+
+## Folder order
+
+Later folders reuse the accounts, JWTs and identifiers captured by earlier folders. Run them in this order.
+
+| Folder | Requests | Coverage |
+|---|---:|---|
+| 01 Health and Security Headers | 4 | HTTPS health, API Helmet/CSP headers, trusted and untrusted CORS origins, preflight. |
+| 02 Authentication | 21 | Administrator login, four unique accounts, JWT capture, registration and login failures, protected profiles. |
+| 03 Gigs | 36 | Freelancer CRUD, ownership, role restrictions, active/inactive visibility, sanitisation and price boundaries. |
+| 04 Bookings | 19 | Booking and matching transaction, **idempotent replay**, exact client/freelancer booking counts, cross-client rejection, invalid or overridden fields. |
+| 05 Income | 11 | **Year-to-date income, monthly breakdown, tax-year boundaries, recalculated tax estimate, replay not double-counted, empty-income report**, freelancer isolation, wrong-role and missing-token rejection. |
+| 06 Administration | 18 | Safe user and booking views, restricted gig removal, history preservation (now including the full financial report), fixture cleanup. |
+| 07 Security and Controlled Errors | 7 | Malformed JSON, oversized bodies, unknown routes, NoSQL operators and array input. |
+| 08 Rate Limiting | 4 | Automatic login and booking exhaustion, `429` headers and forwarded-IP bypass rejection. Always last. |
+
+There are **120 request definitions**: the 112 Part 2 definitions plus 8 Part 3 financial definitions. Every Part 2 contract still applies. Three were strengthened: booking history now asserts an exact count of one, and two income requests now run the financial checks. The bounded rate-limit loops can repeat a request, so executed requests can exceed 120.
+
+### Part 3 financial coverage (P3-12)
+
+The successful booking uses the gig's server-side price of `800.25`. All financial expectations are derived from that captured price and the booking's `createdAt`. None are hard-coded.
+
+| Request | What it proves |
+|---|---|
+| Booking - Create and Capture Transaction | `replayed: false`, matching transaction, and a fresh booking quota (`RateLimit-Remaining ≥ 9`). |
+| Booking - Replay Same Key Returns Original | Same `Idempotency-Key` and gig → `200`, `replayed: true`, and the **same** booking and transaction IDs. |
+| Booking - Client History / Freelancer View | Exactly one booking exists after two POSTs. |
+| Income - Freelancer Total / Year-to-Date Matches Confirmed Booking | `yearToDateIncome`, `totalIncome` and both counts equal the confirmed booking, in cents. |
+| Income - Monthly Breakdown Covers Tax Year | Twelve months from `2026-03` to `2027-02` with correct labels. Monthly totals reconcile to year-to-date, months after the observation date are zero, and the booking is counted in its **South African** calendar month. |
+| Income - Tax-Year Boundaries | Tax-year label, start, end and exclusive end; `asOfDate` is today in Africa/Johannesburg and inside the window; the booking falls inside the window. |
+| Income - Illustrative Tax Recalculated | An independent SARS 2026/27 calculation in the test script reproduces `elapsedDays`, `taxYearDays`, projected annual income and illustrative tax to the cent, plus the threshold, rebate, age band and disclaimer. |
+| Income - Booking Replay Not Double Counted | Two POSTs with one key produce one transaction and one booking's income. |
+| Income - Other Freelancer Zero / Empty Account Full Zero Report | A freelancer without bookings receives a complete, correctly shaped report: zero in every month, zero tax, and none of the other freelancer's income. |
+| Income - Reject Client / Reject Admin / Missing JWT | Only an authenticated freelancer can read income. |
+| Admin - Income Survives Gig Removal | The full financial report is unchanged after the booked gig is removed. |
+
+Every financial response is also checked for an exact key set, so the report cannot leak extra fields.
+
+The tax oracle follows the method in [`docs/finance/tax-estimation.md`](../docs/finance/tax-estimation.md). It annualises year-to-date income over the elapsed days, applies the 2026/27 brackets and subtracts the primary rebate, using integer cents throughout. It is written separately from `api/services/taxEstimator.js`, so a regression in either one fails the run. The contracts it checks are described in [`docs/finance/income-api-contract.md`](../docs/finance/income-api-contract.md) and [`docs/security/booking-idempotency.md`](../docs/security/booking-idempotency.md). Ewald's security collection covers idempotency misuse: altered bodies, cross-client reuse and malformed keys.
+
+## HTTPS certificate handling
+
+The API uses a locally generated, self-signed certificate. Trust that specific certificate rather than turning verification off:
+
+- **Newman:** `test:api` passes `--ssl-extra-ca-certs ./certs/localhost-cert.pem`. Do not use `--insecure` or `-k`.
+- **Postman:** **Settings > Certificates > CA certificates**, select `api/certs/localhost-cert.pem`, and leave **SSL certificate verification** on.
+
+If the certificate is regenerated, restart the API and re-select the file in Postman.
+
+## Start a fresh API process
+
+The rate limiters keep their counters in API process memory. Start a fresh process before **every** complete cycle, and keep that process running for the whole cycle:
 
 ```bash
 cd "$(git rev-parse --show-toplevel)"
 npm --prefix api start
 ```
 
-The API must report a successful MongoDB connection and HTTPS startup.
+The API must report a successful MongoDB connection and HTTPS startup. The collection checks this itself. If the first registration or the first booking finds part of its quota already used, the run stops with `Restart the API before a fresh full run`.
 
-Start a fresh API process before each new complete test cycle. Keep the same API process running between folders during one cycle.
+Do not run this collection, the security collection or the Playwright suite on the same API process. Each one consumes the shared registration, login and booking allowances.
 
-## Folder Order
+## Run with Newman
 
-Later folders reuse the accounts, JWTs and identifiers captured by earlier folders.
-
-| Folder | Request definitions | Coverage |
-|---|---:|---|
-| 01 Health and Security Headers | 4 | HTTPS health, API Helmet/CSP headers, trusted and untrusted CORS origins, preflight. |
-| 02 Authentication | 21 | Existing administrator login, four unique accounts, JWT capture, registration failures, login failure and protected profiles. |
-| 03 Gigs | 36 | Freelancer CRUD, ownership, role restrictions, active/inactive visibility, sanitisation and price boundaries. |
-| 04 Bookings | 18 | Booking and matching transaction, client/freelancer views, cross-client rejection and invalid or overridden fields. |
-| 05 Income | 4 | Confirmed transaction income, freelancer isolation, wrong-role and missing-token rejection. |
-| 06 Administration | 18 | Safe user and booking views, restricted gig removal, history preservation and fixture gig cleanup. |
-| 07 Security and Controlled Errors | 7 | Malformed JSON, oversized bodies, unknown routes, NoSQL operators and array input. |
-| 08 Rate Limiting | 4 | Automatic login and booking exhaustion, `429` headers and forwarded-IP bypass rejection. |
-
-There are **112 request definitions**. The two bounded rate-limit loops can execute their requests more than once, so the number of executed requests can exceed 112.
-
-Collection-level assertions check security headers and safe responses, including the absence of `X-Powered-By`, stack traces, database error names and private fields. Negative cases verify the expected controlled error response.
-
-## Run in Postman
-
-1. Import both JSON files.
-2. Open **HustleHub+ Part 2 - Automated API Review**.
-3. Select **HustleHub+ Part 2 - Local** in the Collection Runner and verify `adminEmail` and `adminPassword`. If the exported password is blank, set its local value before running.
-4. Add `api/certs/localhost-cert.pem` under **Settings > Certificates > CA certificates**.
-5. Use the desktop/local runner for the localhost API, with one iteration, no data file, and every request selected.
-6. Enable **Keep variable values** and **Stop run if an error occurs**.
-7. Run the whole collection, or run folders 01 through 08 individually in order.
-
-No manual registration, login, JWT copying or identifier editing is needed after starting the run. For separate folder runs, **Keep variable values** must be enabled so later folders receive the earlier folder's captured state.
-
-Folder 02 starts a new set of unique test accounts and clears the collection's previous test state. Later folders check that their prerequisites completed. The suite captures account tokens and builds the dependent requests automatically. Invalid-JWT probes use the saved dummy Bearer Token `invalid.jwt.token`.
-
-Folder 08 must run last. It deliberately exhausts the login and booking limits. Before another complete run, restart the API or wait for all relevant limiter windows to expire.
-
-After correcting a request in Postman, save it and export the collection as **Collection v2.1** back to `postman/postman_collection.json` so Newman receives the same correction. Clear captured JWTs and run identifiers from the export.
-
-## Run With Newman
-
-After a fresh API start, open a second terminal inside the repository. If the local environment already provides the assessment administrator password:
+In a second terminal at the repository root, after a fresh API start:
 
 ```bash
-cd "$(git rev-parse --show-toplevel)"
-npm --prefix api run test:api --silent
-```
-
-If `adminPassword` is blank in the exported environment, supply it at run time. Replace `<admin-password>` with the assessment administrator password:
-
-```bash
-cd "$(git rev-parse --show-toplevel)"
 npm --prefix api run test:api --silent -- --env-var 'adminPassword=<admin-password>'
 ```
 
-The single quotes preserve characters such as `$` in the password. `--silent` suppresses npm's script-command echo.
-
-For PowerShell, run the equivalent command from the repository root:
+PowerShell:
 
 ```powershell
 npm --prefix api run test:api --silent -- --env-var 'adminPassword=<admin-password>'
 ```
 
-The existing npm script reads both JSON files, trusts the local certificate through `--ssl-extra-ca-certs`, executes every folder, prints the results, and writes:
+The single quotes keep characters such as `$` literal. `--silent` suppresses npm's command echo. The script runs the CLI and JUnit reporters, trusts the local certificate, exits non-zero if any assertion fails, and writes:
 
 ```text
-evidence/part2/newman-report.xml
+evidence/part3/newman/functional-report.xml
 ```
 
-The expected outcome is completion of all eight folders with **zero failed assertions and no execution errors**. Missing administrator credentials or a failed administrator login stop setup before the test accounts are registered.
+The expected outcome is all eight folders completed with **zero failed assertions and no script errors**. The committed Part 2 report remains at `evidence/part2/newman/newman-report.xml`.
 
-A Postman run followed by a Newman run requires a fresh API start between them because the Postman rate-limit checks intentionally exhaust the counters. In the API terminal, press `Ctrl+C`, then run from the repository root:
+## Run in Postman
 
-```bash
-npm --prefix api start
-```
+1. Import both functional JSON files.
+2. Select **HustleHub+ Functional - Local**, and set `adminPassword` as a local **current value** only.
+3. Trust the certificate as described above.
+4. Open the Collection Runner (desktop/local runner) with one iteration, no data file and every request selected.
+5. Enable **Keep variable values** and **Stop run if an error occurs**.
+6. Run the whole collection, or run folders 01 through 08 individually in order.
 
-Use the corrected repository collection for Newman. Generated Postman tokens and run identifiers belong to local test state and should not be copied into the repository collection.
+After changing a request, save it and **export as Collection v2.1** back to `postman/postman_collection.json`. Before committing, clear all captured `hh.*` values and confirm `adminPassword` is blank in the environment file.
 
-## Test Data and Consistency
+## Rate-limit budget
 
-Each cycle creates two clients and two freelancers with unique email addresses. The existing administrator is authenticated; the suite never creates or promotes an administrator.
+The three limiters key on the client IP address and keep their counters in API process memory.
 
-The suite creates and modifies only its own captured gig records. It removes those gigs during the CRUD and administration checks. The test accounts and one booking/transaction pair remain in MongoDB for persistence verification.
-
-The successful booking uses the gig's updated server-side price of `800.25`. The transaction must match the booking's client, freelancer, amount and status. The freelancer income endpoint must return `800.25` and one confirmed transaction.
-
-Deleting the booked test gig must preserve the booking and its derived income.
-
-## Rate-Limit Caveat
-
-The three limiters in `api/middleware/rateLimiters.js` use the client IP address and keep their counters in API process memory.
-
-| Limiter | Route | Limit | What counts | Normal cycle before folder 08 |
+| Limiter | Route | Limit | What counts | Used before folder 08 |
 |---|---|---|---|---:|
-| `authLimiter` | `POST /api/auth/login` | 5 per 15 minutes | Failed logins; successful logins do not count. | 3 failed attempts |
-| `registerLimiter` | `POST /api/auth/register` | 10 per hour | Every request that reaches the route limiter. | 8 attempts |
-| `bookingLimiter` | `POST /api/bookings` | 10 per 15 minutes | Every request past the JWT and client-role checks. | 9 attempts |
+| `authLimiter` | `POST /api/auth/login` | 5 per 15 minutes | Failed logins only. | 3 |
+| `registerLimiter` | `POST /api/auth/register` | 10 per hour | Every request that reaches the limiter. | 8 |
+| `bookingLimiter` | `POST /api/bookings` | 10 per 15 minutes | Every request past the JWT and client-role checks. | **10** (9 Part 2 + 1 replay) |
 
-Malformed JSON and oversized bodies are rejected by the JSON body parser before the route limiter runs. Missing or invalid JWTs and rejected roles are handled before the booking limiter. Administrator routes have no route-specific limiter.
+The booking replay uses the last booking allowance before folder 08. In folder 08, the booking loop therefore receives `429` on its first attempt and then verifies the `RateLimit-*` and `Retry-After` headers and the forwarded-IP bypass. Any additional booking request before folder 08 would be rate limited, so keep new booking checks out of folders 04–07 unless the limiter changes.
 
-Folder 08 automatically exhausts the remaining login and booking capacity, verifies `429`, `RateLimit-*` and `Retry-After` headers, checks that the frontend origin can read `Retry-After`, and checks that a forged `X-Forwarded-For` header does not bypass the limits. Booking probes use an invalid gig ID and do not create additional bookings or transactions.
+Once the failed-login allowance is exhausted, valid logins are blocked as well. Restart the API before another cycle.
 
-Once the failed-login allowance is exhausted, further login requests are blocked, including valid logins. An immediate second complete cycle also exceeds the registration allowance. Restart the API before another complete cycle, or wait up to one hour for the relevant windows to expire. Avoid extra registration, failed-login or booking requests before an evidence run because they consume the same allowance.
-
-## Failure Diagnosis
-
-The HTTP assertion includes the API's controlled error message when available.
+## Failure diagnosis
 
 | Result | Meaning or check |
 |---|---|
-| Administrator login `400` | The API rejected the request body or credential format. Read the returned error. |
-| Administrator login `401` | The supplied credentials did not authenticate against the configured database. |
-| Administrator login `200`, role assertion fails | The authenticated account does not have the administrator role. |
-| Unexpected `429` before folder 08 | Existing activity consumed the limiter allowance. Start a fresh API process. |
+| `Select the local environment and enable adminEmail and adminPassword.` | `adminPassword` was not supplied. Use `--env-var` or a local current value. |
+| Administrator login `401` | The supplied credentials do not match the configured database. |
+| `Restart the API before a fresh full run: ... quota is already partly used` | Earlier traffic used part of the registration or booking quota. Restart the API. |
+| Booking `500` with a transaction error | `MONGO_URI` points at a standalone MongoDB without replica-set transactions. |
+| `Supported SARS tax year` fails | The server date is outside 2026/27. The API and the oracle both need the next year's tables. |
+| `Financial - booking counted in its South African month` fails | Monthly grouping no longer uses `Africa/Johannesburg`. |
+| `Financial - illustrative tax matches independent SARS calculation` fails | The named field (for example `elapsedDays`) differs between the API and the oracle. Check `taxEstimator.js` against `docs/finance/tax-estimation.md`. |
 | Missing token or preceding-folder error | Run folders in order with **Keep variable values** enabled. |
-| Invalid-JWT probe returns `Authentication required` | Inspect the fresh outgoing request for `Authorization: Bearer invalid.jwt.token`. Use the saved Bearer Token setting and remove empty manual Authorization overrides. |
-| Empty `400` response without API security headers | Inspect outgoing transport headers. Let Postman calculate `Content-Length` and `Host`; remove saved placeholder overrides such as `<calculated when request is sent>`. |
-| `404` on a known booking route | Verify the resolved path is `/api/bookings`, with one slash between segments. `/api//bookings` does not match the route. |
-| Send passes but Runner fails | Save the request, capture a fresh Runner execution, and compare the actual outgoing headers, body and response in the Postman Console. Enable response persistence and console logging for that diagnostic run. |
-| Certificate or connection error | Verify HTTPS startup, the API origin and local certificate trust. |
+| Certificate or connection error | Verify HTTPS startup, `baseUrl` and certificate trust. |
 
-Failed setup or assertions stop the current runner sequence to avoid misleading follow-on failures. Fix the reported cause before starting a new complete cycle. Remove temporary diagnostic scripts once the issue is resolved.
+Failed setup or assertions stop the run to avoid misleading follow-on failures. Fix the reported cause, restart the API and start a new complete cycle.
+
+## Test data
+
+Each cycle creates two clients and two freelancers with unique email addresses under `@hustlehub.test`. The suite creates and modifies only its own captured gig records and removes them during the CRUD and administration checks. The test accounts and one booking/transaction pair remain in MongoDB as persistence evidence. Deleting the booked gig must preserve the booking and the derived income.
 
 ## Evidence
 
-Retain `evidence/part2/newman-report.xml` together with a screenshot of the Newman terminal summary from a successful run against the real MongoDB-backed API after a fresh API start.
-
-The repository also contains the separate React test report at `evidence/part2/react-tests.xml` and feature evidence under the `authentication`, `gigs`, `bookings`, `income`, `admin`, `security` and `database` folders in `evidence/part2`.
-
-API header tests do not prove the React document's CSP. Frontend document CSP evidence, React automated tests and Atlas persistence screenshots are verified separately.
+Part 3 functional evidence lives in [`evidence/part3/newman/`](../evidence/part3/newman/): the JUnit report and a screenshot of the Newman terminal summary from a successful run against a freshly started, MongoDB-backed API.
