@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="28" failures="0" errors="0" time="2.708569499">
+    <testsuite name="src/test/api.test.js" timestamp="2026-11-07T08:11:37.652Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.006413225">
+        <testcase classname="src/test/api.test.js" name="apiRequest &gt; refuses //evil.example/steal so the JWT cannot leave the API origin" time="0.002194908">
+        </testcase>
+        <testcase classname="src/test/api.test.js" name="apiRequest &gt; refuses https://evil.example/steal so the JWT cannot leave the API origin" time="0.000340782">
+        </testcase>
+        <testcase classname="src/test/api.test.js" name="apiRequest &gt; refuses /..\evil so the JWT cannot leave the API origin" time="0.000250857">
+        </testcase>
+        <testcase classname="src/test/api.test.js" name="apiRequest &gt; sends the bearer token to the configured API origin only" time="0.00260296">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/test/app.test.jsx" timestamp="2026-11-07T08:11:37.658Z" hostname="vm" tests="8" failures="0" errors="0" skipped="0" time="1.351360159">
+        <testcase classname="src/test/app.test.jsx" name="login &gt; shows a generic error for bad credentials and never echoes the password" time="0.434969111">
+        </testcase>
+        <testcase classname="src/test/app.test.jsx" name="registration &gt; offers only client and freelancer, and sends no admin role or password confirmation" time="0.376324629">
+        </testcase>
+        <testcase classname="src/test/app.test.jsx" name="marketplace &gt; lists gigs from the API and narrows them with the search box" time="0.074806456">
+        </testcase>
+        <testcase classname="src/test/app.test.jsx" name="freelancer gig form &gt; blocks an invalid gig, then publishes a valid one with the expected payload" time="0.325819775">
+        </testcase>
+        <testcase classname="src/test/app.test.jsx" name="client booking &gt; books a gig after confirmation and sends only the gig id" time="0.073489245">
+        </testcase>
+        <testcase classname="src/test/app.test.jsx" name="route guards &gt; sends an anonymous visitor to the login page" time="0.020291186">
+        </testcase>
+        <testcase classname="src/test/app.test.jsx" name="route guards &gt; shows access denied when the role does not match" time="0.015932646">
+        </testcase>
+        <testcase classname="src/test/app.test.jsx" name="route guards &gt; shows the page to the matching role" time="0.027589268">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/test/bookingIdempotency.test.jsx" timestamp="2026-11-07T08:11:37.659Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.540092807">
+        <testcase classname="src/test/bookingIdempotency.test.jsx" name="booking replay protection &gt; sends one UUID v4 request key in a header without changing the booking body" time="0.264736704">
+        </testcase>
+        <testcase classname="src/test/bookingIdempotency.test.jsx" name="booking replay protection &gt; reuses the same request key when a user explicitly retries a rejected attempt" time="0.098521679">
+        </testcase>
+        <testcase classname="src/test/bookingIdempotency.test.jsx" name="booking replay protection &gt; does not automatically retry when a network failure leaves the booking outcome unknown" time="0.064134345">
+        </testcase>
+        <testcase classname="src/test/bookingIdempotency.test.jsx" name="booking replay protection &gt; creates distinct keys for independent bookings" time="0.109735759">
+        </testcase>
+        <testcase classname="src/test/bookingIdempotency.test.jsx" name="booking replay protection &gt; rejects malformed request keys before sending a network request" time="0.001735654">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/test/freelancerDashboard.test.jsx" timestamp="2026-11-07T08:11:37.659Z" hostname="vm" tests="8" failures="0" errors="0" skipped="0" time="0.481604805">
+        <testcase classname="src/test/freelancerDashboard.test.jsx" name="freelancer finance dashboard &gt; shows lifetime income, tax-year totals and a clearly qualified annual tax projection" time="0.206709028">
+        </testcase>
+        <testcase classname="src/test/freelancerDashboard.test.jsx" name="freelancer finance dashboard &gt; renders all 12 months with accurate labels, scaled bars and upcoming months" time="0.087853625">
+        </testcase>
+        <testcase classname="src/test/freelancerDashboard.test.jsx" name="freelancer finance dashboard &gt; keeps zero-income and no-bookings states useful without inventing tax due" time="0.03572395">
+        </testcase>
+        <testcase classname="src/test/freelancerDashboard.test.jsx" name="freelancer finance dashboard &gt; keeps recent bookings visible when the income service is unavailable" time="0.023494075">
+        </testcase>
+        <testcase classname="src/test/freelancerDashboard.test.jsx" name="freelancer finance dashboard &gt; keeps income visible when booking history fails" time="0.030834392">
+        </testcase>
+        <testcase classname="src/test/freelancerDashboard.test.jsx" name="freelancer finance dashboard &gt; fails safely when analytics fields are missing rather than showing partial amounts" time="0.019962701">
+        </testcase>
+        <testcase classname="src/test/freelancerDashboard.test.jsx" name="freelancer finance dashboard &gt; refreshes both independent endpoints without creating a new booking" time="0.059414021">
+        </testcase>
+        <testcase classname="src/test/freelancerDashboard.test.jsx" name="freelancer finance dashboard &gt; restricts the finance dashboard to the freelancer role" time="0.016227744">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/test/logout.test.jsx" timestamp="2026-11-07T08:11:37.661Z" hostname="vm" tests="3" failures="0" errors="0" skipped="0" time="0.329098503">
+        <testcase classname="src/test/logout.test.jsx" name="server-side sign-out &gt; revokes the token on the API and removes the local session" time="0.218006943">
+        </testcase>
+        <testcase classname="src/test/logout.test.jsx" name="server-side sign-out &gt; clears local state and warns if the API cannot confirm revocation" time="0.068485636">
+        </testcase>
+        <testcase classname="src/test/logout.test.jsx" name="server-side sign-out &gt; clears a revoked session when a protected request returns 401" time="0.041414601">
+        </testcase>
+    </testsuite>
+</testsuites>
