@@ -1,18 +1,18 @@
 # HustleHub+
 
-**INSY7314 Portfolio of Evidence — Part 2: Secure Stack**
+**INSY7314 Portfolio of Evidence: Part 3, DevSecOps, Monitoring and Finalisation**
 
 HustleHub+ is a secure freelance marketplace built with MongoDB, Express, React and Node.js. Freelancers advertise services, clients browse and book those services, and administrators review users and bookings and remove gigs when necessary.
 
 Part 2 extends the Part 1 authentication foundation into a working full-stack application. It adds persistent MongoDB storage, a React interface, role-based access control, gig management, bookings, simulated transactions, freelancer income and automated backend and frontend testing.
 
+Part 3 adds an illustrative South African income-tax estimate to the freelancer dashboard, two new security features (server-side session revocation and booking replay protection), structured logging with Grafana Cloud monitoring, Docker images for the API and frontend, a GitHub Actions DevSecOps pipeline with SonarQube Cloud static analysis, and a final threat-to-control security review.
+
 ## Demonstration Video
 
-[Watch the HustleHub+ Part 2 demonstration on YouTube](https://youtu.be/laT6uWLJGro)
+**Part 3 demonstration:** *link to be added before submission.*
 
-**Video link placeholder:** replace the URL above with the recorded Part 2 demonstration link before submission.
-
-The demonstration covers registration and login, freelancer gig creation and editing, client booking and history, transaction recording, freelancer income, administration, security controls and test evidence.
+**Part 2 demonstration (retained):** [Watch on YouTube](https://youtu.be/laT6uWLJGro). It covers registration and login, freelancer gig creation and editing, client booking and history, transaction recording, freelancer income, administration, security controls and test evidence.
 
 ## Group Members
 
@@ -25,18 +25,20 @@ The demonstration covers registration and login, freelancer gig creation and edi
 ## Contents
 
 - [Implemented Features and Roles](#implemented-features-and-roles)
+- [Part 3 Features](#part-3-features)
 - [Architecture and Frontend Integration](#architecture-and-frontend-integration)
 - [Technology Stack](#technology-stack)
 - [Project Structure](#project-structure)
 - [Installation and Configuration](#installation-and-configuration)
+- [Running with Docker Compose](#running-with-docker-compose)
 - [Administrator Account](#administrator-account)
 - [API Endpoints](#api-endpoints)
 - [Security Design](#security-design)
 - [Automated Testing](#automated-testing)
+- [CI/CD and Static Analysis](#cicd-and-static-analysis)
 - [Assessment Evidence Map](#assessment-evidence-map)
 - [Screenshot Evidence](#screenshot-evidence)
 - [Response Status Codes](#response-status-codes)
-- [Part 3 Direction](#part-3-direction)
 - [References](#references)
 
 ## Implemented Features and Roles
@@ -51,6 +53,36 @@ The demonstration covers registration and login, freelancer gig creation and edi
 Bookings use simulated payments. No real payment processor or card details are required. Each successful booking creates a confirmed transaction associated with the booking, client and freelancer.
 
 Income is calculated from confirmed transactions belonging to the authenticated freelancer. The stored booking amount is a snapshot of the server-side gig price at the time of booking. Updating or deleting a gig does not remove the existing booking and transaction history.
+
+## Part 3 Features
+
+### Freelancer income and illustrative tax
+
+The freelancer dashboard shows lifetime income, year-to-date income for the South African tax year (1 March 2026 to 28 February 2027), a March to February monthly breakdown and an illustrative annual tax figure. The API annualises year-to-date confirmed income and applies the SARS 2027 tax brackets and rebates. The figure is a projection for illustration only: it is not tax advice or tax currently due, and platform revenue is not verified taxable income.
+
+Methodology and SARS sources: [tax estimation](docs/finance/tax-estimation.md). Response fields: [income API contract](docs/finance/income-api-contract.md).
+
+### Security feature 1: server-side session revocation
+
+Signing out invalidates every JWT issued to the account, not only the copy held by the browser. Each token carries the account's session version, and every protected request compares it with the version stored in MongoDB. `POST /api/auth/logout` increments the version atomically. Deleted accounts and changed roles are rejected in the same check. [Design and trade-offs](docs/security/session-revocation.md).
+
+### Security feature 2: booking replay protection
+
+`POST /api/bookings` requires an `Idempotency-Key` header containing a UUID v4 that the browser generates for each booking attempt. Retrying with the same key returns the original booking (`200`, `replayed: true`) instead of creating a second booking and transaction. Reusing a key for a different gig returns `409`. A unique `{ client, requestKey }` index and a MongoDB transaction enforce this in the database. [Design and limits](docs/security/booking-idempotency.md).
+
+### Structured logging and Grafana Cloud monitoring
+
+The API writes one JSON event per security-relevant outcome (sign-in, sign-out, booking, committed transaction, errors and start-up) with a server-generated request ID. Fields are allowlisted, so passwords, tokens, email addresses, IP addresses and request bodies are never logged. When `GRAFANA_LOKI_URL`, `GRAFANA_LOKI_USER` and `GRAFANA_LOKI_TOKEN` are set, events are also sent to Grafana Cloud Loki using a write-only token. Without them, logging stays on stdout.
+
+[Event contract](docs/monitoring/structured-events.md), [Grafana setup, queries and privacy checks](docs/monitoring/grafana-cloud.md), [dashboard JSON](docs/monitoring/grafana-dashboard.json).
+
+### Containers
+
+The API and the frontend each have a Docker image that runs as a non-root user: Node.js serving HTTPS for the API, and Nginx serving the built React application. Docker Compose runs both, binds their ports to `127.0.0.1` only and keeps the local certificate in a named volume. See [Running with Docker Compose](#running-with-docker-compose).
+
+### DevSecOps pipeline and static analysis
+
+GitHub Actions runs unit tests with coverage, lint and build, dependency audits, Docker-based API, security and browser suites, and the SonarQube Cloud quality gate. A final `CI gate` job fails if any required job fails. See [CI/CD and Static Analysis](#cicd-and-static-analysis).
 
 ## Architecture and Frontend Integration
 
@@ -138,11 +170,16 @@ See the [detailed architecture document](docs/architecture/hustlehub-architectur
 | Frontend | React, React Router, Vite and CSS |
 | Backend | Node.js, Express 5 and JavaScript |
 | Persistence | MongoDB Atlas and Mongoose |
-| Authentication | bcrypt password hashing and JWTs through `jsonwebtoken` |
-| API security | Helmet, CSP, CORS, validation, sanitisation and `express-rate-limit` |
+| Authentication | bcrypt password hashing, JWTs through `jsonwebtoken`, server-side session versions |
+| API security | Helmet, CSP, CORS, validation, sanitisation, `express-rate-limit` and idempotency keys |
 | Transport and configuration | Node HTTPS, local development certificates and dotenv |
-| Backend testing | Postman collections and Newman with JUnit evidence |
+| Logging and monitoring | Winston structured events, `winston-loki` and Grafana Cloud |
+| Containers | Docker, Nginx and Docker Compose |
+| CI/CD and analysis | GitHub Actions, npm audit and SonarQube Cloud |
+| API testing | Postman collections run with the Postman CLI, JUnit evidence |
+| Backend unit testing | Node.js test runner (`node:test`) with coverage |
 | Frontend testing | Vitest, React Testing Library, user-event and jsdom |
+| Browser testing | Playwright (Chromium) |
 
 ## Project Structure
 
@@ -165,15 +202,26 @@ See the [detailed architecture document](docs/architecture/hustlehub-architectur
 | `docs/architecture/` | Architecture documentation and Mermaid source. |
 | `evidence/part1/screenshots/` | Retained Part 1 foundation evidence. |
 | `evidence/part2/` | Part 2 application screenshots, API captures and automated test reports. |
+| `evidence/part3/` | Part 3 evidence: test reports, logging, static analysis and CI runs ([index](evidence/part3/README.md)). |
+| `api/test/` | Backend unit tests (`node:test`). |
+| `api/Dockerfile`, `client/Dockerfile`, `client/nginx/` | Container images and the frontend web server configuration. |
+| `compose.yaml`, `compose.ci.yaml`, `docker/` | Docker Compose stack, CI overlay with a local MongoDB replica set, and start-up scripts. |
+| `e2e/` | Playwright browser tests. |
+| `.github/workflows/ci.yml`, `scripts/ci/` | DevSecOps pipeline and its helper scripts. |
+| `sonar-project.properties` | SonarQube Cloud project and coverage configuration. |
+| `docs/security/` | Session revocation, booking replay protection, static analysis and the threat-to-control review. |
+| `docs/finance/`, `docs/monitoring/`, `docs/docker/`, `docs/ci/`, `docs/testing/` | Tax methodology, logging and monitoring, containers, pipeline and test guides. |
 
 ## Installation and Configuration
 
 ### Prerequisites
 
-- Node.js and npm compatible with the project dependencies.
-- Git and OpenSSL.
+- Node.js 22 or later with npm (CI uses Node 22 for the API and Node 24 for the client).
+- Git and OpenSSL. On Windows, Git for Windows includes OpenSSL at `C:\Program Files\Git\usr\bin\openssl.exe`.
 - A MongoDB Atlas database with database-user credentials and network access configured for the machine running the API.
+- Docker Desktop, to run the containers.
 - Postman Desktop for manual collection runs, if required.
+- On Windows, use PowerShell 7. The `npm --prefix ...` commands below work unchanged in PowerShell.
 
 Use the committed `package-lock.json` files for repeatable dependency installation. The following setup commands are for a fresh clone.
 
@@ -190,6 +238,12 @@ npm --prefix client ci
 cp api/.env.example api/.env
 cp client/.env.example client/.env
 mkdir -p api/certs
+```
+
+Windows (PowerShell):
+
+```powershell
+git clone https://github.com/ST10437403-JamesMaherry/INSY7314POE.git; cd INSY7314POE; git switch dev; npm --prefix api ci; npm --prefix client ci; Copy-Item api/.env.example api/.env; Copy-Item client/.env.example client/.env; New-Item -ItemType Directory -Force api/certs
 ```
 
 ### 2. Configure the API
@@ -219,6 +273,8 @@ JWT_SECRET=replace_with_your_generated_local_secret
 JWT_EXPIRES_IN=1h
 ```
 
+Optional Grafana Cloud log delivery uses `GRAFANA_LOKI_URL`, `GRAFANA_LOKI_USER` and `GRAFANA_LOKI_TOKEN`; leave them unset to log to stdout only. See [Grafana Cloud setup](docs/monitoring/grafana-cloud.md).
+
 Use database-user credentials in `MONGO_URI`. The Atlas connection must be available before the API starts; startup fails if the database connection cannot be established.
 
 ### 3. Configure the frontend
@@ -243,7 +299,18 @@ openssl req -x509 -newkey rsa:2048 -nodes -sha256 -days 365 \
   -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
 ```
 
-Trust `api/certs/localhost-cert.pem` in the local browser/operating system so the React application can call the HTTPS API. In Postman, add the certificate under **Settings > Certificates > CA certificates**. Newman uses `--ssl-extra-ca-certs` through the existing npm script.
+Windows (PowerShell), using the OpenSSL bundled with Git for Windows:
+
+```powershell
+& "C:\Program Files\Git\usr\bin\openssl.exe" req -x509 -newkey rsa:2048 -nodes -sha256 -days 365 -keyout api/certs/localhost-key.pem -out api/certs/localhost-cert.pem -subj "/CN=localhost" -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
+```
+
+Trust `api/certs/localhost-cert.pem` in the local browser/operating system so the React application can call the HTTPS API:
+
+- **macOS:** open the certificate in Keychain Access and set it to *Always Trust*.
+- **Windows:** `certutil -user -addstore Root api\certs\localhost-cert.pem` adds it to the current user's trusted roots.
+
+In Postman, add the certificate under **Settings > Certificates > CA certificates**. The npm test scripts pass it to the Postman CLI with `--ssl-extra-ca-certs`.
 
 The certificate is for local development. A deployed application requires a trusted certificate and the corresponding deployed frontend/API origins.
 
@@ -278,6 +345,25 @@ npm --prefix client run lint
 npm --prefix client run build
 ```
 
+## Running with Docker Compose
+
+Requires Docker Desktop. Compose reads the **repository-root** `.env`, not `api/.env`.
+
+1. Create the root `.env` from `.env.example` (`cp .env.example .env` on macOS, `Copy-Item .env.example .env` in PowerShell). Set `MONGO_URI` and `JWT_SECRET` to the same values as `api/.env`, and keep `CLIENT_ORIGIN=http://localhost:5173` and `VITE_API_URL=https://localhost:4000`.
+2. Validate, build and start the stack:
+
+   ```bash
+   docker compose config --quiet
+   docker compose up --build -d --wait
+   docker compose ps
+   ```
+
+   `api` and `client` should report `healthy`, and the one-shot `tls-init` service `Exited (0)`.
+3. The API certificate is generated inside a Docker volume. Export its public certificate and trust it before using the frontend at `http://localhost:5173`; the [Compose guide](docs/docker/compose.md) gives the export, verification and trust steps.
+4. Stop with `docker compose down`. Adding `--volumes` also deletes the certificate, so a new one must be trusted next time.
+
+`compose.ci.yaml` adds a disposable MongoDB replica set for automated tests. It is for CI and local test runs only and must never be pointed at Atlas.
+
 ## Administrator Account
 
 Public registration allows only `client` and `freelancer`. Administrator access is assigned directly in the assessment database rather than through the registration interface.
@@ -309,17 +395,18 @@ The default API origin is `https://localhost:4000`.
 | `POST` | `/api/auth/register` | Public | Register a client or freelancer. |
 | `POST` | `/api/auth/login` | Public | Authenticate and return a signed JWT with safe user data. |
 | `GET` | `/api/auth/me` | Verified JWT | Retrieve the authenticated account's safe profile. |
+| `POST` | `/api/auth/logout` | Verified JWT | Sign out and revoke every token issued to the account. |
 | `GET` | `/api/gigs` | Public | Browse active marketplace gigs. |
 | `GET` | `/api/gigs/mine` | Freelancer | List the freelancer's own active and inactive gigs. |
 | `GET` | `/api/gigs/:id` | Public | View an active gig. |
 | `POST` | `/api/gigs` | Freelancer | Create a gig owned by the authenticated freelancer. |
 | `PUT` | `/api/gigs/:id` | Owning freelancer | Update allowed gig fields. |
 | `DELETE` | `/api/gigs/:id` | Owning freelancer | Delete an owned gig. |
-| `POST` | `/api/bookings` | Client | Create a booking and its simulated transaction. |
+| `POST` | `/api/bookings` | Client | Create a booking and its simulated transaction. Requires an `Idempotency-Key` header (UUID v4). |
 | `GET` | `/api/bookings/mine` | Client | Retrieve the client's own booking history. |
 | `GET` | `/api/bookings/freelancer` | Freelancer | Retrieve bookings associated with the freelancer. |
 | `GET` | `/api/bookings/:id` | Owning client | Retrieve one owned booking. |
-| `GET` | `/api/income/me` | Freelancer | Retrieve income and confirmed transaction count. |
+| `GET` | `/api/income/me` | Freelancer | Retrieve lifetime and year-to-date income, the monthly breakdown and the illustrative tax estimate. |
 | `GET` | `/api/admin/users` | Administrator | View safe user records. |
 | `GET` | `/api/admin/bookings` | Administrator | View platform booking records. |
 | `DELETE` | `/api/admin/gigs/:id` | Administrator | Remove a marketplace gig. |
@@ -371,7 +458,7 @@ The example password is fictional. User and resource identifiers are MongoDB Obj
 
 Passwords are hashed with bcrypt before storage. Login compares the submitted password with the stored hash. The bcrypt work factor is configurable, with a secure default of 12 and a minimum configured value of 10. Registration and login enforce bcrypt's supported password-byte limit.
 
-Unknown accounts and incorrect passwords receive the same `Invalid credentials` response. JWT application claims contain the user ID and role; the token library adds issue and expiry timestamps. JWTs are signed using the backend-only secret, and protected routes verify the signature and expiry before using the claims.
+Unknown accounts and incorrect passwords receive the same `Invalid credentials` response. JWT application claims contain the user ID, role and session version; the token library adds issue and expiry timestamps. JWTs are signed using the backend-only secret, and protected routes verify the signature and expiry, then check the session version and role against MongoDB before using the claims. Signing out increments the session version, which revokes all earlier tokens.
 
 The frontend keeps the token in the tab's `sessionStorage`. `AuthContext` checks the account with `/api/auth/me` during session restoration and clears the session when an authenticated request returns `401`.
 
@@ -452,7 +539,7 @@ Each complete cycle creates unique test clients and freelancers. Scripts capture
 
 Save/export corrected requests back to the repository collection so Postman and Newman use the same configuration. Exported collection state should exclude generated JWTs and captured run identifiers.
 
-### Run with Newman
+### Run with the Postman CLI
 
 Start a fresh API process in one terminal:
 
@@ -468,9 +555,9 @@ npm --prefix api run test:api --silent -- --env-var 'adminPassword=<admin-passwo
 
 The JUnit report is written to `evidence/part3/newman/functional-report.xml`.
 
-The script uses the repository collection/environment, trusts `api/certs/localhost-cert.pem`, and runs the CLI and JUnit reporters. The report path is relative to the npm script's `api` working directory. `--silent` suppresses npm's script-command echo.
+The script runs the pinned Postman CLI (`postman-cli`, installed with the API dependencies; no Postman account or API key is needed) against the repository collection and environment, trusts `api/certs/localhost-cert.pem`, and runs the CLI and JUnit reporters. The report path is relative to the npm script's `api` working directory. `--silent` suppresses npm's script-command echo.
 
-**Committed Newman evidence:** Part 3 [JUnit report](evidence/part3/newman/functional-report.xml) and [summary](evidence/part3/newman/functional-summary.png). Part 2 [JUnit report](evidence/part2/newman/newman-report.xml), [terminal summary](evidence/part2/newman/newman-summary.png) and [Postman Runner summary](evidence/part2/newman/postman-runner-summary.png).
+**Committed API evidence:** Part 3 [JUnit report](evidence/part3/newman/functional-report.xml) and [summary](evidence/part3/newman/functional-summary.png). Part 2 [JUnit report](evidence/part2/newman/newman-report.xml), [terminal summary](evidence/part2/newman/newman-summary.png) and [Postman Runner summary](evidence/part2/newman/postman-runner-summary.png).
 
 A successful cycle must complete all eight folders with zero failed assertions and no script errors. The Part 3 cycle records 335 passing assertions. The committed reports and screenshots record the submitted results.
 
@@ -484,7 +571,32 @@ Stop the API with `Ctrl+C`, then restart before another complete cycle:
 npm --prefix api start
 ```
 
-This resets the in-memory counters. A full Postman run and a full Newman run each need their own fresh API process. The database persists across restarts, while unique test accounts prevent fixture collisions. Test accounts and the booking/transaction pair remain available for persistence evidence; the suite removes its captured test gigs during its cleanup checks.
+This resets the in-memory counters. A full Postman run and a full Postman CLI run each need their own fresh API process. The database persists across restarts, while unique test accounts prevent fixture collisions. Test accounts and the booking/transaction pair remain available for persistence evidence; the suite removes its captured test gigs during its cleanup checks.
+
+### Security test suite
+
+A separate collection, `postman/part3_security_collection.json`, tests the security controls: missing, forged, expired and revoked JWTs, role and cross-account isolation, `Idempotency-Key` misuse, malformed input and safe errors, security headers, and the rate limiters. Run each cycle on a freshly started API. From the `api` folder:
+
+```bash
+npm run test:security --silent -- --env-var 'adminPassword=<admin-password>' --env-var "jwtSecret=<JWT_SECRET from api/.env>"
+```
+
+Restart the API, then run the rate-limit cycle:
+
+```bash
+npm run test:security:limits --silent
+```
+
+Keep `--silent`, otherwise npm echoes the secret values. See the [security suite guide](docs/testing/security-postman-suite.md); reports are in [`evidence/part3/security-tests/`](evidence/part3/security-tests/).
+
+### Backend unit tests and coverage
+
+```bash
+npm --prefix api test
+npm --prefix api run test:coverage
+```
+
+The coverage run also writes `api/coverage/lcov.info` for SonarQube Cloud. See [backend unit tests](docs/testing/backend-unit-tests.md).
 
 ### Real-browser tests (Playwright)
 
@@ -500,13 +612,16 @@ See [docs/testing/e2e-playwright.md](docs/testing/e2e-playwright.md). Evidence: 
 
 ### Frontend tests
 
-`client/src/test/app.test.jsx` exercises login feedback, allowed registration roles, marketplace rendering/search, gig form validation, booking confirmation and role-based route behaviour. `client/src/test/api.test.js` checks the shared API service's token/destination behaviour. The frontend tests use jsdom and mocked API responses; the Newman suite separately exercises the real API and database.
+`client/src/test/app.test.jsx` exercises login feedback, allowed registration roles, marketplace rendering/search, gig form validation, booking confirmation and role-based route behaviour. `client/src/test/api.test.js` checks the shared API service's token/destination behaviour. Part 3 adds `logout.test.jsx` (server-side sign-out), `bookingIdempotency.test.jsx` (request keys and retries) and `freelancerDashboard.test.jsx` (income and tax display). The frontend tests use jsdom and mocked API responses; the Newman suite separately exercises the real API and database.
 
 Run from the repository root:
 
 ```bash
 npm --prefix client test
+npm --prefix client run test:coverage
 ```
+
+`test:coverage` writes `client/coverage/lcov.info` and does not rewrite the Part 2 JUnit report.
 
 To write a JUnit report explicitly into the submitted frontend evidence folder:
 
@@ -518,6 +633,34 @@ npm --prefix client test -- \
 ```
 
 **Committed frontend evidence:** [JUnit report](evidence/part2/frontend-tests/react-tests.xml) and [test summary](evidence/part2/frontend-tests/react-tests-summary.png).
+
+## CI/CD and Static Analysis
+
+The workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (*HustleHub DevSecOps*) runs on pushes to `dev`, `main`, `feature/**`, `fix/**` and `chore/**`, on pull requests into `dev` or `main`, and on manual dispatch.
+
+| Job | What runs | Fails when |
+|---|---|---|
+| Configuration contracts | Container, Compose and pipeline configuration checks | A check or shell syntax test fails |
+| Backend | Locked install, backend unit tests and coverage | A test fails or coverage is missing |
+| Frontend | Locked install, Vitest with coverage, ESLint and a production build | A test, lint rule or build fails |
+| Dependency audit | `npm audit` for `api`, `client` and `e2e` | Any high or critical advisory |
+| Docker integration | Smoke, functional, security, rate-limit and browser suites, each in its own disposable stack | Start-up, health, TLS, non-root or test failure |
+| Sonar quality gate | SonarQube Cloud analysis with both coverage reports (on `dev` and pull requests into `dev`) | The quality gate does not pass, or the token or coverage is missing |
+| CI gate | Combines every required job | Any required job fails, is cancelled or is skipped unexpectedly |
+
+Integration jobs use a local MongoDB replica set and secrets generated for the run, so production credentials never reach CI. The only stored secret is `SONAR_TOKEN`. Actions are pinned to full commit SHAs, and the workflow has read-only repository permissions. Full details: [DevSecOps pipeline](docs/ci/devsecops.md).
+
+### Static analysis
+
+SonarQube Cloud (project `hustlehub-plus_insy7314poe`, Free plan, main branch `dev`) analyses `api` and `client/src` with coverage from both test suites, using the default *Sonar way* quality gate. The scan waits for the gate and fails if it does not pass. The first scan found 19 issues (security rating E): 14 were fixed and 5 accessibility findings were accepted with written reasons, giving a security rating of A. To scan locally:
+
+```bash
+npm --prefix api run test:coverage
+npm --prefix client run test:coverage
+npx --yes @sonar/scan
+```
+
+The scan needs `SONAR_TOKEN` set in the shell. [Configuration, findings and decisions](docs/security/static-analysis.md). Evidence: [static analysis](evidence/part3/static-analysis/) and [workflow runs](evidence/part3/ci/github-actions-runs.png).
 
 ## Assessment Evidence Map
 
@@ -758,22 +901,16 @@ The Part 1 captures document the original secure authentication foundation. Curr
 
 | Status | Use |
 |---|---|
-| `200 OK` | Successful reads, login, gig updates and deletion confirmations. |
+| `200 OK` | Successful reads, login, sign-out, gig updates, deletion confirmations and replayed bookings (`replayed: true`). |
 | `201 Created` | Successful registration, gig creation and booking/transaction creation. |
 | `400 Bad Request` | Invalid input, malformed JSON or invalid identifier format. |
-| `401 Unauthorized` | Invalid credentials or missing/invalid/expired JWT. |
+| `401 Unauthorized` | Invalid credentials, or a missing, invalid, expired or revoked JWT. |
 | `403 Forbidden` | Authenticated role is not permitted to perform the operation. |
 | `404 Not Found` | Unknown route, missing/unavailable gig, or resource not available to the requesting owner. |
-| `409 Conflict` | Duplicate registration email. |
+| `409 Conflict` | Duplicate registration email, or an `Idempotency-Key` reused for a different gig. |
 | `413 Payload Too Large` | JSON body exceeds the configured `10kb` limit. |
 | `429 Too Many Requests` | Authentication, registration or booking allowance exceeded. |
 | `500 Internal Server Error` | Controlled unexpected server failure. |
-
-## Part 3 Direction
-
-Part 2 delivers the full-stack marketplace, persistent financial records, income tracking and the security/testing controls described above.
-
-Part 3 will extend this baseline with estimated tax, Docker-based containerisation, CI/CD for backend and frontend, security/static analysis, event logging and monitoring, and the final security review. Those items are outside the current Part 2 implementation.
 
 ## References
 
@@ -782,5 +919,5 @@ Part 3 will extend this baseline with estimated tax, Docker-based containerisati
 - [Express error-handling guide](https://expressjs.com/en/guide/error-handling/)
 - [Helmet documentation](https://helmet.js.org/)
 - [Mongoose transactions](https://mongoosejs.com/docs/transactions.html)
-- [Newman command reference](https://learning.postman.com/docs/reference/newman-cli/newman-options/)
+- [Postman CLI reporters](https://learning.postman.com/docs/postman-cli/postman-cli-reporters)
 - [Vitest reporters](https://vitest.dev/guide/reporters.html)
