@@ -34,11 +34,13 @@ Part 3 adds an illustrative South African income-tax estimate to the freelancer 
 - [Administrator Account](#administrator-account)
 - [API Endpoints](#api-endpoints)
 - [Security Design](#security-design)
+- [Security Review](#security-review)
 - [Automated Testing](#automated-testing)
 - [CI/CD and Static Analysis](#cicd-and-static-analysis)
 - [Assessment Evidence Map](#assessment-evidence-map)
 - [Screenshot Evidence](#screenshot-evidence)
 - [Response Status Codes](#response-status-codes)
+- [Group Contributions](#group-contributions)
 - [References](#references)
 
 ## Implemented Features and Roles
@@ -434,7 +436,7 @@ Provisioning registration consumes the registration allowance. Stop the API with
 npm --prefix api start
 ```
 
-Demonstration credentials supplied for marking are assessment credentials and will be removed and rotated after marking. The collection itself contains no administrator password or generated JWTs. Backend database credentials, the JWT signing secret and private keys remain outside the frontend and assessment documentation.
+No administrator password is stored in the repository: both Postman environments keep `adminPassword` blank, and passwords are supplied at run time. Earlier commits of `postman/postman_environment.json` contained the assessment administrator's password in plain text. That password must be treated as compromised and changed in the assessment database before submission; this rotation is still outstanding. Credentials for marking are shared outside the repository. Backend database credentials, the JWT signing secret and private keys remain outside the frontend and assessment documentation.
 
 ## API Endpoints
 
@@ -557,6 +559,38 @@ JSON bodies are limited to `10kb`. Malformed JSON returns `400`; oversized bodie
 The final Express error handler produces bounded, safe JSON error responses. Unknown routes return `404`. Internal diagnostics remain on the server rather than in client responses; public responses omit stack traces, database error details, configuration values and password hashes.
 
 Local `.env` files, private keys, certificates and dependency directories are excluded from Git. Safe `.env.example` files document the configuration contract. The public frontend API URL is separate from backend credentials.
+
+## Security Review
+
+The full [threat-to-control review](docs/security/threat-control-review.md) maps 32 threats across 7 trust boundaries to their controls, tests and evidence, classified with STRIDE and the OWASP Top 10:2025. The summary below covers the main threats. The two Part 3 security features are in bold.
+
+| Threat (OWASP Top 10:2025) | Control | Added in | Evidence |
+|---|---|---|---|
+| Credentials intercepted in transit (A04) | HTTPS API, HSTS, restricted CORS | Part 1/2 | [Security matrix](evidence/part3/security-tests/security-matrix.xml) |
+| Password guessing (A07) | Failed-login limiter, bcrypt work factor 12 | Part 1/2 | [Rate-limit cycle](evidence/part3/security-tests/security-limits.xml) |
+| Forged or altered JWT (A07) | Signature and expiry verified with a server-only secret | Part 1/2 | [Security matrix](evidence/part3/security-tests/security-matrix.xml) |
+| Stolen token reused after sign-out (A07) | **Server-side session version, checked on every request** | **P3-05** | [Security matrix](evidence/part3/security-tests/security-matrix.xml), [Playwright](evidence/part3/e2e/playwright-junit.xml) |
+| Access to other users' data (A01) | Role guards and ownership-filtered queries | Part 1/2 | [Security matrix](evidence/part3/security-tests/security-matrix.xml), [access denied](evidence/part3/e2e/screenshots/07-client-access-denied.png) |
+| Price, owner or extra fields injected (A01) | Allowlist validators; server-derived price and owner | Part 1/2, P3-15 | [Backend tests](evidence/part3/unit-tests/api-node-test.xml) |
+| NoSQL injection (A05) | Primitive-type validation; plain-string lookups | Part 1/2, P3-15 | [Backend tests](evidence/part3/unit-tests/api-node-test.xml), [static analysis](evidence/part3/static-analysis/) |
+| Stored XSS (A05) | Text sanitisation, React escaping, API CSP | Part 1/2 | [Backend tests](evidence/part3/unit-tests/api-node-test.xml) |
+| Duplicate bookings and transactions (A06) | **`Idempotency-Key`, unique index, MongoDB transaction** | **P3-06** | [Security matrix](evidence/part3/security-tests/security-matrix.xml) |
+| Internal errors exposed (A10) | Central error handler with generic responses | Part 1/2 | [Security matrix](evidence/part3/security-tests/security-matrix.xml) |
+| Unnoticed attacks; secrets in logs (A09) | Allowlisted structured events, Grafana Cloud dashboard | P3-07, P3-08 | [Logging evidence](evidence/part3/logging/) |
+| Vulnerable dependencies; insecure code merged (A03, A08) | npm audit, SonarQube quality gate, blocking CI gate | P3-15, P3-16 | [Static analysis](evidence/part3/static-analysis/), [workflow runs](evidence/part3/ci/github-actions-runs.png) |
+| Container or service exposure (A02) | Non-root images, localhost-only ports, isolated CI database | P3-09 to P3-11, P3-16 | [Compose guide](docs/docker/compose.md) |
+
+### Residual risks
+
+The review lists 14 accepted limitations. The most important:
+
+- Payments are simulated; no payment provider or real money is involved.
+- TLS uses a self-signed localhost certificate, and the frontend is served over plain HTTP on localhost.
+- The tax figure is an illustrative projection, not tax advice.
+- `jwt.verify` does not pin the algorithm to HS256. Exploiting this needs the signing secret, but RFC 8725 asks for an explicit list.
+- The JWT is kept in `sessionStorage` and the SPA has no Content-Security-Policy, so a successful XSS could read it.
+- Rate limits are kept in process memory per IP and reset when the API restarts.
+- An administrator password was committed in earlier revisions and must be rotated (see [Administrator Account](#administrator-account)).
 
 ## Automated Testing
 
@@ -715,6 +749,23 @@ npx --yes @sonar/scan
 The scan needs `SONAR_TOKEN` set in the shell. [Configuration, findings and decisions](docs/security/static-analysis.md). Evidence: [static analysis](evidence/part3/static-analysis/) and [workflow runs](evidence/part3/ci/github-actions-runs.png).
 
 ## Assessment Evidence Map
+
+### Part 3 rubric
+
+| Rubric criterion (marks) | Implementation | Evidence |
+|---|---|---|
+| Final features: tax and income dashboard (20) | [Tax estimator](api/services/taxEstimator.js), [income analytics](api/services/incomeAnalytics.js), [freelancer dashboard](client/src/pages/FreelancerDashboardPage.jsx), [methodology](docs/finance/tax-estimation.md) | [Dashboard screenshot](evidence/part3/e2e/screenshots/05-freelancer-income-tax-dashboard.png), [financial API assertions](evidence/part3/newman/financial-assertions.png) |
+| CI/CD pipeline (20) | [Workflow](.github/workflows/ci.yml), [pipeline guide](docs/ci/devsecops.md) | [Workflow runs](evidence/part3/ci/github-actions-runs.png) |
+| Static code analysis (10) | [`sonar-project.properties`](sonar-project.properties), [findings and decisions](docs/security/static-analysis.md) | [Static analysis](evidence/part3/static-analysis/) |
+| Docker: backend and frontend (10) | [API image](api/Dockerfile), [client image](client/Dockerfile), [Compose](compose.yaml), [guide](docs/docker/compose.md) | Listed as pending in the [evidence index](evidence/part3/README.md) |
+| Logging (10) | [Event logger](api/utils/logger.js), [Grafana transport](api/utils/lokiTransport.js), [monitoring docs](docs/monitoring/) | [Logging evidence](evidence/part3/logging/) |
+| Own security features (15) | [Session revocation](docs/security/session-revocation.md), [booking replay protection](docs/security/booking-idempotency.md) | [Security tests](evidence/part3/security-tests/), [Playwright](evidence/part3/e2e/playwright-junit.xml) |
+| Security review (10) | [Security Review](#security-review), [threat-to-control review](docs/security/threat-control-review.md) | Review document |
+| README update (5) | This README and the [architecture document](docs/architecture/hustlehub-architecture.md) | This README |
+
+The complete list of reports, screenshots and test totals is in the [Part 3 evidence index](evidence/part3/README.md).
+
+### Part 2 evidence map
 
 This map connects the Part 2 assessment areas to implementation and evidence without requiring a reviewer to search the entire codebase.
 
@@ -964,8 +1015,22 @@ The Part 1 captures document the original secure authentication foundation. Curr
 | `429 Too Many Requests` | Authentication, registration or booking allowance exceeded. |
 | `500 Internal Server Error` | Controlled unexpected server failure. |
 
+## Group Contributions
+
+Part 3 work by member, taken from each member's assigned issues and merged pull requests. The commits behind every item are in the Git history; Part 1 and Part 2 contributions are recorded there as well.
+
+| Member | Part 3 work |
+|---|---|
+| James Maherry | P3-01 tax estimation, P3-02 income analytics, P3-03 tax dashboard, P3-04 backend unit tests, P3-05 session revocation, P3-06 booking replay protection, P3-07 structured logging, P3-09 API container, P3-10 client container, P3-11 Docker Compose, P3-16 DevSecOps pipeline, P3-20 final regression and submission |
+| Ewald Pagel | P3-08 Grafana Cloud logging, P3-13 security Postman collection, P3-15 SonarQube static analysis, P3-17 threat-to-control review, P3-18 final README and architecture, fixes to the functional Postman collection |
+| Mark Mansvelt | P3-12 Postman financial coverage, P3-14 Playwright browser tests, P3-19 QA evidence and demonstration runbook |
+
+P3-19 and P3-20 were still open when this section was written.
+
 ## References
 
+- [OWASP Top 10:2025](https://top10.owasp.org/2025/)
+- [Threat-to-control review sources](docs/security/threat-control-review.md#sources)
 - [OWASP Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)
 - [RFC 7519 — JSON Web Token](https://www.rfc-editor.org/rfc/rfc7519.html)
 - [Express error-handling guide](https://expressjs.com/en/guide/error-handling/)
