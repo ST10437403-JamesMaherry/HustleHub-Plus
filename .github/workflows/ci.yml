@@ -47,6 +47,7 @@ jobs:
         run: |
           node --test client/docker/containerConfig.check.mjs
           node --test scripts/composeConfig.test.mjs
+          node --test scripts/ci/contract.test.cjs
           sh -n docker/cert-init.sh
           bash -n docker/mongo-init.sh
 
@@ -114,6 +115,27 @@ jobs:
           retention-days: 14
           overwrite: true
 
+  dependencies:
+    name: Dependency audit (${{ matrix.package }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [api, client, e2e]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install locked dependencies without executing lifecycle scripts
+        run: npm --prefix "${{ matrix.package }}" ci --ignore-scripts --no-audit --no-fund
+      - name: Block high and critical advisories, including development tooling
+        run: npm --prefix "${{ matrix.package }}" audit --audit-level=high
+
   integration:
     name: Isolated Docker integration (${{ matrix.suite }})
     needs: [configuration, backend, frontend]
@@ -154,3 +176,65 @@ jobs:
       - name: Remove only the disposable CI project
         if: always()
         run: docker compose --env-file /dev/null -p hustlehub-ci -f compose.yaml -f compose.ci.yaml down --volumes --remove-orphans
+
+  sonar:
+    name: Sonar quality gate (dev)
+    needs: [configuration, backend, frontend]
+    # The existing Sonar Free project analyses dev and pull requests targeting dev.
+    if: github.ref == 'refs/heads/dev' || (github.event_name == 'pull_request' && github.base_ref == 'dev')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Refuse secret-bearing analysis of fork code
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          echo 'Sonar cannot run with repository secrets on a fork. A reviewed, trusted branch run is required.'
+          exit 1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: backend-coverage
+          path: api/coverage
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: frontend-coverage
+          path: client/coverage
+      - name: Require the Sonar token and both coverage files
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          test -n "$SONAR_TOKEN" || { echo 'SONAR_TOKEN is required for the dev quality gate.'; exit 1; }
+          test -s api/coverage/lcov.info
+          test -s client/coverage/lcov.info
+      - name: Analyse source and wait for the blocking quality gate
+        uses: SonarSource/sonarqube-scan-action@4d1dc0c91ee400dcf8a6dddf2f705ac36542e304 # v8.4.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >-
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.qualitygate.timeout=300
+
+  gate:
+    name: CI gate
+    if: always()
+    needs: [configuration, backend, frontend, dependencies, integration, sonar]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Reject failed, cancelled or unexpectedly skipped checks
+        env:
+          CI_JOB_RESULTS: ${{ toJSON(needs) }}
+          CI_SONAR_REQUIRED: ${{ github.ref == 'refs/heads/dev' || (github.event_name == 'pull_request' && github.base_ref == 'dev') }}
+        run: node scripts/ci/gate.cjs
