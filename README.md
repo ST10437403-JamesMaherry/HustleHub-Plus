@@ -88,46 +88,95 @@ GitHub Actions runs unit tests with coverage, lint and build, dependency audits,
 
 ```mermaid
 flowchart TB
-    subgraph BROWSER["Browser and test clients"]
-        USER["Client / Freelancer / Administrator"]
-        REACT["React pages and components"]
-        AUTH["AuthContext and shared API service"]
-        TESTS["Postman / Newman"]
-        USER --> REACT --> AUTH
+    subgraph BROWSER["Browser boundary: untrusted client"]
+        ACTORS["Client / Freelancer / Admin"]
+        REACT["React / React Router"]
+        SESSION["AuthContext / sessionStorage JWT"]
+        ACTORS --> REACT
+        REACT <--> SESSION
     end
 
-    TLS["HTTPS API boundary"]
+    TOOLS["Postman CLI / Playwright / curl"]
+    HTTPS{{"API boundary: HTTPS / TLS"}}
 
-    subgraph SERVER["Node.js and Express application"]
-        HTTP["Helmet / CSP / CORS / JSON body limit"]
-        ROUTES["Routes and endpoint middleware"]
-        GUARDS["JWT / Roles / Validation / Sanitisation / Rate limits"]
-        AUTHCTRL["Authentication"]
-        GIGCTRL["Gigs"]
-        MONEYCTRL["Bookings and income"]
-        ADMINCTRL["Administration"]
-        ERRORS["Controlled JSON errors"]
-        HTTP --> ROUTES --> GUARDS
-        GUARDS --> AUTHCTRL
-        GUARDS --> GIGCTRL
-        GUARDS --> MONEYCTRL
-        GUARDS --> ADMINCTRL
-        ROUTES --> ERRORS
+    subgraph HOST["Docker host: ports bound to 127.0.0.1"]
+        NGINX["Client container: Nginx, non-root, built React app"]
+
+        subgraph SERVER["API container: Node.js / Express, non-root"]
+            HEADERS["Helmet / API CSP / restricted CORS"]
+            BODY["JSON parsing: 10kb body limit"]
+            ROUTES["Express route selection"]
+            AUTH["Register / login: rate limits and input checks"]
+            JWT["Protected routes: JWT verification and session-version check"]
+            RBAC["Role authorisation"]
+            INPUT["Route-specific limits, sanitisation and validation"]
+            CTRL["Controllers: ownership and booking replay protection"]
+            CREDENTIALS["bcrypt / JWT issuing / sign-out revocation"]
+            INCOME["Income and illustrative tax"]
+            MONGOOSE["Mongoose models, queries and transactions"]
+            ERRORS["Controlled 404 and error handlers"]
+            LOGGER["Structured event logger: allowlisted fields"]
+
+            HEADERS --> BODY --> ROUTES
+            ROUTES -->|"Registration / login"| AUTH
+            ROUTES -->|"Protected routes"| JWT
+            ROUTES -->|"Public gig reads"| CTRL
+            AUTH --> CTRL
+            JWT -->|"Account profile / sign-out"| CTRL
+            JWT -->|"Role-restricted routes"| RBAC
+            RBAC -->|"Where configured"| INPUT
+            RBAC -->|"Reads and deletes"| CTRL
+            INPUT --> CTRL
+            CTRL --> CREDENTIALS
+            CTRL --> INCOME --> MONGOOSE
+            CTRL -->|"Other database operations"| MONGOOSE
+            JWT -->|"Live user, role and session version"| MONGOOSE
+            BODY -->|"Parsing errors"| ERRORS
+            ROUTES -->|"Unmatched routes"| ERRORS
+            CTRL -->|"Forwarded failures"| ERRORS
+            ROUTES -.->|"Request outcomes"| LOGGER
+            ERRORS -.-> LOGGER
+        end
     end
 
-    subgraph DATA["MongoDB Atlas data boundary"]
-        MODELS["Mongoose models and schemas"]
-        DATABASE[("Users / Gigs / Bookings / Transactions")]
-        MODELS --> DATABASE
+    DBBOUNDARY{{"Database boundary: Atlas connection"}}
+    subgraph DATA["Persistent data: MongoDB Atlas"]
+        MONGO[("hustlehub database")]
     end
 
-    AUTH --> TLS
-    TESTS --> TLS
-    TLS --> HTTP
-    AUTHCTRL --> MODELS
-    GIGCTRL --> MODELS
-    MONEYCTRL --> MODELS
-    ADMINCTRL --> MODELS
+    LOGBOUNDARY{{"Log boundary: HTTPS, write-only token"}}
+    subgraph MONITOR["Monitoring: Grafana Cloud"]
+        LOKI["Loki logs and security dashboard"]
+    end
+
+    subgraph PIPE["Delivery pipeline: GitHub"]
+        REPO["Repository: dev and pull requests"]
+        GHA["GitHub Actions: tests, audit, Docker integration"]
+        SONAR["SonarQube Cloud quality gate"]
+        GATE["CI gate"]
+        REPO --> GHA
+        GHA --> SONAR
+        GHA --> GATE
+        SONAR --> GATE
+    end
+
+    REACT -->|"Loads the app"| NGINX
+    REACT -->|"HTTPS API requests"| HTTPS
+    TOOLS -->|"HTTPS API requests"| HTTPS
+    HTTPS --> HEADERS
+    MONGOOSE --> DBBOUNDARY --> MONGO
+    LOGGER --> LOGBOUNDARY --> LOKI
+
+    classDef default fill:#111111,stroke:#737373,color:#f5f5f5
+    classDef boundary fill:#080808,stroke:#d4d4d4,stroke-width:2px,color:#ffffff
+    class HTTPS,DBBOUNDARY,LOGBOUNDARY boundary
+    style BROWSER fill:#0a0a0a,stroke:#525252,color:#f5f5f5
+    style HOST fill:#050505,stroke:#3f3f3f,color:#f5f5f5
+    style SERVER fill:#0a0a0a,stroke:#525252,color:#f5f5f5
+    style DATA fill:#0a0a0a,stroke:#525252,color:#f5f5f5
+    style MONITOR fill:#0a0a0a,stroke:#525252,color:#f5f5f5
+    style PIPE fill:#0a0a0a,stroke:#525252,color:#f5f5f5
+    linkStyle default stroke:#a3a3a3,color:#a3a3a3
 ```
 
 The diagram groups the endpoint controls for readability. Their exact order is defined in each route file. For example, booking creation verifies the JWT and client role before applying the booking limiter and request validation.
@@ -156,10 +205,13 @@ The controller uses a MongoDB session and `withTransaction()` to save the bookin
 |---|---|
 | Browser to API | HTTPS encrypts API requests and responses. CORS specifies the frontend origin allowed to read API responses in a browser. |
 | Request to application logic | JSON size limits, expected field types, allowed fields, sanitisation and validation reject invalid input. |
-| Anonymous to authenticated operations | JWT signature and expiry verification run before protected controllers. |
+| Anonymous to authenticated operations | JWT signature, expiry and the server-side session version are checked before protected controllers; sign-out revokes earlier tokens. |
 | Authenticated user to resources | Role checks and ownership-filtered queries restrict access to the user's permitted records. |
 | Application to database | Mongoose schemas, authenticated Atlas access, server-derived ownership and atomic booking transactions protect persistence. |
 | Server to response | Safe response objects and controlled errors keep password hashes and internal diagnostic information out of API responses. |
+| API to Grafana Cloud | Only allowlisted log fields leave the API, over HTTPS with a write-only token. |
+| Container to host | Non-root images, ports bound to `127.0.0.1`, private key kept in a Docker volume. |
+| Source code to pipeline | Pinned actions, read-only permissions, dependency audit and a blocking SonarQube Cloud gate. |
 
 See the [detailed architecture document](docs/architecture/hustlehub-architecture.md) and [editable diagram source](docs/architecture/hustlehub-architecture.mmd).
 
