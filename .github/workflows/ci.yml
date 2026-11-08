@@ -1,3 +1,4 @@
+
 name: HustleHub DevSecOps
 
 on:
@@ -139,7 +140,7 @@ jobs:
   integration:
     name: Isolated Docker integration (${{ matrix.suite }})
     needs: [configuration, backend, frontend]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 30
     strategy:
       fail-fast: false
