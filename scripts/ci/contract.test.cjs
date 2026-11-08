@@ -10,6 +10,7 @@ const { validateSuite, validateFixture, writeReport, evaluateNewman, safeStartup
 const { evaluateJobs } = require('./gate.cjs');
 const { normaliseCoverage } = require('./normalise-coverage.cjs');
 const BrowserReporter = require('./playwright-reporter.cjs');
+const { selectSuite, examineSummary, commandArguments, disposableEnvironment } = require('./postman.cjs');
 const root = path.resolve(__dirname, '../..');
 const read = (name) => readFileSync(path.join(root, name), 'utf8');
 const workflow = read('.github/workflows/ci.yml');
@@ -214,4 +215,67 @@ test('empty coverage and paths outside the package fail closed', () => {
     writeFileSync(file, 'SF:../../secrets.js\nend_of_record\n');
     assert.throws(() => normaliseCoverage('api', dir));
   });
+});
+
+
+test('Postman CLI inventories remain aligned with the untouched collections', () => {
+  assert.equal(selectSuite('functional').expected.length, 120);
+  assert.equal(selectSuite('security').expected.length, 103);
+  assert.equal(selectSuite('limits').expected.length, 13);
+  assert.equal(selectSuite('security').folder, 'Security Matrix');
+  assert.equal(selectSuite('limits').folder, 'Rate Limits');
+  assert.throws(() => selectSuite('smoke'));
+});
+
+test('Postman CLI runner requires CA trust, private reports, and disabled cloud reporting', () => {
+  const args = commandArguments({
+    collection: '/repo/collection.json', folder: 'Security Matrix',
+    environment: '/private/env.json', certificate: '/private/ca.pem', report: '/private/raw.json'
+  });
+  assert.ok(args.includes('--ssl-extra-ca-certs'));
+  assert.ok(args.includes('--report-events=false'));
+  assert.ok(args.includes('--reporter-json-structure'));
+  assert.ok(args.includes('newman'));
+  assert.ok(args.includes('--reporter-json-omitAllHeadersAndBody'));
+  assert.ok(args.includes('--no-insecure-file-read'));
+  assert.ok(args.includes('--silent'));
+  assert.deepEqual(args.slice(-2), ['-i', 'Security Matrix']);
+  assert.ok(!args.includes('--insecure') && !args.includes('-k'));
+  assert.ok(!args.some((value) => value.includes('SECRET_TOKEN')));
+});
+
+test('Postman CLI environment stays local and separate from command arguments', () => {
+  const source = fixture();
+  const data = disposableEnvironment(source);
+  assert.equal(data.values.find((variable) => variable.key === 'jwtSecret').value, source.JWT_SECRET);
+  assert.equal(data.values.find((variable) => variable.key === 'adminPassword').value, source.CI_ADMIN_PASSWORD);
+  assert.equal(data.values.find((variable) => variable.key === 'baseUrl').value, 'https://localhost:4000');
+});
+
+test('Postman CLI compatible report accepts complete passes and rejects incomplete or unsafe reports', () => {
+  const success = () => ({ run: {
+    executions: [
+      { item: { name: 'A' }, assertions: [{ assertion: 'ok' }] },
+      { item: { name: 'B' }, assertions: [{ assertion: 'ok' }] }
+    ], failures: [], stats: { assertions: { total: 2, failed: 0 } }
+  } });
+  assert.equal(examineSummary(success(), ['A', 'B'], 0).passed, true);
+  assert.equal(examineSummary(success(), ['A', 'B', 'C'], 0).passed, false);
+  assert.equal(examineSummary(success(), ['A', 'B'], 1).passed, false);
+  const skipped = success(); skipped.run.executions[1].assertions[0].skipped = true;
+  assert.equal(examineSummary(skipped, ['A', 'B'], 0).passed, false);
+  const failed = success(); failed.run.executions[0].assertions[0].error = { message: 'private failure' };
+  assert.equal(examineSummary(failed, ['A', 'B'], 0).passed, false);
+  assert.equal(examineSummary({ run: { executions: [] } }, ['A'], 0).passed, false);
+  assert.equal(examineSummary({}, ['A'], 0).passed, false);
+  assert.equal(examineSummary({ run: { executions: [{ item: { name: 'A' } }] } }, ['A'], 0).passed, false);
+});
+
+test('Postman CLI replaces Newman without weakening the full dependency audit', () => {
+  const pkg = JSON.parse(read('api/package.json'));
+  assert.equal(pkg.devDependencies['postman-cli'], '1.76.0');
+  assert.equal(Object.hasOwn(pkg.devDependencies, 'newman'), false);
+  assert.match(workflow, /Install locked Postman CLI for API collection runs/);
+  assert.match(read('scripts/ci/integration.mjs'), /scripts\/ci\/postman\.cjs/);
+  assert.doesNotMatch(workflow, /--omit=dev|audit[^\n]*\|\|\s*true/);
 });

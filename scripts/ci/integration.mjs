@@ -136,7 +136,7 @@ try {
       'test', '--config', path.join(root, 'scripts/ci/playwright.config.cjs')
     ], { cwd: path.join(root, 'e2e'), timeout: 600000 });
   } else {
-    command(process.execPath, ['scripts/ci/newman.cjs', suite], { timeout: 360000 });
+    command(process.execPath, ['scripts/ci/postman.cjs', suite], { timeout: 360000 });
   }
 } catch {
   failed = true;

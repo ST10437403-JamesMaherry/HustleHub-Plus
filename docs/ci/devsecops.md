@@ -11,7 +11,7 @@ Assessment anchors:
 - INSY7314 POE, pp. 8-9: automatic GitHub Actions dependency installation, backend/frontend tests and builds, failing checks, static analysis and Compose orchestration.
 - INSY7314 POE, p. 16: a robust pipeline with security tests, both stack builds, correct failure propagation and both application containers running in the pipeline.
 - INSY7314 Module Manual, Learning Unit 6, especially pp. 155-159: workflow execution, interpreting failures and using repository secrets rather than committing credentials.
-- Lecturer POE Guidelines: backend unit/Newman testing, frontend unit/browser testing, container execution and inspectable evidence.
+- Lecturer POE Guidelines: backend unit/Postman CLI testing, frontend unit/browser testing, container execution and inspectable evidence.
 
 ## Files
 
@@ -20,23 +20,23 @@ Assessment anchors:
 | `.github/workflows/ci.yml` | Automatic workflow, independent checks, Sonar integration and final gate |
 | `scripts/ci/integration.mjs` | Isolated Compose lifecycle, identity checks, TLS export, suite execution and cleanup |
 | `scripts/ci/seed-admin.cjs` | Guarded administrator provisioning through stdin inside the disposable API container |
-| `scripts/ci/newman.cjs` | Runs the existing collections with in-memory credentials and complete-run checks |
+| `scripts/ci/postman.cjs` | Runs the existing v2.1 collections with a private temporary environment and complete-run checks |
 | `scripts/ci/playwright.config.cjs` | Runs the existing Chromium tests against the built Nginx client |
 | `scripts/ci/playwright-reporter.cjs` | Publishes browser case results without typed values, traces or attachments |
-| `scripts/ci/report.cjs` | Safe JUnit/JSON reporting, fixture validation and Newman result evaluation |
+| `scripts/ci/report.cjs` | Safe JUnit/JSON reporting, fixture validation and collection result evaluation |
 | `scripts/ci/normalise-coverage.cjs` | Converts valid LCOV source paths to repository-relative paths before upload |
 | `scripts/ci/gate.cjs` | Fails on unsuccessful or unexpectedly skipped required jobs |
-| `scripts/ci/contract.test.cjs` | Tests CI helper behaviour and security/configuration contracts |
+| `scripts/ci/contract.test.cjs` | Tests CI helper behaviour, security/configuration contracts and Postman CLI reporting |
 | `scripts/ci/negative-control.cjs` | Intentionally failing test used only by an explicit manual evidence run |
 | `ci-output/.gitignore` | Keeps generated reports out of Git |
 
-All application source, dependency manifests and existing test collections are preserved. No new npm package is required by the CI helpers.
+The application source and Postman collections are preserved. The API development dependency is now pinned to Postman CLI 1.76.0 instead of the discontinued Newman runner; the API lockfile must be regenerated with npm before committing.
 
 ## Workflow structure
 
 | Job | What executes | Failure condition |
 |---|---|---|
-| Configuration contracts | Existing 10 client-container checks, 17 Compose checks, 20 new CI checks and shell syntax checks | Failed assertion or syntax error |
+| Configuration contracts | Existing 10 client-container checks, 17 Compose checks, 25 CI checks and shell syntax checks | Failed assertion or syntax error |
 | Backend | Node 22, locked installation, existing backend tests and LCOV coverage | Install/test failure or missing coverage |
 | Frontend | Node 24, locked installation, Vitest coverage, ESLint and Vite production build | Install/test/lint/build failure or missing coverage |
 | Dependency audits | Independent `api`, `client` and `e2e` installations and npm audits | Any high/critical advisory or audit/registry error |
@@ -86,11 +86,11 @@ Never run the CI fixture against Atlas. Never publish its unauthenticated MongoD
 
 ## Certificate verification
 
-The existing certificate initializer provides a localhost certificate. The API's healthcheck verifies it inside the container. Newman receives the exported public certificate through `sslExtraCaCerts`; redirects and insecure TLS are disabled.
+The existing certificate initializer provides a localhost certificate. The API's healthcheck verifies it inside the container. Postman CLI receives the exported public certificate through `--ssl-extra-ca-certs`; redirects and insecure TLS are disabled.
 
-Playwright reuses the existing narrowly scoped certificate public-key pin and CA-verified Node fixtures. Its CI configuration disables automatic Vite startup, because the real frontend container must be tested. There is no `NODE_TLS_REJECT_UNAUTHORIZED=0`, Newman `--insecure`, browser-wide `ignoreHTTPSErrors`, or application TLS downgrade.
+Playwright reuses the existing narrowly scoped certificate public-key pin and CA-verified Node fixtures. Its CI configuration disables automatic Vite startup, because the real frontend container must be tested. There is no `NODE_TLS_REJECT_UNAUTHORIZED=0`, Postman CLI `--insecure`, browser-wide `ignoreHTTPSErrors`, or application TLS downgrade.
 
-## Postman/Newman integration details
+## Postman CLI integration details
 
 No collection is rewritten. Mark's functional collection runs in full; Ewald's security collection runs twice with distinct top-level folders, each on its own fresh stack:
 
@@ -100,11 +100,11 @@ No collection is rewritten. Mark's functional collection runs in full; Ewald's s
 | `security` | `postman/part3_security_collection.json` | `Security Matrix` |
 | `limits` | `postman/part3_security_collection.json` | `Rate Limits` |
 
-The runner uses Newman's library API to supply the same `baseUrl`, `clientOrigin`, `adminEmail`, `adminPassword` and `jwtSecret` variables without putting credentials on the command line. It checks callback errors, script/request/assertion failures, pending/skipped assertions, and whether every selected request definition was visited. A collection that stops early cannot claim success just because the last executed assertion passed.
+The runner supplies `baseUrl`, `clientOrigin`, `adminEmail`, `adminPassword` and `jwtSecret` through an environment file in a temporary directory restricted to the current user, never as command arguments. The CLI runs a local v2.1 JSON collection with `--report-events=false`, no Postman API key and a clean temporary home directory. It writes a Newman-schema JSON report only into this private directory. The runner checks command exit status, request/script/assertion failures, pending/skipped assertions, and whether every selected request definition was visited. A collection that stops early cannot appear successful because of its last passing assertion. Private JSON and environment files are removed before returning.
 
-The CI JUnit report records each emitted assertion plus one run-completeness check. Therefore its case count differs from older Newman reports which may collapse repeated requests. The console states actual executed request and assertion-event counts; these are not hard-coded success numbers.
+The CI JUnit report records each emitted assertion plus one run-completeness check. Therefore its case count differs from the earlier Newman reports which may collapse repeated requests. The console states actual executed request and assertion-event counts; these are not hard-coded success numbers.
 
-Do not run the original Newman npm scripts against the same process one after another. They retain their normal local usage and report paths; CI intentionally uses separate in-memory runners to avoid mutating submission evidence.
+The original Newman JUnit reports remain historical submission evidence. The local `api/package.json` commands now use Postman CLI and retain their existing paths; run them on a fresh API process. CI uses independent disposable stacks and writes only safe generated reports under `ci-output/`, never into submission evidence.
 
 ## Artifacts and diagnostics
 
@@ -113,7 +113,7 @@ Artifacts retained for 14 days:
 - `backend-coverage` and `frontend-coverage`: the respective `lcov.info` files, normalized to repository-relative source paths so separate analysis jobs can resolve them.
 - `integration-smoke`, `integration-functional`, `integration-security`, `integration-limits`, `integration-browser`: safe JUnit/JSON results, pre-test container status/UID snapshots, startup classifications and the final runner result.
 
-Raw error text, expected/actual response bodies, JWTs, environments, TLS private keys, Playwright HTML reports, traces and screenshots are not exported. Generated case identifiers avoid accidental sensitive data in assertion names. Console output identifies a failed Newman request by its static collection name, or a browser test by source file and line. Reproduce locally using the existing owner documentation when detailed payload diagnostics are needed.
+Raw error text, expected/actual response bodies, JWTs, environments, TLS private keys, Playwright HTML reports, traces and screenshots are not exported. Generated case identifiers avoid accidental sensitive data in assertion names. Console output identifies a failed collection request by its static collection name, or a browser test by source file and line. Reproduce locally using the existing owner documentation when detailed payload diagnostics are needed.
 
 An empty result set, skipped required test, script error, early abort or incomplete run fails. CI startup classifications include only `database.ready` / `app.start`, success/failure and a fixed phase name. Raw database exception messages are deliberately not copied.
 
@@ -128,6 +128,14 @@ In the repository, open Settings > Secrets and variables > Actions. Confirm that
 Do not add the Atlas URI, normal JWT secret, assessment password or Grafana token for this pipeline. Where branch rules are available, require `CI gate` on `dev` and avoid bypassing it. Ensure repository Actions policy permits the pinned official GitHub actions and SonarSource scan action.
 
 All action references are full commit SHAs verified against upstream tags on 8 November 2026. Check out with persisted Git credentials disabled; use a read-only repository token. Node dependency caches are deliberately disabled for this first pipeline to keep trust boundaries straightforward.
+
+## Postman CLI dependency and privacy contract
+
+`api/package.json` pins `postman-cli` at `1.76.0` and removes `newman`. Commit the `api/package-lock.json` regenerated using `npm --prefix api install --package-lock-only`, then `npm --prefix api ci`. Audit the full API dependency graph and confirm no high or critical advisories remain. Do not publish raw Postman reports or temporary environments.
+
+The CLI accepts local v2.1 JSON collections, folder selection using `-i`, a custom CA via `--ssl-extra-ca-certs`, and JSON reports using `--reporter-json-structure newman`. The report is analysed internally for the same complete-run contract used previously. No cloud login or API key is needed. `--report-events=false` disables automatic API Catalog/Application Inventory reporting; the child process also uses an isolated home and no inherited Postman key.
+
+This update changes the automation runner, not the existing collection requests, assertions, test data rules or assessment evidence. First execute the three Postman CLI suites on disposable Compose stacks and compare their pass/fail behavior to the previously recorded Newman results before merging.
 
 ## Local verification on macOS
 
@@ -147,7 +155,7 @@ npm --prefix client run lint
 VITE_API_URL=https://localhost:4000 npm --prefix client run build
 ```
 
-The baseline has 98 backend and 28 frontend tests. The new helper suite has 20 tests; existing container configuration suites total 27. Counts describe the source baseline, not a promise that a future run will pass.
+The baseline has 98 backend and 28 frontend tests. The new helper suite has 25 tests; existing container configuration suites total 27. Counts describe the source baseline, not a promise that a future run will pass.
 
 Check the full dependency graph, including development tooling:
 
@@ -203,7 +211,7 @@ Suggested PR title:
 
 Suggested brief description:
 
-> Adds automatic backend/frontend quality checks, isolated Docker-based Newman and Playwright tests, dependency audits, and the existing Sonar quality gate. Uses disposable credentials and MongoDB fixtures, publishes safe test reports, and fails the final gate when a required check fails. Includes CI helper tests and setup/evidence documentation.
+> Adds automatic backend/frontend quality checks, isolated Docker-based Postman CLI and Playwright tests, dependency audits, and the existing Sonar quality gate. Uses disposable credentials and MongoDB fixtures, publishes safe test reports, and fails the final gate when a required check fails. Includes CI helper tests and setup/evidence documentation.
 
 Add actual local and GitHub outcomes after running them; do not paste unverified passing totals.
 
@@ -230,7 +238,18 @@ Known separate follow-ups remain: explicit JWT algorithm pinning from the securi
 - https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax
 - https://docs.docker.com/reference/cli/docker/compose/up/
 - https://docs.npmjs.com/cli/commands/npm-audit/
-- https://github.com/postmanlabs/newman (library API, run summary, events and CA configuration)
+- https://learning.postman.com/docs/reference/newman-cli/migrate-to-postman-cli (Newman migration)
+- https://learning.postman.com/docs/postman-cli/postman-cli-reporters (Newman-schema JSON and reporter options)
 - https://docs.sonarsource.com/sonarqube-cloud/administering-sonarcloud/managing-subscription/subscription-plans
 - https://github.com/SonarSource/sonarqube-scan-action
 - Existing project contracts: `docs/testing/security-postman-suite.md`, `docs/testing/e2e-playwright.md`, `docs/security/static-analysis.md`, `docs/docker/compose.md`.
+
+## P3-16 CI runner update
+
+The archived Part 2 and Part 3 evidence was generated with Newman. New CI runs use Postman CLI 1.76.0 (`api/package.json`) against the **same exported v2.1 collections** and the same checked request contracts. The local `test:api` and security scripts now call `postman collection run` with the CA certificate. Do not overwrite previously committed evidence during CI; its isolated runner writes safe reports only to `ci-output/`.
+
+Install the locked dependency with `npm --prefix api ci`. Use a fresh HTTPS API instance for each complete suite, just as with Newman. Postman CLI local-file runs do not need an account or cloud API key; the CI runner additionally uses `--report-events=false` and removes raw temporary reports.
+
+## CI collection execution after P3-16
+
+The security collection and fixture contracts are unchanged. The P3-16 pipeline runs them with Postman CLI 1.76.0 instead of Newman's deprecated library. It selects the `Security Matrix` and `Rate Limits` folders separately using `-i`, against a freshly created disposable MongoDB replica set and a fresh API process each time. Certificate verification remains enabled. Generated administrator credentials and the JWT secret are provided through a restricted temporary environment, and exported CI evidence contains only anonymous case identifiers and pass/fail status. The original Newman reports remain historical assessment evidence.

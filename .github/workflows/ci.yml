@@ -154,7 +154,7 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - name: Install Newman for API collection runs
+      - name: Install locked Postman CLI for API collection runs
         if: matrix.suite == 'functional' || matrix.suite == 'security' || matrix.suite == 'limits'
         run: npm --prefix api ci --no-audit --no-fund
       - name: Install the locked browser test package and Chromium
