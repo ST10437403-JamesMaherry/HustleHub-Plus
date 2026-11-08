@@ -153,3 +153,94 @@ These risks remain after the controls above. Each is either accepted for this as
 | R12 | **Static-analysis scope.** `client/Dockerfile`, the Nginx config, the Compose files and `docker/` fall outside `sonar.sources`. The Free plan offers no custom gate and analyses only `dev`, and the Sonar token belongs to one team member's account. | T30 | Free-plan limits and the original source scope. | Add the infrastructure paths to `sonar.sources`; move to an organisation-owned token if the project continues. |
 | R13 | **Concurrent bookings are tested with doubles.** Concurrent duplicate requests are covered by unit tests with database doubles. The API suites run against a real replica set but send requests one at a time. | T20, T23 | The suites are deterministic by design. | A concurrent load test against the CI stack. |
 | R14 | **The CI gate only blocks if required.** The pipeline fails correctly, but merges are blocked only if `CI gate` is a required check in the branch rules, and that can't be confirmed from the source. | T29-T31 | Repository settings are outside the code. | Require `CI gate` on `dev` (repository owner). |
+
+## Part 3 security features: rationale
+
+The Part 2 controls covered transport, input, authentication, authorisation and errors. Two gaps were left: a JWT stayed valid after sign-out, and a repeated booking request could create duplicate financial records. The two Part 3 features close those gaps.
+
+### Session revocation (P3-05)
+
+**Gap.** Part 2 used stateless JWTs. Signing out only removed the token from `sessionStorage`, so a copied token kept working until it expired (T16). A deleted or demoted account also kept its old permissions until expiry (T17).
+
+**Why it matters.** The OWASP Session Management Cheat Sheet says sessions must be invalidated on the server side, not just in the browser. The OWASP JWT Cheat Sheet points out that JWTs have no built-in way to revoke a token and describes a server-side denylist to imitate logout. ASVS 5.0 covers both concerns in V7 (Session Management) and V9 (Self-contained Tokens).
+
+**Design.** Each user has a `sessionVersion` counter. The JWT carries the version it was issued with, and the middleware compares it with the stored value on every protected request. Sign-out increments the counter with a conditional atomic update, so a concurrent sign-out can't report a false success. A per-user counter was chosen over a token denylist because it:
+
+- needs no list of revoked tokens and no clean-up job;
+- reuses the user lookup that the middleware also needs for the live role check (T17);
+- rejects tokens issued before the feature existed, since they carry no version.
+
+**Trade-offs.** Sign-out ends sessions on all devices, and every protected request depends on MongoDB being available (R08).
+
+### Booking replay protection (P3-06)
+
+**Gap.** A double click, a client retry after a timeout, or a deliberately replayed request could create a second booking and a second simulated transaction (T20). The freelancer income and tax figures are calculated from those transactions, so duplicates would corrupt financial data.
+
+**Why it matters.** This is a business-logic integrity flaw (OWASP A06 Insecure Design; ASVS 5.0 V2 Validation and Business Logic). The IETF Idempotency-Key draft (still an Internet-Draft, so cited as work in progress) describes this exact pattern: a client-supplied key makes a non-idempotent `POST` safe to retry.
+
+**Design.**
+
+- The browser generates a UUID v4 per booking attempt with cryptographic randomness and keeps it for retries of that attempt.
+- A unique compound index on `{ client, requestKey }` enforces the rule in the database. Scoping the key to the authenticated client means one client's key can't reach another client's records.
+- A repeat with the same key and gig returns the original booking and price snapshot (`200`, `replayed: true`). The same key with a different gig is rejected (`409`).
+- The booking and its transaction are written in one MongoDB transaction, and the index is created before the API starts listening.
+
+Two simpler options were rejected. De-duplicating by client, gig and time window would block legitimate repeat purchases. Disabling the button in the UI doesn't stop a replay sent outside the browser.
+
+**Limits.** A purchase made deliberately with a new key is a new booking. Payments are simulated (R01), and concurrent duplicates are verified with database doubles (R13).
+
+## Summary matrix for the README
+
+A condensed version for the root README (P3-18). Paths are relative to the repository root.
+
+| Threat (OWASP Top 10:2025) | Control | Added in | Evidence |
+|---|---|---|---|
+| Credentials intercepted in transit (A04) | HTTPS API, HSTS, restricted CORS | Part 1/2 | `evidence/part3/security-tests/security-matrix.xml` |
+| Password guessing (A07) | Failed-login limiter, bcrypt work factor 12 | Part 1/2 | `evidence/part3/security-tests/security-limits.xml` |
+| Forged or altered JWT (A07) | Signature and expiry verified with a server-only secret | Part 1/2 | `security-matrix.xml` |
+| Stolen token reused after sign-out (A07) | **Server-side session version, checked on every request** | **P3-05** | `security-matrix.xml`, `evidence/part3/e2e/playwright-junit.xml` |
+| Access to other users' data (A01) | Role guards and ownership-filtered queries | Part 1/2 | `security-matrix.xml`, `evidence/part3/e2e/screenshots/07-client-access-denied.png` |
+| Price, owner or extra fields injected (A01) | Allowlist validators; server-derived price and owner | Part 1/2, P3-15 | `evidence/part3/unit-tests/api-node-test.xml` |
+| NoSQL injection (A05) | Primitive-type validation; plain-string lookups | Part 1/2, P3-15 | `api-node-test.xml`, `evidence/part3/static-analysis/` |
+| Stored XSS (A05) | Text sanitisation, React escaping, API CSP | Part 1/2 | `api-node-test.xml` |
+| Duplicate bookings and transactions (A06) | **`Idempotency-Key`, unique index, MongoDB transaction** | **P3-06** | `security-matrix.xml` |
+| Internal errors exposed (A10) | Central error handler with generic responses | Part 1/2 | `security-matrix.xml` |
+| Unnoticed attacks; secrets in logs (A09) | Allowlisted structured events, Grafana Cloud dashboard | P3-07, P3-08 | `evidence/part3/logging/` |
+| Vulnerable dependencies; insecure code merged (A03, A08) | npm audit, SonarQube quality gate, blocking CI gate | P3-15, P3-16 | `evidence/part3/static-analysis/`, `evidence/part3/ci/github-actions-runs.png` |
+| Container or service exposure (A02) | Non-root images, localhost-only ports, isolated CI database | P3-09 to P3-11, P3-16 | `docs/docker/compose.md` |
+
+Accepted limitations are listed in [Residual risks](#residual-risks).
+
+## Sources
+
+Reviewed on 8 November 2026. Each source was read at the address given. Draft standards are marked as such.
+
+| Source | Used for |
+|---|---|
+| [OWASP Top 10:2025](https://top10.owasp.org/2025/) | Category IDs in every table |
+| [OWASP ASVS 5.0.0](https://asvs.owasp.org/) (released 30 May 2025) | V2, V7 and V9 references in the feature rationale |
+| [Microsoft Threat Modeling Tool: threats (STRIDE)](https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats) | STRIDE categories |
+| [RFC 8725: JSON Web Token Best Current Practices](https://www.rfc-editor.org/rfc/rfc8725.html), section 3.1 | T15, R04 (explicit algorithm list) |
+| [OWASP Session Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html) | T16, P3-05 rationale |
+| [OWASP JSON Web Token Cheat Sheet for Java](https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet) | T16, P3-05 rationale (revocation; the guidance is language-independent) |
+| [OWASP Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html) | T13 (bcrypt work factor of at least 10) |
+| [OWASP Mass Assignment Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Mass_Assignment_Cheat_Sheet.html) | T08, T19 |
+| [OWASP Input Validation Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html) | T05-T08 (allowlist validation) |
+| [OWASP WSTG: Testing for NoSQL Injection](https://wstg.owasp.org/latest/4-Web_Application_Security_Testing/07-Injection/05.6-NoSQL_Injection) | T07 |
+| [OWASP: Regular expression Denial of Service (ReDoS)](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS) | T09 |
+| [OWASP Error Handling Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html) | T10 |
+| [OWASP Denial of Service Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html) | T06, T11, T21 |
+| [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html) | T22, T25 (data to exclude from logs) |
+| [OWASP HTTP Headers Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) | T01-T04 |
+| [OWASP Docker Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html) | T32 (non-root user) |
+| [IETF draft: The Idempotency-Key HTTP Header Field](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/) (draft 08, October 2026, work in progress) | T20, P3-06 rationale |
+| [MongoDB: Transactions](https://www.mongodb.com/docs/manual/core/transactions/) | T23 (supported on replica sets and sharded clusters) |
+| [Express: Production Best Practices, Security](https://expressjs.com/en/advanced/best-practice-security.html) | T01, T04 |
+| [Helmet](https://helmet.js.org/) | T01, T03 |
+| [MDN: Strict-Transport-Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security) | T01 |
+| [MDN: Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy) | T03, T05, R05 |
+| [express-rate-limit: Stores](https://express-rate-limit.mintlify.app/reference/stores) | R06 (memory store is per process) |
+| [GitHub Docs: Using secrets in GitHub Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions) | T31 (no secrets for fork-triggered runs) |
+| [Grafana Cloud: Access policies](https://grafana.com/docs/grafana-cloud/security-and-account-management/authentication-and-permissions/access-policies/) | T26 (`logs:write` scope) |
+
+Project documents used: [architecture](../architecture/hustlehub-architecture.md), [session revocation](session-revocation.md), [booking replay protection](booking-idempotency.md), [static analysis](static-analysis.md), [structured events](../monitoring/structured-events.md), [Grafana Cloud](../monitoring/grafana-cloud.md), [security Postman suite](../testing/security-postman-suite.md), [DevSecOps pipeline](../ci/devsecops.md) and [Compose](../docker/compose.md).
