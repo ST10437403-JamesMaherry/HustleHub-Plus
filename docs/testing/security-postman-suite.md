@@ -8,7 +8,7 @@ Every response in the suite is also checked at collection level. A response fail
 
 - carries `X-Powered-By`, or lacks `X-Content-Type-Options: nosniff` or a `Content-Security-Policy` header;
 - contains a stack-trace frame, `node_modules`, a file-system path, or a MongoDB/Mongoose or JavaScript error name (`MongoServerError`, `CastError`, `ValidationError`, `E11000`, `SyntaxError` and similar);
-- contains `JWT_SECRET`, `MONGO_URI`, a `mongodb://` connection string or a private-key marker;
+- contains `JWT_SECRET`, `MONGO_URI`, a `[REDACTED_DATABASE_URI] connection string or a private-key marker;
 - contains the administrator password, the `jwtSecret` value, the run's test password or the run's `Idempotency-Key`;
 - contains a JWT anywhere except a successful login response;
 - has a JSON field named `password`, `passwordHash`, `sessionVersion`, `requestKey`, `secret`, `stack`, `_id` or `__v` at any depth;
@@ -20,7 +20,7 @@ Every response in the suite is also checked at collection level. A response fail
 |---|---|
 | `postman/part3_security_collection.json` | **HustleHub+ Part 3 - Security Matrix**, with two top-level folders: `Security Matrix` and `Rate Limits`. |
 | `postman/part3_security_environment.json` | **HustleHub+ Part 3 - Security Local**: `baseUrl`, `clientOrigin`, `adminEmail`, and empty secret-type `adminPassword` and `jwtSecret` values. |
-| `api/package.json` | `test:security` and `test:security:limits` Newman scripts. |
+| `api/package.json` | `test:security` and `test:security:limits` Postman CLI scripts. |
 
 Neither JSON file contains a password, signing secret or captured token. Test-account passwords and request keys are generated for each run.
 
@@ -103,7 +103,7 @@ The pre-request script mints tokens with CryptoJS, which is built into the Postm
 - The provisioned administrator `admin.demo@hustlehub.test` in that database. Register it as a client, then set `role: "admin"` in MongoDB; there is no provisioning API.
 - `CLIENT_ORIGIN` in `api/.env` matching `clientOrigin`, normally `http://localhost:5173`.
 - `JWT_EXPIRES_IN=1h` or shorter. The suite rejects longer token lifetimes.
-- Dependencies installed in `api` (`npm ci`), which includes Newman 6.2.2.
+- Dependencies installed in `api` (`npm ci`), which includes Postman CLI 1.76.0.
 
 ## Run it (PowerShell 7, from the `api` folder)
 
@@ -134,7 +134,7 @@ Expected results with zero failures:
 | Security matrix | 103 | 103 | 278 | `evidence/part3/security-tests/security-matrix.xml` |
 | Rate limits | 13 | 34 | 102 | `evidence/part3/security-tests/security-limits.xml` |
 
-The rate-limit loops repeat their request until the limiter blocks it, which is why the limits cycle executes more requests than it defines. Newman exits with a non-zero code on any failure.
+The rate-limit loops repeat their request until the limiter blocks it, which is why the limits cycle executes more requests than it defines. Postman CLI exits with a non-zero code on any failure.
 
 To run in the Postman app, import both JSON files, enter `adminPassword` and `jwtSecret` as local current values only, run **one** top-level folder per fresh API process with **Keep variable values** enabled, and do not export the environment with those values filled in.
 
@@ -144,12 +144,12 @@ To run in the Postman app, import both JSON files, enter `adminPassword` and `jw
 - The fresh-start checks and the matrix's `RateLimit-Remaining` assertion stop the run with a clear message instead of producing a run that passes or fails depending on earlier traffic.
 - The rate-limit cycle asserts exact remaining counts (9, 8, 7) and bounds every loop by the configured limit.
 - The first failed assertion stops the run, so later requests never run against missing state. Each folder also checks that the previous folder finished in the same cycle.
-- Token times are relative to the Newman host clock. The API and Newman should share a clock; the control token tolerates up to ten minutes of skew.
+- Token times are relative to the collection-runner host clock. The API and runner should share a clock; the control token tolerates up to ten minutes of skew.
 - Each cycle leaves its test accounts and two bookings with their transactions (matrix) in the database, as the Part 2 suite does. The fixture gigs are removed.
 
 ## Not covered
 
-- **Concurrent duplicate submissions.** Newman sends requests one at a time, so two simultaneous bookings with the same key are not exercised here. The unit suite covers the logic with doubles; a live race needs parallel requests against a replica set.
+- **Concurrent duplicate submissions.** The CLI sends requests one at a time, so two simultaneous bookings with the same key are not exercised here. The unit suite covers the logic with doubles; a live race needs parallel requests against a replica set.
 - **Deleted accounts and changed roles.** No API route deletes a user or changes a role, so these `401` paths remain covered by `api/test/sessionRevocation.test.js`.
 - **`500 Authentication service unavailable`** requires a database outage and is covered by the unit tests.
 - **Signing algorithm.** `verifyToken` does not pin `algorithms`, so a token signed with the same secret using HS384 or HS512 is accepted. This needs the secret and is not asserted by the suite.
@@ -157,10 +157,13 @@ To run in the Postman app, import both JSON files, enter `adminPassword` and `jw
 
 ## Continuous integration (P3-16)
 
-James can wire both cycles into GitHub Actions without changing the collection:
+The GitHub Actions workflow runs the security matrix and rate-limit folder on **separate disposable Docker Compose stacks**, each with its own MongoDB replica set, HTTPS certificate, JWT secret and administrator fixture. The CLI uses local collection files and `--report-events=false`. It verifies the generated public certificate without disabling TLS checks, rejects missing or skipped requests, and emits only sanitized pass/fail artifacts under `ci-output/`. There are no production database secrets or assessment credentials in CI.
 
-1. Start a MongoDB replica-set service, generate a localhost certificate, run `npm ci` in `api`, and provision the administrator in the CI database (register, then promote with `mongosh`).
-2. Generate a fresh `JWT_SECRET` for the job (for example `openssl rand -hex 32`), mask it, and give the same value to the API process and to Newman as `jwtSecret`. `adminPassword` comes from a repository secret (or is generated with the administrator in step 1). Neither value is committed.
-3. Start the API in the background, wait for `/health`, run `npm run test:security --silent -- --env-var "adminPassword=$ADMIN_PASSWORD" --env-var "jwtSecret=$JWT_SECRET"`, then stop the API.
-4. Start a **new** API process, wait for `/health`, run `npm run test:security:limits --silent`, then stop it. The two cycles must not share an API process.
-5. Upload `evidence/part3/security-tests/*.xml` as artefacts. Newman's exit code fails the job.
+Run from the repository root to reproduce these two suites on a machine with Docker Desktop running:
+
+```bash
+node scripts/ci/integration.mjs security
+node scripts/ci/integration.mjs limits
+```
+
+The archived Newman evidence remains unchanged. Fresh CI reports use generated case identifiers and do not replace the submitted screenshots or JUnit files.

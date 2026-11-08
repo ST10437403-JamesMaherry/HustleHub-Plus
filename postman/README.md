@@ -2,7 +2,7 @@
 
 The functional Postman collection reviews the real MongoDB-backed API end to end. It creates unique test accounts, captures JWTs and identifiers, runs the marketplace workflow, and checks role restrictions, ownership, validation and rate limiting. Part 3 extends it with the booking idempotency contract, year-to-date income, the monthly breakdown and the illustrative tax estimate. Calculated values are recalculated in the test script, not just checked for `200 OK`.
 
-The same collection runs in Postman and through the `test:api` npm script (Newman).
+The same collection runs in Postman and through the `test:api` npm script (Postman CLI).
 
 ## Files
 
@@ -12,11 +12,11 @@ The same collection runs in Postman and through the `test:api` npm script (Newma
 | `postman_environment.json` | **HustleHub+ Functional - Local**: `baseUrl`, `clientOrigin`, `adminEmail` and a **blank** `adminPassword`. |
 | `part3_security_collection.json` / `part3_security_environment.json` | Separate Part 3 security matrix (P3-13), documented in [`docs/testing/security-postman-suite.md`](../docs/testing/security-postman-suite.md). |
 
-Neither functional JSON file contains a password, JWT, run identifier or `Idempotency-Key`. Supply `adminPassword` at run time (Newman) or as a local current value (Postman). Test-account passwords, emails and booking keys are generated for each run and cleared from the exported collection.
+Neither functional JSON file contains a password, JWT, run identifier or `Idempotency-Key`. Supply `adminPassword` at run time (CLI) or as a local current value (Postman desktop). Test-account passwords, emails and booking keys are generated for each run and cleared from the exported collection.
 
 ## Prerequisites
 
-- Dependencies are installed in `api` (Newman is a development dependency): `npm --prefix api ci`.
+- Dependencies are installed in `api` (Postman CLI is a development dependency): `npm --prefix api ci`.
 - `api/.env` points `MONGO_URI` at the assessment database, with `USE_HTTPS=true`. Booking creation uses MongoDB transactions, so the database must be Atlas or another replica set.
 - The certificate `api/certs/localhost-cert.pem` exists and includes `DNS:localhost` in its subject alternative names (see the root `README.md`).
 - `baseUrl` is the API origin only: `https://localhost:4000`, without `/api` or a trailing slash. The collection refuses any origin that is not local HTTPS.
@@ -94,7 +94,7 @@ The tax oracle follows the method in [`docs/finance/tax-estimation.md`](../docs/
 
 The API uses a locally generated, self-signed certificate. Trust that specific certificate rather than turning verification off:
 
-- **Newman:** `test:api` passes `--ssl-extra-ca-certs ./certs/localhost-cert.pem`. Do not use `--insecure` or `-k`.
+- **Postman CLI:** `test:api` passes `--ssl-extra-ca-certs ./certs/localhost-cert.pem`. Do not use `--insecure` or `-k`.
 - **Postman:** **Settings > Certificates > CA certificates**, select `api/certs/localhost-cert.pem`, and leave **SSL certificate verification** on.
 
 If the certificate is regenerated, restart the API and re-select the file in Postman.
@@ -112,7 +112,7 @@ The API must report a successful MongoDB connection and HTTPS startup. The colle
 
 Do not run this collection, the security collection or the Playwright suite on the same API process. Each one consumes the shared registration, login and booking allowances.
 
-## Run with Newman
+## Run with Postman CLI
 
 In a second terminal at the repository root, after a fresh API start:
 
