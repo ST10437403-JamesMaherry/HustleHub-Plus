@@ -102,3 +102,54 @@ OWASP Top 10:2025 categories used: A01 Broken Access Control, A02 Security Misco
 ### Sources
 
 https://top10.owasp.org/2025/
+
+## Verification evidence
+
+Each threat links to the checks that exercise its control. *CI* means the check also runs in the P3-16 pipeline; integration suites run against a disposable Docker stack with a real MongoDB replica set.
+
+| Threats | Automated check | CI | Evidence |
+|---|---|---|---|
+| T01-T04 | P3-13 security matrix, folder *08 Security Protections* (HTTPS, headers, CSP, CORS preflight) | `integration (security)` | `evidence/part3/security-tests/security-matrix.xml` |
+| T05 | `api/test/requestValidation.test.js` (sanitisation removes markup); P3-13 folder *07 Malformed Input and Safe Errors* | `backend`, `integration (security)` | `evidence/part3/unit-tests/api-node-test.xml` |
+| T06, T10 | `api/test/securityMiddleware.test.js` (malformed JSON, no exception details); P3-13 folder 07 | `backend`, `integration (security)` | `api-node-test.xml`, `security-matrix.xml` |
+| T07 | `requestValidation.test.js` (NoSQL-operator and object-valued credentials rejected); `staticAnalysisFixes.test.js` (plain-string lookups); P3-13 folder 07 | `backend`, `integration (security)` | `api-node-test.xml`; Sonar rule S5147 closed (`evidence/part3/static-analysis/`) |
+| T08, T19 | `requestValidation.test.js` (mass-assignment fields blocked); `securityMiddleware.test.js` (client-supplied price and ownership rejected); `staticAnalysisFixes.test.js` | `backend` | `api-node-test.xml`; Sonar rule S4684 closed |
+| T09 | `staticAnalysisFixes.test.js` (50,000-character slash run, email edge cases) | `backend` | Sonar rule S8786 closed |
+| T11, T21 | P3-13 rate-limit cycle, folders *11 Booking Limiter* and *13 Login Limiter*, each on a fresh API process | `integration (limits)` | `evidence/part3/security-tests/security-limits.xml` |
+| T12 | Playwright *a wrong password is rejected without creating a session* | `integration (browser)` | `evidence/part3/e2e/screenshots/06-login-rejected.png` |
+| T13, T14 | `requestValidation.test.js` (bcrypt byte limit, administrator self-registration blocked) | `backend` | `api-node-test.xml` |
+| T15 | `securityMiddleware.test.js` (corrupted and expired tokens); P3-13 folder *02 Authentication and Forged Tokens* (forged, expired and altered JWTs) | `backend`, `integration (security)` | `security-matrix.xml` |
+| T16, T17 | `api/test/sessionRevocation.test.js`; `client/src/test/logout.test.jsx`; P3-13 folder *03 Session Revocation*; Playwright *sign-out revokes the session* | `backend`, `frontend`, `integration (security, browser)` | `security-matrix.xml`, `evidence/part3/e2e/playwright-junit.xml` |
+| T18 | P3-13 folders *04 Role Isolation* and *05 Cross-account Isolation*; Playwright *a client cannot open freelancer pages* | `integration (security, browser)` | `security-matrix.xml`, `e2e/screenshots/07-client-access-denied.png` |
+| T20 | `api/test/bookingIdempotency.test.js` (replay, conflict, client scoping, concurrent submissions); `client/src/test/bookingIdempotency.test.jsx`; P3-13 folder *06 Idempotency Misuse* | `backend`, `frontend`, `integration (security)` | `security-matrix.xml` |
+| T22, T25 | `api/test/logging.test.js` (allowlisted fields, server request IDs); Grafana privacy query | `backend` | `evidence/part3/logging/explore-request-correlation.png`, `privacy-check-no-results.png` |
+| T23 | `bookingIdempotency.test.js` (failed transaction insert rolls back the booking); functional suite on a real replica set | `backend`, `integration (functional)` | `evidence/part3/newman/functional-report.xml` |
+| T24, T32 | `scripts/composeConfig.test.mjs`, `client/docker/containerConfig.check.mjs`, `api/test/containerHealth.test.js`; integration runner checks non-root UIDs, `127.0.0.1` ports and the CI database URI | `configuration`, `integration (smoke)` | `docs/ci/devsecops.md` |
+| T26, T27 | `api/test/lokiTransport.test.js` (unsafe settings disable shipping without printing the token); dashboard | `backend` | `evidence/part3/logging/dashboard-overview.png` |
+| T28 | The P3-13 suite fails if any response contains a secret, password, connection string or internal field; Postman environments hold only empty secret values; CI generates its own secrets | `integration (security)`, workflow design | `docs/testing/security-postman-suite.md`, `docs/ci/devsecops.md` |
+| T29 | `npm audit --audit-level=high` for `api`, `client` and `e2e` | `dependencies` | `evidence/part3/ci/github-actions-runs.png` |
+| T30 | SonarQube Cloud quality gate; final CI gate | `sonar`, `gate` | `evidence/part3/static-analysis/`, `evidence/part3/ci/github-actions-runs.png` |
+| T31 | Workflow review: SHA-pinned actions, read-only permissions, fork refusal step | Workflow design | `.github/workflows/ci.yml` |
+
+**Recorded CI runs (HustleHub DevSecOps, 8 November 2026):** the pull-request run for #123 (run #4) and the `dev` run after the merge (run #5, commit `cac4305`) both completed successfully ([`evidence/part3/ci/github-actions-runs.png`](../../evidence/part3/ci/github-actions-runs.png)). Runs #1 and #2 on the same branch failed before the integration runner was fixed, which shows failures stop the workflow. The deliberate `failure_probe` run and its screenshots are still to come, as part of P3-16's evidence (see `evidence/part3/README.md`).
+
+## Residual risks
+
+These risks remain after the controls above. Each is either accepted for this assessment or has a named follow-up.
+
+| ID | Risk | Threats | Why it remains | Mitigation or owner |
+|---|---|---|---|---|
+| R01 | **Payments are simulated.** No payment provider, card data or real money is involved. | T19, T20, T23 | Out of scope for the module. Replay protection guards the booking records, not a real charge. | A real deployment would need a PCI-compliant provider, using the provider's own idempotency support. |
+| R02 | **TLS is local only.** The API uses a self-signed localhost certificate, and the frontend is served over plain HTTP on localhost. | T01 | Local development and assessment setup. | A public deployment needs a CA-issued certificate and HTTPS for the frontend as well. |
+| R03 | **Tax figures are illustrative.** The estimate annualises year-to-date income against the SARS 2027 tables and is not tax advice. | n/a | A deliberate feature limitation, shown in the UI and API response. | See `docs/finance/tax-estimation.md`. |
+| R04 | **JWT algorithm not pinned.** P3-13 showed that an HS512 token signed with the same secret is accepted. | T15 | Exploiting it needs the signing secret, so the practical risk is low, but RFC 8725 requires an explicit algorithm list. | Pass `algorithms: ['HS256']` to `jwt.verify` (James; also listed in `docs/ci/devsecops.md`). |
+| R05 | **Token readable by XSS.** The JWT is kept in `sessionStorage`, and the SPA's Nginx config sends no Content-Security-Policy. | T05 | Sanitisation and React escaping reduce XSS risk but do not remove it. | Add a CSP to `client/nginx/default.conf`; consider an HttpOnly cookie design. |
+| R06 | **Rate limits live in process memory.** Counters reset on restart, aren't shared between instances, and are kept per IP. | T11, T21 | Single-instance deployment. | A shared store (for example Redis) is needed before scaling out. Side effects: users behind one IP share a limit; after a lockout even the correct password is refused for 15 minutes; booking and registration limiters also count rejected (400) requests. |
+| R07 | **Account enumeration through registration.** Registering an existing email returns 409. | T12 | Clear feedback for genuine users; limited to 10 attempts per hour. | Accepted. A generic response with email confirmation would remove it. |
+| R08 | **Sign-out limits.** Sign-out ends every session on every device. If the sign-out request fails, the token stays valid until it expires (`JWT_EXPIRES_IN`, 1 hour in the example config). | T16 | Per-device sessions need a session store; the UI warns when server revocation isn't confirmed. | Accepted for Part 3. |
+| R09 | **Monitoring without alerting.** Grafana shows dashboards but has no alert rules, and the log token is short-lived and must be renewed. | T27 | Dashboards were the P3-08 scope. | Add alert rules for repeated sign-in failures and API errors; renew the token before it expires. |
+| R10 | **Demo password in Git history.** The old admin password was blanked in `postman/postman_environment.json` during P3-16, but earlier commits still contain it. | T28 | Removing a file value does not change history. | Rotate the administrator password (P3-18). |
+| R11 | **Moderate and low advisories pass CI.** Only high and critical advisories fail the dependency job. | T29 | A deliberate threshold. | Review moderate findings at release (P3-20). |
+| R12 | **Static-analysis scope.** `client/Dockerfile`, the Nginx config, the Compose files and `docker/` fall outside `sonar.sources`. The Free plan offers no custom gate and analyses only `dev`, and the Sonar token belongs to one team member's account. | T30 | Free-plan limits and the original source scope. | Add the infrastructure paths to `sonar.sources`; move to an organisation-owned token if the project continues. |
+| R13 | **Concurrent bookings are tested with doubles.** Concurrent duplicate requests are covered by unit tests with database doubles. The API suites run against a real replica set but send requests one at a time. | T20, T23 | The suites are deterministic by design. | A concurrent load test against the CI stack. |
+| R14 | **The CI gate only blocks if required.** The pipeline fails correctly, but merges are blocked only if `CI gate` is a required check in the branch rules, and that can't be confirmed from the source. | T29-T31 | Repository settings are outside the code. | Require `CI gate` on `dev` (repository owner). |
