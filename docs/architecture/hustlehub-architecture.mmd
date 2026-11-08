@@ -1,45 +1,53 @@
 flowchart TB
     subgraph BROWSER["Browser boundary: untrusted client"]
         ACTORS["Client / Freelancer / Admin"]
-        REACT["React / Vite / React Router"]
-        SESSION["AuthContext / sessionStorage"]
+        REACT["React / React Router"]
+        SESSION["AuthContext / sessionStorage JWT"]
         ACTORS --> REACT
         REACT <--> SESSION
     end
 
-    TOOLS["Postman / Newman / curl"]
+    TOOLS["Postman CLI / Playwright / curl"]
     HTTPS{{"API boundary: HTTPS / TLS"}}
 
-    subgraph SERVER["Application boundary: Node.js / Express"]
-        HEADERS["Helmet / API CSP / restricted CORS"]
-        BODY["JSON parsing: 10kb body limit"]
-        ROUTES["Express route selection"]
-        AUTH["Register / login: rate limits and input checks"]
-        JWT["Protected routes: JWT verification"]
-        RBAC["Role authorisation"]
-        INPUT["Route-specific limits, sanitisation and validation"]
-        CTRL["Controllers: business rules and ownership"]
-        CREDENTIALS["bcrypt / JWT issuing"]
-        INCOME["Income: sum confirmed transactions"]
-        MONGOOSE["Mongoose models, queries and sessions"]
-        ERRORS["Controlled 404 and error handlers"]
+    subgraph HOST["Docker host: ports bound to 127.0.0.1"]
+        NGINX["Client container: Nginx, non-root, built React app"]
 
-        HEADERS --> BODY --> ROUTES
-        ROUTES -->|"Registration / login"| AUTH
-        ROUTES -->|"Protected routes"| JWT
-        ROUTES -->|"Public gig reads"| CTRL
-        AUTH --> CTRL
-        JWT -->|"Account profile"| CTRL
-        JWT -->|"Role-restricted routes"| RBAC
-        RBAC -->|"Where configured"| INPUT
-        RBAC -->|"Reads and deletes"| CTRL
-        INPUT --> CTRL
-        CTRL --> CREDENTIALS
-        CTRL --> INCOME --> MONGOOSE
-        CTRL -->|"Other database operations"| MONGOOSE
-        BODY -->|"Parsing errors"| ERRORS
-        ROUTES -->|"Unmatched routes"| ERRORS
-        CTRL -->|"Forwarded failures"| ERRORS
+        subgraph SERVER["API container: Node.js / Express, non-root"]
+            HEADERS["Helmet / API CSP / restricted CORS"]
+            BODY["JSON parsing: 10kb body limit"]
+            ROUTES["Express route selection"]
+            AUTH["Register / login: rate limits and input checks"]
+            JWT["Protected routes: JWT verification and session-version check"]
+            RBAC["Role authorisation"]
+            INPUT["Route-specific limits, sanitisation and validation"]
+            CTRL["Controllers: ownership and booking replay protection"]
+            CREDENTIALS["bcrypt / JWT issuing / sign-out revocation"]
+            INCOME["Income and illustrative tax"]
+            MONGOOSE["Mongoose models, queries and transactions"]
+            ERRORS["Controlled 404 and error handlers"]
+            LOGGER["Structured event logger: allowlisted fields"]
+
+            HEADERS --> BODY --> ROUTES
+            ROUTES -->|"Registration / login"| AUTH
+            ROUTES -->|"Protected routes"| JWT
+            ROUTES -->|"Public gig reads"| CTRL
+            AUTH --> CTRL
+            JWT -->|"Account profile / sign-out"| CTRL
+            JWT -->|"Role-restricted routes"| RBAC
+            RBAC -->|"Where configured"| INPUT
+            RBAC -->|"Reads and deletes"| CTRL
+            INPUT --> CTRL
+            CTRL --> CREDENTIALS
+            CTRL --> INCOME --> MONGOOSE
+            CTRL -->|"Other database operations"| MONGOOSE
+            JWT -->|"Live user, role and session version"| MONGOOSE
+            BODY -->|"Parsing errors"| ERRORS
+            ROUTES -->|"Unmatched routes"| ERRORS
+            CTRL -->|"Forwarded failures"| ERRORS
+            ROUTES -.->|"Request outcomes"| LOGGER
+            ERRORS -.-> LOGGER
+        end
     end
 
     DBBOUNDARY{{"Database boundary: Atlas connection"}}
@@ -47,15 +55,36 @@ flowchart TB
         MONGO[("hustlehub database")]
     end
 
+    LOGBOUNDARY{{"Log boundary: HTTPS, write-only token"}}
+    subgraph MONITOR["Monitoring: Grafana Cloud"]
+        LOKI["Loki logs and security dashboard"]
+    end
+
+    subgraph PIPE["Delivery pipeline: GitHub"]
+        REPO["Repository: dev and pull requests"]
+        GHA["GitHub Actions: tests, audit, Docker integration"]
+        SONAR["SonarQube Cloud quality gate"]
+        GATE["CI gate"]
+        REPO --> GHA
+        GHA --> SONAR
+        GHA --> GATE
+        SONAR --> GATE
+    end
+
+    REACT -->|"Loads the app"| NGINX
     REACT -->|"HTTPS API requests"| HTTPS
     TOOLS -->|"HTTPS API requests"| HTTPS
     HTTPS --> HEADERS
     MONGOOSE --> DBBOUNDARY --> MONGO
+    LOGGER --> LOGBOUNDARY --> LOKI
 
     classDef default fill:#111111,stroke:#737373,color:#f5f5f5
     classDef boundary fill:#080808,stroke:#d4d4d4,stroke-width:2px,color:#ffffff
-    class HTTPS,DBBOUNDARY boundary
+    class HTTPS,DBBOUNDARY,LOGBOUNDARY boundary
     style BROWSER fill:#0a0a0a,stroke:#525252,color:#f5f5f5
+    style HOST fill:#050505,stroke:#3f3f3f,color:#f5f5f5
     style SERVER fill:#0a0a0a,stroke:#525252,color:#f5f5f5
     style DATA fill:#0a0a0a,stroke:#525252,color:#f5f5f5
+    style MONITOR fill:#0a0a0a,stroke:#525252,color:#f5f5f5
+    style PIPE fill:#0a0a0a,stroke:#525252,color:#f5f5f5
     linkStyle default stroke:#a3a3a3,color:#a3a3a3
