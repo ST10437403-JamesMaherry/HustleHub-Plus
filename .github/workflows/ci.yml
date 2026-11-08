@@ -113,3 +113,44 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
           overwrite: true
+
+  integration:
+    name: Isolated Docker integration (${{ matrix.suite }})
+    needs: [configuration, backend, frontend]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        suite: [smoke, functional, security, limits, browser]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install Newman for API collection runs
+        if: matrix.suite == 'functional' || matrix.suite == 'security' || matrix.suite == 'limits'
+        run: npm --prefix api ci --no-audit --no-fund
+      - name: Install the locked browser test package and Chromium
+        if: matrix.suite == 'browser'
+        run: |
+          npm --prefix e2e ci --no-audit --no-fund
+          npm --prefix e2e run install:browser
+      - name: Build, start, verify and test the disposable stack
+        run: node scripts/ci/integration.mjs "${{ matrix.suite }}"
+      - name: Publish safe integration reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: integration-${{ matrix.suite }}
+          path: ci-output/integration-${{ matrix.suite }}/
+          if-no-files-found: warn
+          retention-days: 14
+          overwrite: true
+      - name: Remove only the disposable CI project
+        if: always()
+        run: docker compose --env-file /dev/null -p hustlehub-ci -f compose.yaml -f compose.ci.yaml down --volumes --remove-orphans
