@@ -1,0 +1,115 @@
+name: HustleHub DevSecOps
+
+on:
+  push:
+    branches: [dev, main, 'feature/**', 'fix/**', 'chore/**']
+  pull_request:
+    branches: [dev, main]
+  workflow_dispatch:
+    inputs:
+      failure_probe:
+        description: 'Run a deliberately failing backend test for CI evidence'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  CI: 'true'
+  GRAFANA_LOKI_URL: ''
+  GRAFANA_LOKI_USER: ''
+  GRAFANA_LOKI_TOKEN: ''
+
+jobs:
+  configuration:
+    name: Configuration contracts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Container and pipeline configuration checks
+        run: |
+          node --test client/docker/containerConfig.check.mjs
+          node --test scripts/composeConfig.test.mjs
+          sh -n docker/cert-init.sh
+          bash -n docker/mongo-init.sh
+
+  backend:
+    name: Backend unit tests and coverage
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - run: npm --prefix api ci --no-audit --no-fund
+      - name: Backend coverage
+        run: |
+          npm --prefix api run test:coverage
+          node scripts/ci/normalise-coverage.cjs api
+          test -s api/coverage/lcov.info
+      - name: Deliberately failing test (manual evidence only)
+        if: github.event_name == 'workflow_dispatch' && inputs.failure_probe
+        run: node scripts/ci/negative-control.cjs
+      - name: Backend coverage artifact
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: backend-coverage
+          path: api/coverage/lcov.info
+          if-no-files-found: warn
+          retention-days: 14
+          overwrite: true
+
+  frontend:
+    name: Frontend tests, lint and production build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: npm --prefix client ci --no-audit --no-fund
+      - name: Frontend tests and coverage without rewriting submission reports
+        run: |
+          npm --prefix client run test:coverage
+          node scripts/ci/normalise-coverage.cjs client
+          test -s client/coverage/lcov.info
+      - run: npm --prefix client run lint
+      - name: Build browser assets
+        env:
+          VITE_API_URL: https://localhost:4000
+        run: npm --prefix client run build
+      - name: Frontend coverage artifact
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: frontend-coverage
+          path: client/coverage/lcov.info
+          if-no-files-found: warn
+          retention-days: 14
+          overwrite: true
