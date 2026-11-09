@@ -1,77 +1,84 @@
-# Part 3 evidence index
+# HustleHub+ — Engineering Evidence Index
 
-This folder holds the evidence for the Part 3 rubric (DevSecOps, Monitoring and Finalisation). Every file listed here comes from a real, successful run. Evidence that has not been produced yet is marked **Pending** with its owning issue. Nothing is fabricated or edited after the run. The only exception is redaction: one secret visible in a terminal capture was covered with a labelled `[REDACTED]` box. The result is unchanged, and the redaction is listed under [Redactions](#redactions).
+This directory preserves results from real local and CI test runs of the HustleHub+ marketplace. The reports and screenshots represent **recorded runs**, not live status guarantees for a new clone, personal cloud account, or later commit.
 
-None of these files contains account passwords, JWTs, `JWT_SECRET`, MongoDB connection strings or Grafana tokens. Test accounts use generated `@hustlehub.test` addresses.
+For the product overview, see the [README](../../README.md). For ongoing development conventions and infrastructure ownership, see the [engineering playbook](../../HUSTLEHUB_PLAYBOOK.md).
 
-The step-by-step demonstration that walks through this evidence is in [`docs/demo/part3-demonstration-runbook.md`](../../docs/demo/part3-demonstration-runbook.md).
+## System verification
 
-## Rubric map
-
-| Rubric criterion (marks) | Evidence in this folder | Implementation and explanation |
+| Area | Evidence | What it demonstrates |
 |---|---|---|
-| Final features: tax + income dashboard (20) | [`e2e/screenshots/05-freelancer-income-tax-dashboard.png`](e2e/screenshots/05-freelancer-income-tax-dashboard.png), [`newman/financial-assertions.png`](newman/financial-assertions.png) | [`docs/finance/tax-estimation.md`](../../docs/finance/tax-estimation.md), [`docs/finance/income-api-contract.md`](../../docs/finance/income-api-contract.md) |
-| CI/CD pipeline (20) | [`ci/github-actions-runs.png`](ci/github-actions-runs.png): passing pull-request and `dev` runs. | [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml), [`docs/ci/devsecops.md`](../../docs/ci/devsecops.md) |
-| Static code analysis (10) | [`static-analysis/`](static-analysis/): before/after overview, accepted issues, passed quality gate | [`docs/security/static-analysis.md`](../../docs/security/static-analysis.md) |
-| Docker: backend + frontend (10) | [Healthy API and client containers](docker/compose-ps.png), [HTTPS API and frontend verification](docker/api-https-health.png). Both captures come from the local Atlas-connected Compose stack. | [`docs/docker/compose.md`](../../docs/docker/compose.md), [README screenshots](../../README.md#docker-compose-container-evidence) |
-| Logging (10) | [`logging/`](logging/): Grafana Cloud dashboard, Explore queries and privacy check | [`logging/README.md`](logging/README.md), [`docs/monitoring/`](../../docs/monitoring/) |
-| Own security features (15) | [`security-tests/`](security-tests/) (idempotency misuse, revocation, limits), [`e2e/playwright-junit.xml`](e2e/playwright-junit.xml) (sign-out revokes the server session) | [`docs/security/booking-idempotency.md`](../../docs/security/booking-idempotency.md), [`docs/security/session-revocation.md`](../../docs/security/session-revocation.md) |
-| Security review in README (10) | Not evidence-based | [README Security Review](../../README.md#security-review), [`docs/security/threat-control-review.md`](../../docs/security/threat-control-review.md) |
-| README update (5) | Not evidence-based | Root `README.md` |
+| Marketplace and finance | [Income dashboard](e2e/screenshots/05-freelancer-income-tax-dashboard.png), [financial API assertions](newman/financial-assertions.png) | Confirmed-income reporting and independently checked illustrative tax |
+| End-to-end browser workflow | [Browser JUnit report](e2e/playwright-junit.xml), [screenshots](e2e/screenshots/) | Account creation, gig publishing, booking, income, sign-out, and access controls |
+| API functionality | [Functional report](newman/functional-report.xml), [summary](newman/functional-summary.png) | Real API calls, role checks, validation, bookings and income contracts |
+| API security | [Security matrix](security-tests/security-matrix.xml), [rate-limit cycle](security-tests/security-limits.xml) | JWT rejection, roles, idempotency misuse, errors, and rate limits |
+| Backend and frontend unit tests | [Backend report](unit-tests/api-node-test.xml), [frontend report](unit-tests/client-vitest.xml) | Regression checks for business logic and UI behaviour |
+| Docker runtime | [Healthy containers](docker/compose-ps.png), [HTTPS and frontend checks](docker/api-https-health.png) | API and Nginx client services running with successful health responses |
+| Continuous integration | [Workflow runs](ci/github-actions-runs.png) | Recorded GitHub Actions runs of the integrated test pipeline |
+| Static code analysis | [Analysis captures](static-analysis/) | Recorded Sonar analysis, findings and gate outcome |
+| Observability | [Grafana captures](logging/) | Structured application events, search and privacy checks |
 
-## Test results
+## Recorded automated test results
 
-| Suite | Command (repository root) | Result | Files |
-|---|---|---|---|
-| Functional API, Part 2 + Part 3 financial (P3-12) | `npm --prefix api run test:api --silent -- --env-var 'adminPassword=<admin-password>'` | 120 request definitions, 122 executed, **335 assertions, 0 failed** | [`newman/functional-report.xml`](newman/functional-report.xml), [`newman/functional-summary.png`](newman/functional-summary.png), [`newman/financial-assertions.png`](newman/financial-assertions.png) |
-| Security matrix (P3-13) | `npm --prefix api run test:security` (see the suite doc) | 103 requests, **278 assertions, 0 failed** | [`security-tests/security-matrix.xml`](security-tests/security-matrix.xml), [`security-tests/security-matrix-summary.png`](security-tests/security-matrix-summary.png) |
-| Security rate limits (P3-13) | `npm --prefix api run test:security:limits` | 34 requests executed, **102 assertions, 0 failed** | [`security-tests/security-limits.xml`](security-tests/security-limits.xml), [`security-tests/security-limits-summary.png`](security-tests/security-limits-summary.png) |
-| Real-browser E2E (P3-14) | `npm --prefix e2e run test:evidence` | **7 passed, 0 failed** | [`e2e/playwright-junit.xml`](e2e/playwright-junit.xml), [`e2e/playwright-summary.png`](e2e/playwright-summary.png), [`e2e/screenshots/`](e2e/screenshots/) |
-| Backend unit tests | `npm --prefix api test` | **98 passed, 0 failed** | [`unit-tests/api-node-test.xml`](unit-tests/api-node-test.xml) |
-| Frontend unit tests | `npm --prefix client test` | **28 passed (5 files), 0 failed** | [`unit-tests/client-vitest.xml`](unit-tests/client-vitest.xml) |
+| Suite | Recorded result | Evidence |
+|---|---|---|
+| Functional API | 122 executed requests; **335 assertions passed**, 0 failed | [Report](newman/functional-report.xml), [summary](newman/functional-summary.png) |
+| API security matrix | 103 requests; **278 assertions passed**, 0 failed | [Report](security-tests/security-matrix.xml), [summary](security-tests/security-matrix-summary.png) |
+| Rate-limit security cycle | 34 requests; **102 assertions passed**, 0 failed | [Report](security-tests/security-limits.xml), [summary](security-tests/security-limits-summary.png) |
+| Playwright browser tests | **7 passed**, 0 failed | [JUnit](e2e/playwright-junit.xml), [summary](e2e/playwright-summary.png) |
+| Backend unit tests | **98 passed**, 0 failed | [JUnit](unit-tests/api-node-test.xml) |
+| Frontend unit tests | **28 passed**, 0 failed | [JUnit](unit-tests/client-vitest.xml) |
 
-**Counts in the JUnit files.** The Postman CLI summary table (the screenshots) is the authoritative total. The JUnit exports list each request once, so requests that repeat in a loop (for example *Booking Limit - Automatic Loop Until 429*) are merged. That is why `functional-report.xml` contains 329 test cases against 335 assertions, and `security-limits.xml` contains 39 test cases against 102 assertions. Both formats report 0 failures.
+The request-loop summaries and JUnit reports count repeated requests differently. For the functional suite, the summary records 335 assertions while the JUnit report contains fewer entries because repeated requests are grouped. This is a reporting-format distinction, not evidence of an omitted test.
 
-Every API-backed suite needs **its own freshly started API process** (`npm --prefix api start`), because the rate limiters count in memory. Run order used for the final cycle: functional Newman → restart → E2E → restart → security matrix → restart → security limits.
+## Browser journey screenshots
 
-Reproducing the unit-test reports: the API report comes from
+| Screenshot | View |
+|---|---|
+| [Freelancer published gig](e2e/screenshots/01-freelancer-gig-published.png) | An authenticated freelancer publishes an active service |
+| [Client booking confirmation](e2e/screenshots/02-client-booking-confirm.png) | Booking review and simulated-payment notice |
+| [Booking confirmed](e2e/screenshots/03-client-booking-confirmed.png) | Confirmation reference and amount |
+| [Client booking history](e2e/screenshots/04-client-booking-history.png) | Persisted confirmed booking |
+| [Freelancer income and tax](e2e/screenshots/05-freelancer-income-tax-dashboard.png) | Year-to-date income and illustrative annual tax |
+| [Invalid sign-in](e2e/screenshots/06-login-rejected.png) | Safe invalid-credentials error |
+| [Cross-role access denied](e2e/screenshots/07-client-access-denied.png) | Client cannot view freelancer financial data |
+
+### Historical tax-output context
+
+The dashboard screenshot was taken on **7 November 2026**. It showed R250,000 in confirmed simulated income and an illustrative tax estimate of **R56,718.82**. The estimate was calculated using elapsed days in the 2026/27 South African tax year. Repeating the calculation on another date may change the projection even when the underlying transactions remain unchanged.
+
+For the tax model and independent test approach, see [tax methodology](../../docs/finance/tax-estimation.md) and [browser test guide](../../docs/testing/e2e-playwright.md).
+
+## Docker health reproduction
+
+The container evidence shows the Express HTTPS API and Nginx client both reporting healthy. To reproduce it with your **own** configured MongoDB Atlas credentials:
 
 ```bash
-cd api && node --test --test-reporter=spec --test-reporter-destination=stdout \
-  --test-reporter=junit --test-reporter-destination=../evidence/part3/unit-tests/api-node-test.xml test/*.test.js
+cd ~/Documents/GitHub/HustleHub-Plus
+docker compose config --quiet
+docker compose up --build -d --wait
+docker compose ps api client
+
+mkdir -p api/certs
+docker compose cp api:/app/certs/localhost-cert.pem api/certs/compose-localhost-cert.pem
+curl --fail --cacert api/certs/compose-localhost-cert.pem https://localhost:4000/health
+curl --fail --silent --show-error -o /dev/null -w 'Frontend HTTP %{http_code}\n' http://localhost:5173/login
 ```
 
-The client's Vitest configuration always writes its JUnit file to `evidence/part2/frontend-tests/react-tests.xml`. Copy that file to `unit-tests/client-vitest.xml`, then restore the Part 2 file with `git restore evidence/part2/frontend-tests/react-tests.xml`.
+Expected: both services healthy, API JSON containing `"status":"OK"` and `"protocol":"HTTPS"`, and frontend HTTP `200`. Trust the public certificate in your browser for local HTTPS; never globally disable certificate verification. The normal stack uses an external Atlas database. The disposable CI overlay is explained in the [Compose guide](../../docs/docker/compose.md).
 
-## Application screenshots
+## CI and static analysis context
 
-Captured by the Playwright suite in a real Chromium browser against the HTTPS API, using generated demonstration data.
+These captures belong to earlier verified GitHub and Sonar runs. The personal repository uses `main`, while the imported workflow still scopes its blocking Sonar scan to `dev`. A passing personal `main` workflow **does not currently imply a passing Sonar scan**. Follow the [personal service ownership section](../../HUSTLEHUB_PLAYBOOK.md#personal-service-ownership) to move analysis into a personally owned Sonar project and update the quality gate.
 
-| File | Shows |
-|---|---|
-| [`01-freelancer-gig-published.png`](e2e/screenshots/01-freelancer-gig-published.png) | A newly registered freelancer publishes a gig. |
-| [`02-client-booking-confirm.png`](e2e/screenshots/02-client-booking-confirm.png) | The client's booking confirmation step with the simulated-payment notice. |
-| [`03-client-booking-confirmed.png`](e2e/screenshots/03-client-booking-confirmed.png) | Booking confirmed, with reference and recorded simulated payment. |
-| [`04-client-booking-history.png`](e2e/screenshots/04-client-booking-history.png) | The booking in the client's history (transaction persisted). |
-| [`05-freelancer-income-tax-dashboard.png`](e2e/screenshots/05-freelancer-income-tax-dashboard.png) | Freelancer dashboard: R250 000 income, R56 718.82 illustrative tax, projection explanation, March–February monthly breakdown. |
-| [`06-login-rejected.png`](e2e/screenshots/06-login-rejected.png) | A wrong password is rejected with a generic message. |
-| [`07-client-access-denied.png`](e2e/screenshots/07-client-access-denied.png) | A client is denied the freelancer dashboard. |
+No production Atlas credentials or long-lived signing secrets are required for the isolated CI integration suites; they use disposable fixtures and generated values.
 
-Worked check of screenshot 05 (7 November 2026 = day 252 of 365): R250 000 × 365 ÷ 252 = **R362 103.17** projected. Tax = R44 118 + 26% × (R362 103.17 − R245 100) − R17 820 primary rebate = **R56 718.82**. The Playwright test and the Postman oracle both check this calculation independently of the API code.
+## Evidence handling
 
-## Docker Compose screenshots
+- Test-account addresses are generated for the suites; avoid treating their records as persistent production data.
+- A terminal summary was redacted to conceal an administrator password supplied at runtime. The redaction did not change test counts or the reported outcome.
+- Do not commit environment values, JWTs, database connection strings, administrator passwords, private keys or Grafana tokens.
+- Review the historical repository, screenshots and Git commits for sensitive values before public publication. Rotate the historically exposed administrator credential wherever still valid.
+- Keep real and simulated transactions clearly distinguished in demonstrations and documentation.
 
-These captures document the local Docker Compose deployment described in [`docs/docker/compose.md`](../../docs/docker/compose.md), not the disposable CI MongoDB fixture.
-
-| File | Verification |
-|---|---|
-| [`docker/compose-ps.png`](docker/compose-ps.png) | `docker compose ps api client` shows the Express API and Nginx frontend both running and reporting `healthy`. |
-| [`docker/api-https-health.png`](docker/api-https-health.png) | `curl` validates the API's HTTPS certificate and confirms `/health` returns `status: OK`; the frontend returns HTTP `200`. |
-
-The certificate is verified against the exported local public certificate; TLS verification is not disabled. The [root README](../../README.md#docker-compose-container-evidence) includes the exact reproduction commands.
-
-## Redactions
-
-| File | What was covered | Why |
-|---|---|---|
-| [`newman/functional-summary.png`](newman/functional-summary.png) | The value passed as `--env-var 'adminPassword=...'` on the command line | It was the assessment administrator's password. It is redacted here and is being rotated in the assessment database before submission. |
+For test repetition and release checks, use the [engineering playbook](../../HUSTLEHUB_PLAYBOOK.md).
