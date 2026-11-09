@@ -10,7 +10,7 @@ Part 3 adds an illustrative South African income-tax estimate to the freelancer 
 
 ## Demonstration Video
 
-**Part 3 demonstration:** *link to be added before submission.*
+**Part 3 demonstration:** https://youtu.be/Xdnxl5pdQgw
 
 **Part 2 demonstration (retained):** [Watch on YouTube](https://youtu.be/laT6uWLJGro). It covers registration and login, freelancer gig creation and editing, client booking and history, transaction recording, freelancer income, administration, security controls and test evidence.
 
