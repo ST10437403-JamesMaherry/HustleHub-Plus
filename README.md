@@ -80,7 +80,7 @@ The API writes one JSON event per security-relevant outcome (sign-in, sign-out, 
 
 ### Containers
 
-The API and the frontend each have a Docker image that runs as a non-root user: Node.js serving HTTPS for the API, and Nginx serving the built React application. Docker Compose runs both, binds their ports to `127.0.0.1` only and keeps the local certificate in a named volume. See [Running with Docker Compose](#running-with-docker-compose).
+The API and the frontend each have a Docker image that runs as a non-root user: Node.js serving HTTPS for the API, and Nginx serving the built React application. Docker Compose runs both, binds their ports to `127.0.0.1` only and keeps the local certificate in a named volume. See [Running with Docker Compose](#running-with-docker-compose). Evidence of the running services is provided in the [Docker container health screenshots](#docker-compose-container-evidence).
 
 ### DevSecOps pipeline and static analysis
 
@@ -412,7 +412,7 @@ Requires Docker Desktop. Compose reads the **repository-root** `.env`, not `api/
    docker compose ps
    ```
 
-   `api` and `client` should report `healthy`, and the one-shot `tls-init` service `Exited (0)`.
+   `api` and `client` should report `healthy`, and the one-shot `tls-init` service `Exited (0)`. See the [Compose health evidence](#docker-compose-container-evidence).
 3. The API certificate is generated inside a Docker volume. Export its public certificate and trust it before using the frontend at `http://localhost:5173`; the [Compose guide](docs/docker/compose.md) gives the export, verification and trust steps.
 4. Stop with `docker compose down`. Adding `--volumes` also deletes the certificate, so a new one must be trusted next time.
 
@@ -578,7 +578,7 @@ The full [threat-to-control review](docs/security/threat-control-review.md) maps
 | Internal errors exposed (A10) | Central error handler with generic responses | Part 1/2 | [Security matrix](evidence/part3/security-tests/security-matrix.xml) |
 | Unnoticed attacks; secrets in logs (A09) | Allowlisted structured events, Grafana Cloud dashboard | P3-07, P3-08 | [Logging evidence](evidence/part3/logging/) |
 | Vulnerable dependencies; insecure code merged (A03, A08) | npm audit, SonarQube quality gate, blocking CI gate | P3-15, P3-16 | [Static analysis](evidence/part3/static-analysis/), [workflow runs](evidence/part3/ci/github-actions-runs.png) |
-| Container or service exposure (A02) | Non-root images, localhost-only ports, isolated CI database | P3-09 to P3-11, P3-16 | [Compose guide](docs/docker/compose.md) |
+| Container or service exposure (A02) | Non-root images, localhost-only ports, isolated CI database | P3-09 to P3-11, P3-16 | [Compose guide](docs/docker/compose.md), [container health evidence](#docker-compose-container-evidence) |
 
 ### Residual risks
 
@@ -757,7 +757,7 @@ The scan needs `SONAR_TOKEN` set in the shell. [Configuration, findings and deci
 | Final features: tax and income dashboard (20) | [Tax estimator](api/services/taxEstimator.js), [income analytics](api/services/incomeAnalytics.js), [freelancer dashboard](client/src/pages/FreelancerDashboardPage.jsx), [methodology](docs/finance/tax-estimation.md) | [Dashboard screenshot](evidence/part3/e2e/screenshots/05-freelancer-income-tax-dashboard.png), [financial API assertions](evidence/part3/newman/financial-assertions.png) |
 | CI/CD pipeline (20) | [Workflow](.github/workflows/ci.yml), [pipeline guide](docs/ci/devsecops.md) | [Workflow runs](evidence/part3/ci/github-actions-runs.png) |
 | Static code analysis (10) | [`sonar-project.properties`](sonar-project.properties), [findings and decisions](docs/security/static-analysis.md) | [Static analysis](evidence/part3/static-analysis/) |
-| Docker: backend and frontend (10) | [API image](api/Dockerfile), [client image](client/Dockerfile), [Compose](compose.yaml), [guide](docs/docker/compose.md) | Listed as pending in the [evidence index](evidence/part3/README.md) |
+| Docker: backend and frontend (10) | [API image](api/Dockerfile), [client image](client/Dockerfile), [Compose](compose.yaml), [guide](docs/docker/compose.md) | [Healthy API and client containers](evidence/part3/docker/compose-ps.png), [HTTPS API and frontend verification](evidence/part3/docker/api-https-health.png) |
 | Logging (10) | [Event logger](api/utils/logger.js), [Grafana transport](api/utils/lokiTransport.js), [monitoring docs](docs/monitoring/) | [Logging evidence](evidence/part3/logging/) |
 | Own security features (15) | [Session revocation](docs/security/session-revocation.md), [booking replay protection](docs/security/booking-idempotency.md) | [Security tests](evidence/part3/security-tests/), [Playwright](evidence/part3/e2e/playwright-junit.xml) |
 | Security review (10) | [Security Review](#security-review), [threat-to-control review](docs/security/threat-control-review.md) | Review document |
@@ -924,6 +924,30 @@ These captures show the database side of the marketplace workflow. The booking a
 ![Automated rate-limit tests](evidence/part2/security/postman-08-rate-limit.png)
 
 </details>
+
+### Docker Compose Container Evidence
+
+The local Docker Compose stack runs the Express API and built React frontend as separate, non-root containers. The API serves HTTPS on `localhost:4000`, while Nginx serves the frontend on `localhost:5173`. Service health and the browser-facing endpoints are checked independently.
+
+**Both application containers running and healthy**
+
+![Docker Compose API and client containers reporting healthy](evidence/part3/docker/compose-ps.png)
+
+**HTTPS API and frontend response verification**
+
+![Verified HTTPS API health response and successful frontend HTTP response](evidence/part3/docker/api-https-health.png)
+
+To reproduce the checks from the repository root with the Compose stack running:
+
+```bash
+docker compose ps api client
+mkdir -p api/certs
+docker compose cp api:/app/certs/localhost-cert.pem api/certs/compose-localhost-cert.pem
+curl --fail --cacert api/certs/compose-localhost-cert.pem https://localhost:4000/health
+curl --fail -s -o /dev/null -w 'Frontend HTTP %{http_code}\n' http://localhost:5173/login
+```
+
+The API should return `"status":"OK"` with `"protocol":"HTTPS"`, the frontend should return HTTP `200`, and both containers should report `healthy`. The certificate used by `curl` is the public certificate generated by the local TLS initializer; certificate verification is not disabled. For the full setup and shutdown process, see the [Docker Compose guide](docs/docker/compose.md).
 
 ### Automated Test Results
 

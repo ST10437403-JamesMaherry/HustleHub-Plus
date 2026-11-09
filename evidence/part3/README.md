@@ -13,7 +13,7 @@ The step-by-step demonstration that walks through this evidence is in [`docs/dem
 | Final features: tax + income dashboard (20) | [`e2e/screenshots/05-freelancer-income-tax-dashboard.png`](e2e/screenshots/05-freelancer-income-tax-dashboard.png), [`newman/financial-assertions.png`](newman/financial-assertions.png) | [`docs/finance/tax-estimation.md`](../../docs/finance/tax-estimation.md), [`docs/finance/income-api-contract.md`](../../docs/finance/income-api-contract.md) |
 | CI/CD pipeline (20) | [`ci/github-actions-runs.png`](ci/github-actions-runs.png): passing pull-request and `dev` runs. | [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml), [`docs/ci/devsecops.md`](../../docs/ci/devsecops.md) |
 | Static code analysis (10) | [`static-analysis/`](static-analysis/): before/after overview, accepted issues, passed quality gate | [`docs/security/static-analysis.md`](../../docs/security/static-analysis.md) |
-| Docker: backend + frontend (10) | **Pending (P3-19 capture):** `docker/compose-ps.png` (`docker compose ps` with `api` and `client` both `healthy`) and `docker/api-https-health.png` (`curl.exe -k https://localhost:4000/health` answered by the Compose API container). See the [final QA checklist](../../docs/demo/part3-demonstration-runbook.md#final-qa-checklist). | [`docs/docker/compose.md`](../../docs/docker/compose.md) |
+| Docker: backend + frontend (10) | [Healthy API and client containers](docker/compose-ps.png), [HTTPS API and frontend verification](docker/api-https-health.png). Both captures come from the local Atlas-connected Compose stack. | [`docs/docker/compose.md`](../../docs/docker/compose.md), [README screenshots](../../README.md#docker-compose-container-evidence) |
 | Logging (10) | [`logging/`](logging/): Grafana Cloud dashboard, Explore queries and privacy check | [`logging/README.md`](logging/README.md), [`docs/monitoring/`](../../docs/monitoring/) |
 | Own security features (15) | [`security-tests/`](security-tests/) (idempotency misuse, revocation, limits), [`e2e/playwright-junit.xml`](e2e/playwright-junit.xml) (sign-out revokes the server session) | [`docs/security/booking-idempotency.md`](../../docs/security/booking-idempotency.md), [`docs/security/session-revocation.md`](../../docs/security/session-revocation.md) |
 | Security review in README (10) | Not evidence-based | [README Security Review](../../README.md#security-review), [`docs/security/threat-control-review.md`](../../docs/security/threat-control-review.md) |
@@ -58,6 +58,17 @@ Captured by the Playwright suite in a real Chromium browser against the HTTPS AP
 | [`07-client-access-denied.png`](e2e/screenshots/07-client-access-denied.png) | A client is denied the freelancer dashboard. |
 
 Worked check of screenshot 05 (7 November 2026 = day 252 of 365): R250 000 × 365 ÷ 252 = **R362 103.17** projected. Tax = R44 118 + 26% × (R362 103.17 − R245 100) − R17 820 primary rebate = **R56 718.82**. The Playwright test and the Postman oracle both check this calculation independently of the API code.
+
+## Docker Compose screenshots
+
+These captures document the local Docker Compose deployment described in [`docs/docker/compose.md`](../../docs/docker/compose.md), not the disposable CI MongoDB fixture.
+
+| File | Verification |
+|---|---|
+| [`docker/compose-ps.png`](docker/compose-ps.png) | `docker compose ps api client` shows the Express API and Nginx frontend both running and reporting `healthy`. |
+| [`docker/api-https-health.png`](docker/api-https-health.png) | `curl` validates the API's HTTPS certificate and confirms `/health` returns `status: OK`; the frontend returns HTTP `200`. |
+
+The certificate is verified against the exported local public certificate; TLS verification is not disabled. The [root README](../../README.md#docker-compose-container-evidence) includes the exact reproduction commands.
 
 ## Redactions
 
