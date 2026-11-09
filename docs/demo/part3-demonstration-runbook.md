@@ -45,6 +45,25 @@ Supporting evidence: [`evidence/part3/README.md`](../../evidence/part3/README.md
 | Dashboard shows R0 | Make sure the booking was made against the freelancer's own gig, then use **Refresh data**. |
 | A pipeline run is still in progress | Show the most recent completed passing run. |
 
+## Final QA checklist
+
+Complete these checks before submission. The first block was verified against the `dev` snapshot of 9 November 2026. The second block requires a team member's machine or accounts.
+
+**Verified**
+
+- [x] Every relative link and heading anchor in all repository Markdown files resolves (0 broken).
+- [x] Every committed JUnit report has 0 failures and 0 skipped: functional Newman, security matrix, security limits, Playwright (7), API unit (98), client Vitest (28).
+- [x] The totals in the evidence index and README match the CLI summary screenshots (335, 278, 102 assertions). The JUnit testcase counts differ, as explained in the [evidence index](../../evidence/part3/README.md#test-results).
+- [x] Part 3 screenshots checked for secrets. One administrator password was visible on a command line and has been redacted (see [Redactions](../../evidence/part3/README.md#redactions)). No JWTs, connection strings, `.env` contents or Grafana tokens are visible. The Grafana stack name and request IDs are not secrets.
+- [x] Every `npm` command in this runbook and the evidence index exists in the relevant `package.json`.
+
+**Still to do (team)**
+
+- [ ] **Rotate the assessment administrator password** in Atlas (re-register, or replace the hash) and share the new one with the marker outside the repository. The old password was committed earlier and appeared in a screenshot.
+- [ ] **Docker evidence:** run `docker compose up --build -d`, wait about a minute, then capture `docker compose ps` (both services `healthy`) as `evidence/part3/docker/compose-ps.png` and `curl.exe -k https://localhost:4000/health` as `evidence/part3/docker/api-https-health.png`. Then replace the *Pending* text in the evidence index and the README Part 3 rubric row with links to those files.
+- [ ] **Record the video** using the script above, check it for secrets, and add the link to the README **Demonstration Video** section.
+- [ ] Update the *Group Contributions* note once P3-19 and P3-20 are closed.
+
 ## After recording
 
 - Watch the full video for any visible secret (connection string, token, password, `.env` contents). Re-record that section if one appears.
